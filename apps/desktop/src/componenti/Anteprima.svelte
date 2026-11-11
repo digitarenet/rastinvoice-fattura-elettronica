@@ -29,6 +29,7 @@
     onVistaCambiata,
     onApriImpostazioni,
     onErrore,
+    onAvviso = () => {},
     notifiche = [],
   }: {
     notifiche?: VoceMessaggio[];
@@ -42,6 +43,7 @@
     onVistaCambiata: (v: "moderna" | "standard") => void;
     onApriImpostazioni: () => void;
     onErrore: (m: string) => void;
+    onAvviso?: (m: string) => void;
   } = $props();
 
   let scheda = $state<Scheda>("moderna");
@@ -237,11 +239,28 @@
     applicaZoom();
   }
 
+  // Nome del file senza estensioni, usato come nome proposto nei salvataggi.
+  function nomeBase() {
+    return voce.nome_file.replace(/\.(xml|p7m)$/gi, "").replace(/\.xml$/i, "");
+  }
+
+  // Salvataggio in PDF tramite la finestra di stampa del sistema, che offre
+  // sempre la destinazione "Salva come PDF". Il titolo del documento diventa
+  // il nome proposto per il file.
+  function salvaPdf() {
+    const documento = cornice?.contentDocument;
+    if (!documento) return stampa();
+    const titolo = documento.title;
+    documento.title = nomeBase();
+    onAvviso("Nella finestra di stampa scegli \"Salva come PDF\" o \"Microsoft Print to PDF\".");
+    stampa();
+    documento.title = titolo;
+  }
+
   async function salvaHtml() {
     const html = scheda === "standard" ? htmlStandard : dettaglio?.html;
     if (!html) return;
-    const base = voce.nome_file.replace(/\.(xml|p7m)$/gi, "").replace(/\.xml$/i, "");
-    await api.salvaTesto(`${base}.html`, "html", html).catch((e) => onErrore(String(e)));
+    await api.salvaTesto(`${nomeBase()}.html`, "html", html).catch((e) => onErrore(String(e)));
   }
 
   async function salvaXml() {
@@ -310,6 +329,9 @@
       {#if scheda !== "xml"}
         <button class="btn btn-xs btn-link" title="Stampa (Ctrl+P)" aria-label="Stampa" onclick={stampa}>
           <Icona nome="it-print" />
+        </button>
+        <button class="btn btn-xs btn-link" title="Salva in PDF" aria-label="Salva in PDF" onclick={salvaPdf}>
+          <Icona nome="it-file-pdf" />
         </button>
         <button class="btn btn-xs btn-link" title="Salva come pagina HTML" aria-label="Salva come pagina HTML" onclick={salvaHtml}>
           <Icona nome="it-download" />

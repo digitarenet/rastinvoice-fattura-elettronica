@@ -187,7 +187,10 @@ fn elementi_zip(byte: &[u8]) -> Result<Vec<(String, Vec<u8>)>, String> {
         if voce.is_dir() {
             continue;
         }
-        let nome = voce.name().replace('\\', "/");
+        let Ok(nome) = voce.name() else {
+            continue;
+        };
+        let nome = nome.replace('\\', "/");
         let nome = nome.rsplit('/').next().unwrap_or_default().to_owned();
         // Si estraggono solo documenti e contenitori: il resto non serve.
         if nome.is_empty() || !(e_documento(&nome) || tipo_contenitore(&nome).is_some()) {

@@ -176,7 +176,7 @@ fn riconosci_zip(b: &[u8]) -> Tipo {
     let Ok(mut archivio) = zip::ZipArchive::new(Cursor::new(b)) else {
         return Tipo::Sconosciuto;
     };
-    let nomi: Vec<String> = archivio.file_names().map(|n| n.to_owned()).collect();
+    let nomi: Vec<String> = archivio.file_names().filter_map(|n| n.ok().map(|n| n.into_owned())).collect();
     if nomi.iter().any(|n| n == "word/document.xml") {
         return Tipo::Docx;
     }
@@ -463,7 +463,7 @@ fn archivio(byte: &[u8]) -> Anteprima {
         if let Ok(v) = archivio.by_index(i) {
             if !v.is_dir() {
                 voci.push(VoceArchivio {
-                    nome: v.name().to_owned(),
+                    nome: v.name().map(|n| n.into_owned()).unwrap_or_default(),
                     dimensione: v.size(),
                 });
             }

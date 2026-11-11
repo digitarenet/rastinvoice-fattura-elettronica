@@ -52,6 +52,7 @@
       Visita digitare.net
     </button>
     <p class="piccolo mt-3 mb-0">Copyright © 2026 Andrea Re · info@digitare.net</p>
+    <p class="piccolo mt-1 mb-0">Software libero con licenza pubblica dell'Unione europea EUPL-1.2.</p>
   </div>
 
   <h2 class="h5 mt-4">Librerie utilizzate</h2>

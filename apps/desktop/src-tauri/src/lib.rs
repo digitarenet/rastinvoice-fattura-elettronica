@@ -3,6 +3,7 @@
 //
 // Applicazione desktop: comandi esposti all'interfaccia.
 
+mod aggiornamenti;
 mod anteprima;
 mod archivio;
 mod foglio_stile;
@@ -414,6 +415,21 @@ fn apri_sito() -> Result<(), String> {
     .map_err(|e| e.to_string())
 }
 
+/// Controlla se è stata pubblicata una versione più recente.
+#[tauri::command]
+async fn controlla_aggiornamenti() -> Result<aggiornamenti::Esito, String> {
+    tauri::async_runtime::spawn_blocking(aggiornamenti::controlla)
+        .await
+        .map_err(|e| e.to_string())?
+}
+
+/// Apre nel browser la pagina di download dell'ultima versione.
+#[tauri::command]
+fn apri_download() -> Result<(), String> {
+    tauri_plugin_opener::open_url(aggiornamenti::URL_RELEASE, None::<&str>)
+        .map_err(|e| e.to_string())
+}
+
 /// Copia i file indicati nella cartella "archivio" dei dati dell'applicazione.
 #[tauri::command]
 fn copia_in_archivio(
@@ -557,7 +573,9 @@ pub fn avvia() {
             salva_testo,
             anteprima_allegato,
             byte_allegato,
-            cambia_cartella_dati
+            cambia_cartella_dati,
+            controlla_aggiornamenti,
+            apri_download
         ])
         .run(tauri::generate_context!())
         .expect("errore durante l'avvio dell'applicazione");

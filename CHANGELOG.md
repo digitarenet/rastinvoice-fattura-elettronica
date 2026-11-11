@@ -4,6 +4,28 @@ Tutte le modifiche rilevanti di RustinVoice. Il numero di versione segue lo sche
 MAGGIORE.MINORE.CORREZIONE: la versione minore cresce con le nuove funzioni, quella di
 correzione con le sole correzioni.
 
+## 0.9.0 - 2026-11-11
+
+### Aggiunto
+- Licenza open source **EUPL-1.2** (licenza pubblica dell'Unione europea), nel file `LICENSE`, nei metadati
+  dei pacchetti, nel README e nei Credits.
+- Scheda `publiccode.yml` per il catalogo del software open source di Developers Italia.
+- Pulsante **Salva in PDF** nell'anteprima: apre la finestra di stampa del sistema con il nome del file già
+  proposto e ricorda di scegliere la stampante PDF.
+- Controllo facoltativo delle nuove versioni (Impostazioni > Aggiornamenti), disattivato in modo predefinito;
+  legge solo il numero dell'ultima versione pubblicata su GitHub.
+- Rilascio automatico (`.github/workflows/rilascio.yml`): a ogni tag `v*` produce installer e versione
+  portatile per Windows, app universale per macOS, AppImage per Linux e li allega a una release in bozza.
+- Pacchetto MSIX per il Microsoft Store (`scripts/msix.ps1` e `apps/desktop/src-tauri/msix/`), non firmato
+  perché lo firma lo Store; i dati di Partner Center si passano come variabili del repository.
+- Controllo delle vulnerabilità note nelle dipendenze Rust e JavaScript nella verifica automatica, con gli
+  avvisi non applicabili motivati in `.cargo/audit.toml`.
+
+### Modificato
+- Libreria `zip` aggiornata alla versione 9, che corregge quattro vulnerabilità note nell'estrazione degli
+  archivi (RustinVoice non usava le funzioni interessate, ma l'aggiornamento elimina il rischio).
+- Versione minima di Rust portata a 1.88, richiesta dalla nuova libreria `zip`.
+
 ## 0.8.2 - 2026-11-11
 
 ### Modificato

@@ -14,11 +14,12 @@ members = [
 ]
 
 [workspace.package]
-version = "0.8.2"
+version = "0.9.0"
 edition = "2021"
 authors = ["Andrea Re <info@digitare.net>"]
-rust-version = "1.80"
+rust-version = "1.88"
 repository = "https://github.com/digitarenet/rust-in-voice"
+license = "EUPL-1.2"
 
 [workspace.dependencies]
 roxmltree = "0.21"
@@ -37,7 +38,7 @@ sha1 = { version = "0.10", features = ["oid"] }
 sha2 = { version = "0.10", features = ["oid"] }
 p256 = { version = "0.13", features = ["ecdsa", "pkcs8"] }
 p384 = { version = "0.13", features = ["ecdsa", "pkcs8"] }
-zip = { version = "4", default-features = false, features = ["deflate"] }
+zip = { version = "9", default-features = false, features = ["deflate"] }
 
 [profile.release]
 lto = true

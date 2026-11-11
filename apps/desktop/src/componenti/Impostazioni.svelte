@@ -7,7 +7,7 @@
 <script lang="ts">
   import { open } from "@tauri-apps/plugin-dialog";
   import SceltaDati from "./SceltaDati.svelte";
-  import { api, type Avvio, type Impostazioni, type StatoFoglio } from "../lib/api";
+  import { api, type Avvio, type EsitoAggiornamenti, type Impostazioni, type StatoFoglio } from "../lib/api";
   import { normalizzaIdentificativo } from "../lib/archivio";
   import Icona from "./Icona.svelte";
 
@@ -32,6 +32,24 @@
   let nuovoId = $state("");
   let scaricamento = $state(false);
   let esitoFoglio = $state<{ ok: boolean; testo: string } | null>(null);
+  let controllo = $state(false);
+  let esitoAggiornamenti = $state<EsitoAggiornamenti | null>(null);
+  let messaggioAggiornamenti = $state("");
+
+  async function controllaOra() {
+    controllo = true;
+    messaggioAggiornamenti = "";
+    try {
+      esitoAggiornamenti = await api.controllaAggiornamenti();
+      messaggioAggiornamenti = esitoAggiornamenti.disponibile
+        ? `È disponibile la versione ${esitoAggiornamenti.ultima} (in uso: ${esitoAggiornamenti.attuale}).`
+        : `La versione in uso (${esitoAggiornamenti.attuale}) è la più recente.`;
+    } catch (e) {
+      messaggioAggiornamenti = `Controllo non riuscito: ${e}`;
+    } finally {
+      controllo = false;
+    }
+  }
 
   function aggiungiId(valore: string) {
     const id = normalizzaIdentificativo(valore);
@@ -178,6 +196,29 @@
       {/each}
     </select>
     <p class="text-secondary-ri mt-2 mb-0"><small>Ingrandisce testi, pulsanti e menu; con valori alti la disposizione si adatta alla finestra.</small></p>
+  </section>
+
+  <section>
+    <h2 class="h5">Aggiornamenti</h2>
+    <div class="form-check">
+      <input id="aggiornamenti" type="checkbox" checked={imp.aggiornamenti}
+        onchange={(e) => onSalva({ ...imp, aggiornamenti: (e.currentTarget as HTMLInputElement).checked })} />
+      <label for="aggiornamenti">Controlla all'avvio se c'è una nuova versione</label>
+    </div>
+    <p class="text-secondary-ri mb-2"><small>Richiede Internet: l'applicazione legge solo il numero dell'ultima versione pubblicata e non invia dati.</small></p>
+    <div class="d-flex gap-2 align-items-center flex-wrap">
+      <button class="btn btn-outline-primary btn-xs" onclick={controllaOra} disabled={controllo}>
+        {controllo ? "Controllo in corso..." : "Controlla ora"}
+      </button>
+      {#if esitoAggiornamenti?.disponibile}
+        <button class="btn btn-primary btn-xs" onclick={() => api.apriDownload()}>
+          <Icona nome="it-download" classe="bianca" /> Scarica la versione {esitoAggiornamenti.ultima}
+        </button>
+      {/if}
+    </div>
+    {#if messaggioAggiornamenti}
+      <div class="alert alert-info mt-3 py-2" role="status">{messaggioAggiornamenti}</div>
+    {/if}
   </section>
 
   <section>

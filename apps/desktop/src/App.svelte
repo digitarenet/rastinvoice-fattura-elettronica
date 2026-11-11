@@ -129,6 +129,12 @@
       info = await api.avvio();
       imp = info.impostazioni;
       foglio = await api.foglioStato();
+      if (imp.aggiornamenti) {
+        // Controllo facoltativo, in silenzio se non c'è rete.
+        api.controllaAggiornamenti()
+          .then((e) => e.disponibile && mostra(`È disponibile la versione ${e.ultima}: scaricala da Impostazioni.`))
+          .catch(() => {});
+      }
       await scansiona();
       smetti = await getCurrentWebview().onDragDropEvent((e) => {
         const p = e.payload;
@@ -598,6 +604,7 @@
                     onVistaCambiata={(v) => imp && imp.vista !== v && salva({ ...imp, vista: v })}
                     onApriImpostazioni={() => (vista = "impostazioni")}
                     onErrore={(m) => mostra(m, "errore")}
+                    onAvviso={(m) => mostra(m)}
                     notifiche={notificheDi(selezionata, notifichePerFattura)}
                   />
                 {:else}

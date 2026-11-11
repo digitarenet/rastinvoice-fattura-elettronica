@@ -40,3 +40,20 @@ jobs:
       - run: npm ci
       - run: npm run check
       - run: npm run build
+
+  # Vulnerabilità note nelle dipendenze Rust (RustSec) e JavaScript (npm).
+  sicurezza:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - name: Dipendenze Rust
+        run: |
+          cargo install cargo-audit --locked
+          cargo audit
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Dipendenze JavaScript
+        working-directory: apps/desktop
+        run: npm audit --omit=dev --audit-level=high

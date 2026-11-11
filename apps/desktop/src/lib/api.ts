@@ -73,6 +73,13 @@ export interface Impostazioni {
   file_trascinati: "chiedi" | "copia" | "lascia";
   vista: "moderna" | "standard";
   zoom: number;
+  aggiornamenti: boolean;
+}
+
+export interface EsitoAggiornamenti {
+  attuale: string;
+  ultima: string;
+  disponibile: boolean;
 }
 
 export interface Avvio {
@@ -176,6 +183,8 @@ export const api = {
   /** Cambia la cartella dati; se cambia davvero, l'applicazione si riavvia. */
   cambiaCartellaDati: (portable: boolean) => invoke<void>("cambia_cartella_dati", { portable }),
   apriSito: () => invoke<void>("apri_sito"),
+  controllaAggiornamenti: () => invoke<EsitoAggiornamenti>("controlla_aggiornamenti"),
+  apriDownload: () => invoke<void>("apri_download"),
   copiaInArchivio: (percorsi: string[]) =>
     invoke<string[]>("copia_in_archivio", { percorsi }),
   cartellaArchivio: () => invoke<string>("cartella_archivio"),

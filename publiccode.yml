@@ -1,0 +1,84 @@
+# Copyright (c) 2026 Andrea Re - info@digitare.net
+# Autore: Andrea Re @ 2026 - info@digitare.net
+#
+# Scheda per il catalogo del software open source di Developers Italia
+# (standard publiccode.yml). Aggiornare softwareVersion e releaseDate a ogni
+# rilascio.
+publiccodeYmlVersion: "0.4"
+
+name: RustinVoice
+url: "https://github.com/digitarenet/rust-in-voice"
+softwareVersion: "0.9.0"
+releaseDate: "2026-11-11"
+
+platforms:
+  - windows
+  - mac
+  - linux
+
+categories:
+  - billing-and-invoicing
+  - document-management
+
+developmentStatus: beta
+softwareType: "standalone/desktop"
+
+description:
+  it:
+    shortDescription: >-
+      Visualizzatore portatile e accessibile di fatture elettroniche
+      FatturaPA: XML, P7M, ZIP e PEC, archivio e statistiche, offline.
+    longDescription: >-
+      RustinVoice è un visualizzatore open source di fatture elettroniche
+      italiane, emesse e ricevute. Non richiede installazione e funziona su
+      Windows, macOS e Linux, anche da chiavetta USB. Apre file XML, P7M
+      firmati, archivi ZIP, messaggi EML e PEC; mostra la fattura nella vista
+      con il foglio di stile AssoSoftware o in una vista moderna; verifica la
+      firma digitale e segnala gli errori rispetto ai controlli del Sistema di
+      Interscambio. Indicizza intere cartelle, anche di rete o su NAS, con
+      ricerca a testo libero, rubrica di clienti e fornitori e statistiche su
+      fatturato, acquisti e IVA. Collega ricevute e notifiche SdI alle fatture.
+      L'interfaccia segue il design system di Designers Italia ed è progettata
+      per le WCAG 2.1 AA. Il motore XSLT è interno, quindi la visualizzazione
+      non dipende dal browser. Nessun dato lascia il computer.
+    features:
+      - Apertura di XML, P7M, ZIP, EML e PEC
+      - Vista con foglio di stile AssoSoftware e vista moderna
+      - Verifica della firma digitale
+      - Controlli secondo i codici di errore SdI
+      - Archivio di cartelle locali, di rete e NAS con ricerca a testo libero
+      - Rubrica clienti e fornitori
+      - Statistiche su fatturato, acquisti e IVA
+      - Ricevute e notifiche SdI collegate alle fatture
+      - Interfaccia accessibile con Bootstrap Italia
+      - Riga di comando per script e integrazioni
+    screenshots:
+      - docs/immagini/documenti.png
+      - docs/immagini/assosoftware.png
+      - docs/immagini/rubrica.png
+      - docs/immagini/statistiche.png
+
+legal:
+  license: EUPL-1.2
+  mainCopyrightOwner: Andrea Re
+  repoOwner: Andrea Re
+
+maintenance:
+  type: internal
+  contacts:
+    - name: Andrea Re
+      email: info@digitare.net
+
+localisation:
+  localisationReady: false
+  availableLanguages:
+    - it
+
+intendedAudience:
+  countries:
+    - it
+
+it:
+  countryExtensionVersion: "1.0"
+  riuso:
+    codiceIPA: ""

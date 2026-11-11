@@ -7,6 +7,7 @@ description = "Nucleo di lettura e interpretazione delle fatture elettroniche Fa
 version.workspace = true
 edition.workspace = true
 authors.workspace = true
+license.workspace = true
 rust-version.workspace = true
 repository.workspace = true
 

@@ -103,7 +103,7 @@ fn estrai_xsl(zip_byte: &[u8]) -> Result<Vec<u8>, String> {
         .map_err(|e| format!("archivio non valido: {e}"))?;
     for i in 0..archivio.len() {
         let mut f = archivio.by_index(i).map_err(|e| e.to_string())?;
-        if f.is_file() && f.name().to_lowercase().ends_with(".xsl") {
+        if f.is_file() && f.name().is_ok_and(|n| n.to_lowercase().ends_with(".xsl")) {
             let mut v = Vec::new();
             f.by_ref()
                 .take(MAX_BYTE)

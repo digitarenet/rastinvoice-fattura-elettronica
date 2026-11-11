@@ -223,7 +223,7 @@ fn soddisfa(n: &Nodo<'_, '_>, asse: Asse, t: &Test) -> bool {
         Test::Istruzione(obiettivo) => match n {
             Nodo::Normale(x) if x.node_type() == NodeType::PI => obiettivo
                 .as_ref()
-                .map_or(true, |o| x.pi().is_some_and(|p| p.target == o)),
+                .is_none_or(|o| x.pi().is_some_and(|p| p.target == o)),
             _ => false,
         },
         Test::Qualsiasi => principale(n),

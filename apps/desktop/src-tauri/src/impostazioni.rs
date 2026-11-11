@@ -36,6 +36,9 @@ pub struct Impostazioni {
     pub vista: String,
     /// Ingrandimento dell'interfaccia (1 = 100%), per l'accessibilità.
     pub zoom: f64,
+    /// `true` se all'avvio si controlla la presenza di nuove versioni
+    /// (richiede Internet; disattivato in modo predefinito).
+    pub aggiornamenti: bool,
 }
 
 impl Impostazioni {

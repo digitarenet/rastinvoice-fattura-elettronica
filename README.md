@@ -55,7 +55,8 @@ Apre fatture emesse e ricevute in tutti i formati in cui arrivano di solito: `.x
   pagamenti, saldo IVA indicativo, grafico mensile o annuale, classifica di clienti e fornitori.
 
 **Stampa ed esportazione**
-- Stampa della fattura.
+- Stampa della fattura e salvataggio in PDF tramite la stampante PDF del sistema, con il nome del file già
+  proposto.
 - Salvataggio in HTML e salvataggio dell'XML estratto dalla busta firmata.
 - Esportazione dell'elenco in CSV, con protezione contro le formule nei fogli di calcolo.
 
@@ -66,6 +67,14 @@ Apre fatture emesse e ricevute in tutti i formati in cui arrivano di solito: `.x
 - Interfaccia secondo il **design system di Designers Italia**, progettata per le **WCAG 2.1 AA**, con ingrandimento
   fino al 200% (vedi [Accessibilità](#accessibilità)).
 - Riga di comando per uso in script e integrazioni (vedi [Riga di comando](#riga-di-comando)).
+- Controllo facoltativo delle nuove versioni, disattivato in modo predefinito: è l'unica funzione che usa
+  Internet oltre al download del foglio di stile.
+
+**Distribuzione**
+- Pacchetti per Windows (installer e versione portatile `.zip`), macOS (app universale Intel e Apple) e Linux
+  (AppImage), prodotti automaticamente a ogni rilascio.
+- Pacchetto MSIX per il Microsoft Store, firmato dallo Store al momento della pubblicazione
+  (`scripts/msix.ps1`).
 
 ## Immagini
 
@@ -272,7 +281,17 @@ Vedere [SECURITY.md](SECURITY.md).
 
 ## Licenza
 
-In definizione. Fino alla pubblicazione della licenza tutti i diritti sono riservati all'autore.
+RustinVoice è software libero, distribuito con la licenza pubblica dell'Unione europea
+[EUPL-1.2](LICENSE). La licenza ha lo stesso valore legale in tutte le lingue ufficiali dell'Unione: il
+testo in italiano è allegato alla
+[decisione di esecuzione (UE) 2017/863](https://eur-lex.europa.eu/eli/dec_impl/2017/863/oj) della Commissione europea.
+
+In breve: il programma si può usare per qualunque scopo, anche commerciale, studiare, modificare e
+ridistribuire. Chi distribuisce una versione modificata, o la mette a disposizione in rete, deve
+pubblicarne il codice sorgente con la stessa licenza (o con una licenza compatibile indicata dalla
+EUPL). Il programma è fornito senza garanzie.
+
+Copyright (c) 2026 Andrea Re - info@digitare.net
 
 ## Autore
 

@@ -208,7 +208,7 @@ fn simboli(testo: &str) -> Result<Vec<Simbolo>, Errore> {
             i += 1;
             continue;
         }
-        let operando = out.last().map_or(true, |s| s.apre_operando());
+        let operando = out.last().is_none_or(|s| s.apre_operando());
         let s = match ch {
             '(' => Simbolo::ParAperta,
             ')' => Simbolo::ParChiusa,

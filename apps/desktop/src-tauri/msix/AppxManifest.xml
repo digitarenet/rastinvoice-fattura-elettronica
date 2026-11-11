@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Copyright (c) 2026 Andrea Re - info@digitare.net
+  Autore: Andrea Re @ 2026 - info@digitare.net
+
+  Modello del manifesto MSIX per il Microsoft Store. I segnaposto tra doppie
+  graffe vengono sostituiti da scripts/msix.ps1 con i valori assegnati da
+  Partner Center (nome del pacchetto ed editore) e con la versione corrente.
+-->
+<Package
+  xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10"
+  xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10"
+  xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities"
+  IgnorableNamespaces="uap rescap">
+
+  <Identity
+    Name="{{NOME_PACCHETTO}}"
+    Publisher="{{EDITORE}}"
+    Version="{{VERSIONE}}"
+    ProcessorArchitecture="x64" />
+
+  <Properties>
+    <DisplayName>{{NOME_VISUALIZZATO}}</DisplayName>
+    <PublisherDisplayName>{{EDITORE_VISUALIZZATO}}</PublisherDisplayName>
+    <Logo>Assets\StoreLogo.png</Logo>
+    <Description>Visualizzatore di fatture elettroniche FatturaPA</Description>
+  </Properties>
+
+  <Dependencies>
+    <TargetDeviceFamily Name="Windows.Desktop" MinVersion="10.0.17763.0" MaxVersionTested="10.0.26100.0" />
+  </Dependencies>
+
+  <Resources>
+    <Resource Language="it-IT" />
+  </Resources>
+
+  <Applications>
+    <Application Id="RustinVoice" Executable="RustinVoice.exe" EntryPoint="Windows.FullTrustApplication">
+      <uap:VisualElements
+        DisplayName="{{NOME_VISUALIZZATO}}"
+        Description="Visualizzatore di fatture elettroniche FatturaPA"
+        BackgroundColor="transparent"
+        Square150x150Logo="Assets\Square150x150Logo.png"
+        Square44x44Logo="Assets\Square44x44Logo.png">
+        <uap:DefaultTile Square310x310Logo="Assets\Square310x310Logo.png" />
+      </uap:VisualElements>
+    </Application>
+  </Applications>
+
+  <Capabilities>
+    <rescap:Capability Name="runFullTrust" />
+  </Capabilities>
+</Package>
