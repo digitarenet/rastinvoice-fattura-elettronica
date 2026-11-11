@@ -1,12 +1,12 @@
 // Copyright (c) 2026 Andrea Re - info@digitare.net
 // Autore: Andrea Re @ 2026 - info@digitare.net
 //
-// Riga di comando di RustinVoice.
+// Riga di comando di RastInvoice.
 //
 // Comandi disponibili:
-//   rustinvoice info <file>        riepilogo leggibile di una fattura
-//   rustinvoice json <file>        intero modello dati in JSON
-//   rustinvoice scansiona <cartella>  elenco dei documenti trovati (CSV)
+//   rastinvoice info <file>        riepilogo leggibile di una fattura
+//   rastinvoice json <file>        intero modello dati in JSON
+//   rastinvoice scansiona <cartella>  elenco dei documenti trovati (CSV)
 
 use clap::{Parser, Subcommand};
 use rustinvoice_core::{apri_byte, apri_file, codici, contenitori, Contenuto, Documento};
@@ -15,7 +15,7 @@ use std::process::ExitCode;
 
 #[derive(Parser)]
 #[command(
-    name = "rustinvoice",
+    name = "rastinvoice",
     version,
     about = "Lettura e analisi di fatture elettroniche FatturaPA"
 )]

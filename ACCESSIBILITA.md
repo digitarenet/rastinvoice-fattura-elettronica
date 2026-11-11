@@ -1,10 +1,10 @@
 <!-- Copyright (c) 2026 Andrea Re - info@digitare.net - Autore: Andrea Re @ 2026 - info@digitare.net -->
 
-# Accessibilità di RustinVoice
+# Accessibilità di RastInvoice
 
-Questo documento descrive lo stato di accessibilità dell'applicazione desktop RustinVoice, la sua
+Questo documento descrive lo stato di accessibilità dell'applicazione desktop RastInvoice, la sua
 aderenza al design system di Designers Italia e le verifiche effettuate. Segue la struttura del modello di
-dichiarazione di accessibilità di AgID. RustinVoice è un software privato e non è soggetto all'obbligo di
+dichiarazione di accessibilità di AgID. RastInvoice è un software privato e non è soggetto all'obbligo di
 pubblicare la dichiarazione: questo documento è una scelta volontaria di trasparenza.
 
 ## Riferimenti

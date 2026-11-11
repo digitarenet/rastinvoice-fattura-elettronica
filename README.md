@@ -1,6 +1,7 @@
-# RustinVoice
+# RastInvoice
 
-> Nome provvisorio. Copyright (c) 2026 Andrea Re - info@digitare.net - [digitare.net](https://www.digitare.net)
+> Fino alla versione 0.9.0 il programma si chiamava RustinVoice; il repository mantiene il nome `rust-in-voice`.
+> Copyright (c) 2026 Andrea Re - info@digitare.net - [digitare.net](https://www.digitare.net)
 
 Visualizzatore di fatture elettroniche italiane (formato **FatturaPA**), portable e multipiattaforma: Windows, Linux e macOS, senza installazione.
 
@@ -120,6 +121,7 @@ Sono previste in seguito un'edizione web (SaaS) e una mobile.
 | Stampa, salvataggio HTML e XML, allegati, esportazione CSV | fatto |
 | Visualizzatore allegati (PDF, immagini, Word, Excel, ODS, CSV, testo, zip) | fatto |
 | Esportazione PDF diretta | da fare |
+| Fattura elettronica europea (norma EN 16931): UBL e CII, documenti della rete Peppol, PDF con XML incorporato ZUGFeRD e Factur-X | da fare |
 | Trasformazione XSL nativa (indipendente dal motore web di sistema) | fatto |
 | Notifiche SdI collegate alle fatture, con spiegazione delle sigle | fatto |
 | Interfaccia secondo il design system di Designers Italia (Bootstrap Italia) | fatto |
@@ -131,7 +133,7 @@ Sono previste in seguito un'edizione web (SaaS) e una mobile.
 crates/
   rustinvoice-core/     nucleo: modello dati, lettura, buste firmate (nessuna dipendenza grafica)
   rustinvoice-render/   vista "Moderna" in HTML a partire dal modello dati
-  rustinvoice-cli/      riga di comando (`rustinvoice`)
+  rustinvoice-cli/      riga di comando (`rastinvoice`)
   rustinvoice-xslt/     motore XSLT 1.0 / XPath 1.0 per i fogli di stile
 apps/
   desktop/              applicazione desktop (Tauri 2 + Svelte 5 + Bootstrap Italia)
@@ -148,7 +150,7 @@ cargo build --release
 cargo test
 ```
 
-L'eseguibile si trova in `target/release/rustinvoice` (`rustinvoice.exe` su Windows).
+L'eseguibile si trova in `target/release/rastinvoice` (`rastinvoice.exe` su Windows).
 
 ### Applicazione desktop
 
@@ -169,7 +171,7 @@ npx tauri build     # anche installer/pacchetti (NSIS, AppImage, DMG)
 Con `cargo build` e `cargo run` l'interfaccia viene ricompilata automaticamente (con `npm`) quando i suoi
 sorgenti sono più recenti dell'ultima compilazione. Per disattivare questo passaggio impostare la variabile
 d'ambiente `RUSTINVOICE_SENZA_NPM=1`. In RustRover sono già pronte le configurazioni di avvio
-"RustinVoice desktop", "Crea EXE" e "Test".
+"RastInvoice desktop", "Crea EXE" e "Test".
 
 L'eseguibile `target/release/rustinvoice-desktop` non richiede installazione. Al primo avvio chiede dove
 salvare i dati: nel profilo utente oppure accanto al programma (**modalità portable**, per esempio su una
@@ -177,36 +179,36 @@ chiavetta USB, con la cartella `dati` creata automaticamente). La scelta si può
 
 Il foglio di stile ufficiale AssoSoftware non è incluso: si scarica dalle impostazioni dell'applicazione
 (dal sito ufficiale) oppure si importa da un file `.xsl` o `.zip`. Il foglio viene applicato da un motore
-XSLT 1.0 scritto apposta per RustinVoice (`crates/rustinvoice-xslt`), che non dipende dal supporto XSLT del
+XSLT 1.0 scritto apposta per RastInvoice (`crates/rustinvoice-xslt`), che non dipende dal supporto XSLT del
 motore web di sistema; quest'ultimo resta solo come riserva. Il motore copre istruzioni e funzioni usate
 dai fogli di stile per la FatturaPA, con limiti di ricorsione e di dimensione del risultato.
 
 ## Riga di comando
 
-Il programma `rustinvoice` (`rustinvoice.exe` su Windows) si ottiene con `cargo build --release -p rustinvoice-cli`
+Il programma `rastinvoice` (`rastinvoice.exe` su Windows) si ottiene con `cargo build --release -p rustinvoice-cli`
 e si trova in `target/release`. Legge gli stessi formati dell'applicazione desktop: `.xml`, `.p7m`, lotti, fatture
 semplificate e notifiche SdI.
 
 | Comando | Cosa fa |
 | --- | --- |
-| `rustinvoice info <FILE>` | Riepilogo leggibile: formato, busta firmata, cedente e cessionario, per ogni documento tipo, numero, data, righe, totale, prima scadenza e allegati. Per le notifiche SdI: tipo, file a cui si riferisce, identificativo SdI ed errori. |
-| `rustinvoice json <FILE>` | Intero modello dati in JSON, utile per integrazioni e altri programmi. |
-| `rustinvoice scansiona <CARTELLA>` | Legge la cartella e tutte le sottocartelle, anche dentro archivi `.zip` ed email `.eml`, e stampa un elenco CSV separato da `;`. Colonne: `file`, `tipo`, `cedente`, `piva_cedente`, `cessionario`, `piva_cessionario`, `tipo_documento`, `numero`, `data`, `totale`. |
-| `rustinvoice help [COMANDO]` | Guida generale o di un comando. |
-| `rustinvoice --version` | Versione del programma. |
+| `rastinvoice info <FILE>` | Riepilogo leggibile: formato, busta firmata, cedente e cessionario, per ogni documento tipo, numero, data, righe, totale, prima scadenza e allegati. Per le notifiche SdI: tipo, file a cui si riferisce, identificativo SdI ed errori. |
+| `rastinvoice json <FILE>` | Intero modello dati in JSON, utile per integrazioni e altri programmi. |
+| `rastinvoice scansiona <CARTELLA>` | Legge la cartella e tutte le sottocartelle, anche dentro archivi `.zip` ed email `.eml`, e stampa un elenco CSV separato da `;`. Colonne: `file`, `tipo`, `cedente`, `piva_cedente`, `cessionario`, `piva_cessionario`, `tipo_documento`, `numero`, `data`, `totale`. |
+| `rastinvoice help [COMANDO]` | Guida generale o di un comando. |
+| `rastinvoice --version` | Versione del programma. |
 
 Opzioni comuni: `-h`, `--help` (guida) e `-V`, `--version` (versione). In caso di errore il messaggio va sullo
 standard error e il codice di uscita è `1`; altrimenti è `0`.
 
 ```sh
 # riepilogo leggibile
-rustinvoice info IT01234567890_0A1B2.xml.p7m
+rastinvoice info IT01234567890_0A1B2.xml.p7m
 
 # intero contenuto in JSON, per esempio filtrato con jq
-rustinvoice json IT01234567890_0A1B2.xml | jq '.contenuto'
+rastinvoice json IT01234567890_0A1B2.xml | jq '.contenuto'
 
 # elenco CSV di tutti i documenti di una cartella e delle sottocartelle
-rustinvoice scansiona ./Fatture > elenco.csv
+rastinvoice scansiona ./Fatture > elenco.csv
 ```
 
 Il motore XSLT ha anche un programma di esempio, che applica un foglio di stile a un file XML e stampa l'HTML:
@@ -264,7 +266,7 @@ L'elenco completo delle dipendenze, incluse quelle indirette, si ottiene con `ca
 
 ## Accessibilità
 
-RustinVoice è progettato per i requisiti **WCAG 2.1 livello AA**, richiamati dalla norma EN 301 549 e dalle
+RastInvoice è progettato per i requisiti **WCAG 2.1 livello AA**, richiamati dalla norma EN 301 549 e dalle
 Linee guida AgID (Legge Stanca):
 - uso completo da tastiera, con fuoco sempre visibile e collegamento "Vai al contenuto principale";
 - contrasti verificati;
@@ -281,7 +283,7 @@ Vedere [SECURITY.md](SECURITY.md).
 
 ## Licenza
 
-RustinVoice è software libero, distribuito con la licenza pubblica dell'Unione europea
+RastInvoice è software libero, distribuito con la licenza pubblica dell'Unione europea
 [EUPL-1.2](LICENSE). La licenza ha lo stesso valore legale in tutte le lingue ufficiali dell'Unione: il
 testo in italiano è allegato alla
 [decisione di esecuzione (UE) 2017/863](https://eur-lex.europa.eu/eli/dec_impl/2017/863/oj) della Commissione europea.

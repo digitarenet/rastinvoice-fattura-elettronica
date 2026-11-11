@@ -69,11 +69,11 @@ jobs:
         if: runner.os == 'Windows'
         shell: pwsh
         run: |
-          $cartella = "target/portatile/RustinVoice"
+          $cartella = "target/portatile/RastInvoice"
           New-Item -ItemType Directory -Force -Path "$cartella/dati" | Out-Null
-          Copy-Item target/release/rustinvoice-desktop.exe "$cartella/RustinVoice.exe"
+          Copy-Item target/release/rustinvoice-desktop.exe "$cartella/RastInvoice.exe"
           Copy-Item LICENSE* $cartella -ErrorAction SilentlyContinue
-          Compress-Archive -Path $cartella -DestinationPath "target/portatile/RustinVoice_${{ steps.versione.outputs.valore }}_windows-x64_portatile.zip"
+          Compress-Archive -Path $cartella -DestinationPath "target/portatile/RastInvoice_${{ steps.versione.outputs.valore }}_windows-x64_portatile.zip"
 
       - name: Pacchetto MSIX (Windows)
         if: runner.os == 'Windows' && vars.MSIX_NOME_PACCHETTO != ''
@@ -89,7 +89,7 @@ jobs:
         with:
           draft: true
           tag_name: ${{ github.ref_type == 'tag' && github.ref_name || format('v{0}', steps.versione.outputs.valore) }}
-          name: RustinVoice ${{ steps.versione.outputs.valore }}
+          name: RastInvoice ${{ steps.versione.outputs.valore }}
           files: |
             target/release/bundle/nsis/*.exe
             target/universal-apple-darwin/release/bundle/dmg/*.dmg

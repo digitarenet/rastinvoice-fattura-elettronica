@@ -1,7 +1,7 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
-  "productName": "RustinVoice",
-  "version": "0.9.0",
+  "productName": "RastInvoice",
+  "version": "0.10.0",
   "identifier": "net.digitare.rustinvoice",
   "build": {
     "beforeDevCommand": "npm run dev",
@@ -12,7 +12,7 @@
   "app": {
     "windows": [
       {
-        "title": "RustinVoice",
+        "title": "RastInvoice",
         "width": 1360,
         "height": 860,
         "minWidth": 980,

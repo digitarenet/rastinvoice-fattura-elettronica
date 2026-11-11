@@ -12,7 +12,7 @@ rust-version.workspace = true
 repository.workspace = true
 
 [[bin]]
-name = "rustinvoice"
+name = "rastinvoice"
 path = "src/main.rs"
 
 [dependencies]

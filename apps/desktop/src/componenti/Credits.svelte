@@ -44,7 +44,7 @@
 
 <section class="credits">
   <div class="intestazione">
-    <h1 class="h3 mb-1">RustinVoice</h1>
+    <h1 class="h3 mb-1">RastInvoice</h1>
     <p class="mb-1">Visualizzatore di fatture elettroniche FatturaPA, versione <strong>{versione}</strong>.</p>
     <p class="mb-3">Ideato e sviluppato da <strong>Andrea Re</strong>, che progetta software su misura per aziende,
       centri di ricerca e startup.</p>
@@ -70,7 +70,7 @@
     Designers Italia, e ne segue le linee guida.</p>
 
   <h2 class="h5 mt-4">Accessibilità</h2>
-  <p>RustinVoice è progettato per i requisiti WCAG 2.1 livello AA, richiamati dalla norma EN 301 549 e dalle Linee
+  <p>RastInvoice è progettato per i requisiti WCAG 2.1 livello AA, richiamati dalla norma EN 301 549 e dalle Linee
     guida AgID. Si usa interamente da tastiera, con il fuoco sempre visibile. I contrasti sono verificati, i messaggi
     di stato vengono annunciati e l'interfaccia si ingrandisce fino al 200% dalle Impostazioni. Il controllo
     automatico con axe-core non rileva violazioni; le prove con i lettori di schermo sono in corso. Per segnalare un

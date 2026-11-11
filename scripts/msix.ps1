@@ -16,7 +16,7 @@ param(
     [Parameter(Mandatory = $true)][string]$NomePacchetto,
     [Parameter(Mandatory = $true)][string]$Editore,
     [Parameter(Mandatory = $true)][string]$EditoreVisualizzato,
-    [string]$NomeVisualizzato = "RustinVoice",
+    [string]$NomeVisualizzato = "RastInvoice",
     [string]$Eseguibile = "target/release/rustinvoice-desktop.exe",
     [string]$Uscita = "target/msix"
 )
@@ -38,7 +38,7 @@ if (-not (Test-Path $Eseguibile)) {
 $layout = Join-Path $Uscita "layout"
 Remove-Item $layout -Recurse -Force -ErrorAction SilentlyContinue
 New-Item -ItemType Directory -Force -Path (Join-Path $layout "Assets") | Out-Null
-Copy-Item $Eseguibile (Join-Path $layout "RustinVoice.exe")
+Copy-Item $Eseguibile (Join-Path $layout "RastInvoice.exe")
 foreach ($logo in "Square44x44Logo", "Square150x150Logo", "Square310x310Logo", "StoreLogo") {
     Copy-Item "apps/desktop/src-tauri/icons/$logo.png" (Join-Path $layout "Assets/$logo.png")
 }
@@ -58,7 +58,7 @@ $makeappx = Get-ChildItem "${env:ProgramFiles(x86)}\Windows Kits\10\bin\*\x64\ma
     Sort-Object FullName -Descending | Select-Object -First 1
 if (-not $makeappx) { throw "makeappx.exe non trovato: installare il Windows SDK." }
 
-$pacchetto = Join-Path $Uscita "RustinVoice_$($versione)_x64.msix"
+$pacchetto = Join-Path $Uscita "RastInvoice_$($versione)_x64.msix"
 & $makeappx.FullName pack /o /d $layout /p $pacchetto
 if ($LASTEXITCODE -ne 0) { throw "makeappx non riuscito ($LASTEXITCODE)." }
 Write-Host "Pacchetto creato: $pacchetto"

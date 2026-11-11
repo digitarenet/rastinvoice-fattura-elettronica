@@ -1,8 +1,21 @@
 # Registro delle modifiche
 
-Tutte le modifiche rilevanti di RustinVoice. Il numero di versione segue lo schema
+Tutte le modifiche rilevanti di RastInvoice (fino alla 0.9.0 chiamato RustinVoice). Il numero di versione segue lo schema
 MAGGIORE.MINORE.CORREZIONE: la versione minore cresce con le nuove funzioni, quella di
 correzione con le sole correzioni.
+
+## 0.10.0 - 2026-11-11
+
+### Modificato
+- Nuovo nome del prodotto: **RastInvoice**. Cambiano il nome mostrato nell'applicazione, nella finestra, nei
+  pacchetti e nei documenti. La cartella dei dati resta la stessa, quindi impostazioni e archivio vengono
+  mantenuti.
+- Il comando della riga di comando si chiama ora `rastinvoice` (prima `rustinvoice`): gli script che lo usano
+  vanno aggiornati.
+
+### Pianificato
+- Supporto della fattura elettronica europea secondo la norma EN 16931: formati UBL e CII, documenti della
+  rete Peppol e PDF con XML incorporato (ZUGFeRD e Factur-X).
 
 ## 0.9.0 - 2026-11-11
 

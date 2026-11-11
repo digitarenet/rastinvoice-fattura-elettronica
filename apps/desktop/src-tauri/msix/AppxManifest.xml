@@ -35,7 +35,7 @@
   </Resources>
 
   <Applications>
-    <Application Id="RustinVoice" Executable="RustinVoice.exe" EntryPoint="Windows.FullTrustApplication">
+    <Application Id="RastInvoice" Executable="RastInvoice.exe" EntryPoint="Windows.FullTrustApplication">
       <uap:VisualElements
         DisplayName="{{NOME_VISUALIZZATO}}"
         Description="Visualizzatore di fatture elettroniche FatturaPA"

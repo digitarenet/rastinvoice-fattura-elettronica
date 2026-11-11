@@ -176,7 +176,10 @@ fn riconosci_zip(b: &[u8]) -> Tipo {
     let Ok(mut archivio) = zip::ZipArchive::new(Cursor::new(b)) else {
         return Tipo::Sconosciuto;
     };
-    let nomi: Vec<String> = archivio.file_names().filter_map(|n| n.ok().map(|n| n.into_owned())).collect();
+    let nomi: Vec<String> = archivio
+        .file_names()
+        .filter_map(|n| n.ok().map(|n| n.into_owned()))
+        .collect();
     if nomi.iter().any(|n| n == "word/document.xml") {
         return Tipo::Docx;
     }

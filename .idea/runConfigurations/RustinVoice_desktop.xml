@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="RustinVoice desktop" type="CargoCommandRunConfiguration" factoryName="Cargo Command">
+  <configuration default="false" name="RastInvoice desktop" type="CargoCommandRunConfiguration" factoryName="Cargo Command">
     <option name="command" value="run -p rustinvoice-desktop" />
     <option name="workingDirectory" value="file://$PROJECT_DIR$" />
     <envs />

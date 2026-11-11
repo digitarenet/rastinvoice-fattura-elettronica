@@ -3,7 +3,7 @@
 
 [package]
 name = "rustinvoice-desktop"
-description = "Applicazione desktop RustinVoice: visualizzatore di fatture elettroniche"
+description = "Applicazione desktop RastInvoice: visualizzatore di fatture elettroniche"
 version.workspace = true
 edition.workspace = true
 authors.workspace = true

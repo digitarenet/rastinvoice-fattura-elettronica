@@ -6,9 +6,9 @@
 # rilascio.
 publiccodeYmlVersion: "0.4"
 
-name: RustinVoice
+name: RastInvoice
 url: "https://github.com/digitarenet/rust-in-voice"
-softwareVersion: "0.9.0"
+softwareVersion: "0.10.0"
 releaseDate: "2026-11-11"
 
 platforms:
@@ -29,7 +29,7 @@ description:
       Visualizzatore portatile e accessibile di fatture elettroniche
       FatturaPA: XML, P7M, ZIP e PEC, archivio e statistiche, offline.
     longDescription: >-
-      RustinVoice è un visualizzatore open source di fatture elettroniche
+      RastInvoice è un visualizzatore open source di fatture elettroniche
       italiane, emesse e ricevute. Non richiede installazione e funziona su
       Windows, macOS e Linux, anche da chiavetta USB. Apre file XML, P7M
       firmati, archivi ZIP, messaggi EML e PEC; mostra la fattura nella vista

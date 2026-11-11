@@ -1,7 +1,7 @@
 // Copyright (c) 2026 Andrea Re - info@digitare.net
 // Autore: Andrea Re @ 2026 - info@digitare.net
 //
-// Nucleo di RustinVoice: lettura, interpretazione e verifica delle fatture
+// Nucleo di RastInvoice: lettura, interpretazione e verifica delle fatture
 // elettroniche italiane nel formato FatturaPA.
 //
 // Il nucleo non dipende da alcuna interfaccia grafica: è usato dalla riga

@@ -30,7 +30,7 @@ pub struct Esito {
 /// Legge l'ultima versione pubblicata e la confronta con quella in uso.
 pub fn controlla() -> Result<Esito, String> {
     let risposta = ureq::get(URL_ULTIMA)
-        .header("User-Agent", "RustinVoice")
+        .header("User-Agent", "RastInvoice")
         .header("Accept", "application/vnd.github+json")
         .call()
         .map_err(|e| format!("controllo non riuscito: {e}"))?;

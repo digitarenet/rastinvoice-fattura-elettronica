@@ -588,7 +588,7 @@ fn funzione<'a, 'i>(
             controlla(1, 1)?;
             match s(0)?.rsplit(':').next().unwrap_or("") {
                 "version" => Valore::Numero(1.0),
-                "vendor" => Valore::Stringa("RustinVoice".into()),
+                "vendor" => Valore::Stringa("RastInvoice".into()),
                 _ => Valore::Stringa(String::new()),
             }
         }

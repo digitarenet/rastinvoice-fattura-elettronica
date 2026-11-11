@@ -375,7 +375,7 @@
         onclick={() => (menuAperto = !menuAperto)}><Icona nome="it-burger" /> Menu</button>
       <div class="marchio">
         <span class="logo"><Icona nome="it-file" /></span>
-        <span class="nome">RustinVoice</span>
+        <span class="nome">RastInvoice</span>
       </div>
       <div class="cerca">
         <Icona nome="it-search" />
@@ -472,7 +472,7 @@
           {#if vuoto}
             <div class="benvenuto">
               <div class="scheda-benvenuto ri-pannello">
-                <h1 class="h3">Benvenuto in RustinVoice</h1>
+                <h1 class="h3">Benvenuto in RastInvoice</h1>
                 <p class="lead">Il visualizzatore di fatture elettroniche che funziona senza installazione e senza connessione.</p>
                 <ol>
                   <li><strong>Scegli una cartella</strong> che contiene fatture .xml o .p7m, anche dentro archivi .zip o email PEC .eml: verrà letta con tutte le sottocartelle.</li>
@@ -739,7 +739,7 @@
   {#if info && info.primo_avvio && !sceltaDatiFatta}
     <div class="velo" role="dialog" aria-modal="true" aria-labelledby="titolo-dati" use:modale>
       <div class="finestra ri-pannello">
-        <h2 id="titolo-dati" class="h5">Dove vuoi salvare i dati di RustinVoice?</h2>
+        <h2 id="titolo-dati" class="h5">Dove vuoi salvare i dati di RastInvoice?</h2>
         <SceltaDati {info} etichettaConferma="Inizia" onFatto={() => (sceltaDatiFatta = true)} />
         <p class="text-secondary-ri mt-3 mb-0"><small>Si può cambiare in seguito dalle Impostazioni.</small></p>
       </div>
