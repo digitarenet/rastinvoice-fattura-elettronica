@@ -19,6 +19,8 @@ jobs:
       - uses: dtolnay/rust-toolchain@stable
         with:
           components: clippy, rustfmt
+      # Cache delle dipendenze compilate: dalla seconda esecuzione molti minuti in meno.
+      - uses: Swatinem/rust-cache@v2
       - name: Formattazione
         run: cargo fmt --all --check
       - name: Analisi statica

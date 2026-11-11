@@ -33,11 +33,11 @@ sotto **Artifacts** si scarica `msix` con il file `RastInvoice_<versione>.0_x64.
 giorni). Il pacchetto non è firmato: lo firma Microsoft Store. La versione per Windows si distribuisce solo
 dallo Store: su GitHub non si pubblicano exe o zip, che senza firma farebbero comparire l'avviso di SmartScreen.
 
-In alternativa, su un computer Windows con il Windows SDK:
+Più veloce, sul PC Windows (requisiti in [Compilare in locale](../README.md#compilare-in-locale)):
 
 ```powershell
-npx tauri build            # da apps/desktop
-pwsh store/microsoft/msix.ps1 -NomePacchetto "..." -Editore "CN=..." -EditoreVisualizzato "..."
+pwsh store/microsoft/build.ps1          # compila e crea target/msix/RastInvoice_<versione>.0_x64.msix
+pwsh store/microsoft/build.ps1 -Prova   # in più installa il pacchetto sul PC per provarlo
 ```
 
 ## 5. Invio (Partner Center > Invii > Avvia l'invio)

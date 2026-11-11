@@ -1,0 +1,19 @@
+{
+  "_nota": "Copiare in store/configurazione.local.json (escluso da git) e compilare. I campi vuoti disattivano la funzione corrispondente.",
+  "microsoft": {
+    "nomePacchetto": "",
+    "editore": "CN=...",
+    "editoreVisualizzato": "digitare.net"
+  },
+  "aggiornamenti": {
+    "chiavePrivata": "~/.tauri/rastinvoice.key",
+    "passwordChiave": "",
+    "chiavePubblica": ""
+  },
+  "apple": {
+    "teamId": "",
+    "identitaApp": "Apple Distribution: Andrea Re (TEAMID)",
+    "identitaInstaller": "3rd Party Mac Developer Installer: Andrea Re (TEAMID)",
+    "profilo": "~/Downloads/RastInvoice_Mac_App_Store.provisionprofile"
+  }
+}

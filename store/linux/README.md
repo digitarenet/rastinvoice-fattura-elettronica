@@ -25,6 +25,9 @@ Li crea il workflow **Rilascio** (Actions > Rilascio > Run workflow) e li allega
 
 Nessuna iscrizione richiesta. Basta pubblicare la release.
 
+Si possono anche compilare sul PC Linux e caricare con `store/linux/build.sh` e `store/linux/pubblica.sh`:
+vedi [Compilare in locale](../README.md#compilare-in-locale).
+
 ## 2. Flathub
 
 È lo store predefinito della maggior parte delle distribuzioni, compresa la "Software" di Fedora e Mint.

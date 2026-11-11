@@ -1,0 +1,29 @@
+# Copyright (c) 2026 Andrea Re - info@digitare.net
+# Autore: Andrea Re @ 2026 - info@digitare.net
+#
+# Ambiente di compilazione per i pacchetti Linux: Debian 12. Compilando su
+# una distribuzione non troppo recente i pacchetti funzionano anche su
+# Debian 12, Ubuntu 22.04/24.04, Linux Mint e Fedora recenti (le librerie di
+# sistema più nuove sono compatibili con le vecchie, non il contrario).
+# Usato da store/linux/build.sh.
+FROM debian:bookworm
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+      build-essential curl ca-certificates file git pkg-config \
+      libwebkit2gtk-4.1-dev libxdo-dev libssl-dev libayatana-appindicator3-dev \
+      librsvg2-dev patchelf xdg-utils \
+    && rm -rf /var/lib/apt/lists/*
+
+# Node.js 24 (quello di Debian 12 è troppo vecchio).
+RUN curl -fsSL https://deb.nodesource.com/setup_24.x | bash - \
+    && apt-get install -y --no-install-recommends nodejs \
+    && rm -rf /var/lib/apt/lists/*
+
+# Rust stabile, leggibile da qualsiasi utente: la compilazione gira con
+# l'utente di chi lancia lo script, così i file prodotti restano suoi.
+ENV RUSTUP_HOME=/opt/rustup PATH=/opt/cargo/bin:$PATH
+RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs \
+      | CARGO_HOME=/opt/cargo sh -s -- -y --profile minimal --default-toolchain stable \
+    && chmod -R a+rX /opt/rustup /opt/cargo
+
+WORKDIR /src

@@ -48,11 +48,10 @@ scelta della cartella dati accanto al programma.
    **Mac Installer Distribution**.
 2. In developer.apple.com creare l'identificativo dell'app (`net.digitare.rustinvoice`) e un profilo di
    provisioning **Mac App Store**.
-3. Compilare l'app universale (`npx tauri build --target universal-apple-darwin --bundles app`), firmarla con
-   il certificato di distribuzione e gli entitlements, creare il pacchetto con `productbuild` e caricarlo
-   con l'app **Transporter**.
-
-Questi passi si possono automatizzare nel workflow Rilascio quando ci sono i certificati.
+3. Sul Mac eseguire `store/apple/build.sh`: compila l'app universale, la firma con il certificato di
+   distribuzione e gli entitlements (`entitlements.plist`), crea il pacchetto con `productbuild` e lo lascia in
+   `target/mac-app-store/`. Il pacchetto si carica con l'app **Transporter**. Senza certificati lo script crea
+   solo `RastInvoice.app`, utile per le prove. Dettagli in [Compilare in locale](../README.md#compilare-in-locale).
 
 ## 4. Scheda in App Store Connect
 
