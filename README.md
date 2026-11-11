@@ -12,11 +12,42 @@ testo libero, filtri per data e per contatto, rubrica di clienti e fornitori e s
 > Fino alla versione 0.9.0 il programma si chiamava RustinVoice; il repository si è chiamato prima `rust-in-voice`
 > e poi `rastinvoice`. I vecchi indirizzi vengono reindirizzati automaticamente.
 
-**Scarica:** Microsoft Store (Windows) · Mac App Store · [release di GitHub](https://github.com/digitarenet/rastinvoice-fattura-elettronica/releases) (Linux `.deb`, `.rpm`, AppImage) · Flathub · Snap Store
-
 Apre fatture emesse e ricevute in tutti i formati in cui arrivano di solito: `.xml`, `.xml.p7m` firmati (anche in base64 o con più firme), lotti con più documenti, fatture semplificate. Riconosce ricevute e notifiche del Sistema di Interscambio senza confonderle con le fatture.
 
 ![Elenco dei documenti e vista Moderna di una fattura](docs/immagini/documenti.png)
+
+## Scarica RastInvoice
+
+<!-- Collegamenti provvisori: sostituire con gli indirizzi definitivi delle schede quando sono pubblicate
+     (Microsoft Store: https://apps.microsoft.com/detail/<ID prodotto>; Mac App Store: https://apps.apple.com/it/app/<id>). -->
+
+<p align="center">
+  <a href="https://apps.microsoft.com/search?query=RastInvoice"><img src="https://get.microsoft.com/images/it-it%20dark.svg" alt="Scarica dal Microsoft Store" height="56"></a>
+  &nbsp;
+  <a href="https://apps.apple.com/it/"><img src="https://tools.applemarketingtools.com/api/badges/download-on-the-mac-app-store/black/it-it" alt="Scarica dal Mac App Store" height="56"></a>
+</p>
+<p align="center">
+  <a href="https://flathub.org/apps/net.digitare.rastinvoice"><img src="https://flathub.org/api/badge?locale=it" alt="Scarica da Flathub" height="56"></a>
+  &nbsp;
+  <a href="https://snapcraft.io/rastinvoice"><img src="https://snapcraft.io/static/images/badges/it/snap-store-black.svg" alt="Scarica dallo Snap Store" height="56"></a>
+</p>
+<p align="center">
+  <a href="https://github.com/digitarenet/rastinvoice-fattura-elettronica/releases/latest"><img src="https://img.shields.io/badge/Debian%20e%20Ubuntu-.deb-A81D33?style=for-the-badge&logo=debian&logoColor=white" alt="Pacchetto .deb per Debian e Ubuntu"></a>
+  <a href="https://github.com/digitarenet/rastinvoice-fattura-elettronica/releases/latest"><img src="https://img.shields.io/badge/Fedora%20e%20openSUSE-.rpm-294172?style=for-the-badge&logo=fedora&logoColor=white" alt="Pacchetto .rpm per Fedora e openSUSE"></a>
+  <a href="https://github.com/digitarenet/rastinvoice-fattura-elettronica/releases/latest"><img src="https://img.shields.io/badge/Linux-AppImage-333333?style=for-the-badge&logo=linux&logoColor=white" alt="AppImage per Linux"></a>
+</p>
+
+| Sistema | Dove scaricarlo | Prezzo |
+| --- | --- | --- |
+| Windows 10 e 11 | [Microsoft Store](https://apps.microsoft.com/search?query=RastInvoice) | gratuito |
+| macOS (Intel e Apple Silicon) | [Mac App Store](https://apps.apple.com/it/) | 2,99 € |
+| Linux, tutte le distribuzioni | [Flathub](https://flathub.org/apps/net.digitare.rastinvoice) · [Snap Store](https://snapcraft.io/rastinvoice) · [AppImage](https://github.com/digitarenet/rastinvoice-fattura-elettronica/releases/latest) | gratuito |
+| Debian, Ubuntu, Linux Mint | [pacchetto `.deb`](https://github.com/digitarenet/rastinvoice-fattura-elettronica/releases/latest) | gratuito |
+| Fedora, openSUSE, RHEL | [pacchetto `.rpm`](https://github.com/digitarenet/rastinvoice-fattura-elettronica/releases/latest) | gratuito |
+| Qualsiasi sistema | [codice sorgente](#compilazione) | gratuito |
+
+Tutte le versioni e le note di rilascio sono nelle [release di GitHub](https://github.com/digitarenet/rastinvoice-fattura-elettronica/releases).
+
 
 ## Funzionalità
 
@@ -128,7 +159,7 @@ Le immagini usano un archivio dimostrativo con dati di fantasia.
 | ![Notifiche del Sistema di Interscambio collegate alle fatture](docs/immagini/notifiche.png) | ![Elenco dei documenti e vista Moderna](docs/immagini/documenti.png) |
 | **Notifiche SdI** collegate alle fatture | **Documenti** e vista Moderna |
 
-Versione attuale: **1.0.1** (vedi il [registro delle modifiche](CHANGELOG.md)).
+Versione attuale: **1.0.2** (vedi il [registro delle modifiche](CHANGELOG.md)).
 
 ## Domande frequenti
 
