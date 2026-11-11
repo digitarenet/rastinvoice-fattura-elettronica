@@ -147,7 +147,7 @@
   <section>
     <h2 class="h5">Foglio di stile ufficiale</h2>
     <p class="text-secondary-ri">
-      La vista "Foglio di stile" usa il foglio di stile pubblicato da AssoSoftware. Non è incluso nell'applicazione:
+      La vista "AssoSoftware" usa il foglio di stile pubblicato da AssoSoftware. Non è incluso nell'applicazione:
       puoi scaricarlo dal sito ufficiale oppure importarlo da un file .xsl o .zip.
     </p>
     <p>

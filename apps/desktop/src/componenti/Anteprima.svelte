@@ -11,6 +11,7 @@
   import { openPath, revealItemInDir } from "@tauri-apps/plugin-opener";
   import { api, type Dettaglio, type Voce } from "../lib/api";
   import * as xslt from "../lib/xslt";
+  import { formatta, type Riga } from "../lib/xmlformato";
   import Icona from "./Icona.svelte";
 
   type Scheda = "moderna" | "standard" | "xml";
@@ -114,9 +115,60 @@
 
   const allegati = $derived(dettaglio?.fattura.corpi[dettaglio.fattura.corpi.length > 1 ? voce.corpo : 0]?.allegati ?? []);
 
+  // Zoom delle viste HTML, ricordato tra una sessione e l'altra.
+  const LIVELLI_ZOOM = [0.5, 0.67, 0.75, 0.8, 0.9, 1, 1.1, 1.25, 1.5, 1.75, 2];
+  let zoom = $state(leggiZoom());
+
+  function leggiZoom(): number {
+    try {
+      const z = Number(localStorage.getItem("rustinvoice.zoom"));
+      return LIVELLI_ZOOM.includes(z) ? z : 1;
+    } catch {
+      return 1;
+    }
+  }
+
+  function cambiaZoom(verso: -1 | 0 | 1) {
+    if (verso === 0) zoom = 1;
+    else {
+      const i = LIVELLI_ZOOM.indexOf(zoom);
+      zoom = LIVELLI_ZOOM[Math.max(0, Math.min(LIVELLI_ZOOM.length - 1, i + verso))];
+    }
+    try {
+      localStorage.setItem("rustinvoice.zoom", String(zoom));
+    } catch {
+      // Memorizzazione non disponibile: lo zoom vale solo per questa sessione.
+    }
+  }
+
+  function applicaZoom(valore = zoom) {
+    const radice = cornice?.contentDocument?.documentElement;
+    if (radice) radice.style.zoom = String(valore);
+  }
+
+  $effect(() => {
+    applicaZoom(zoom);
+  });
+
+  function tastiZoom(e: KeyboardEvent) {
+    if (!(e.ctrlKey || e.metaKey)) return;
+    if (e.key === "+" || e.key === "=") cambiaZoom(1);
+    else if (e.key === "-") cambiaZoom(-1);
+    else if (e.key === "0") cambiaZoom(0);
+    else return;
+    e.preventDefault();
+  }
+
+  // XML formattato per la lettura (il file resta com'è).
+  let xmlFormattato = $state(true);
+  const righeXml = $derived<Riga[] | null>(dettaglio && scheda === "xml" && xmlFormattato ? formatta(dettaglio.xml) : null);
+
   function stampa() {
+    // Si stampa sempre a grandezza naturale.
+    applicaZoom(1);
     cornice?.contentWindow?.focus();
     cornice?.contentWindow?.print();
+    applicaZoom();
   }
 
   async function salvaHtml() {
@@ -166,23 +218,36 @@
   }
 </script>
 
+<svelte:window onkeydown={tastiZoom} />
+
 <section class="anteprima ri-pannello">
   <div class="barra">
     <div class="schede" role="tablist">
       <button role="tab" class:attiva={scheda === "moderna"} aria-selected={scheda === "moderna"} onclick={() => cambiaScheda("moderna")}>Moderna</button>
-      <button role="tab" class:attiva={scheda === "standard"} aria-selected={scheda === "standard"} onclick={() => cambiaScheda("standard")}>Foglio di stile</button>
+      <button role="tab" class:attiva={scheda === "standard"} aria-selected={scheda === "standard"} onclick={() => cambiaScheda("standard")}>AssoSoftware</button>
       <button role="tab" class:attiva={scheda === "xml"} aria-selected={scheda === "xml"} onclick={() => cambiaScheda("xml")}>XML</button>
     </div>
     <div class="azioni">
+      <div class="zoom" role="group" aria-label="Zoom">
+        <button class="btn btn-xs btn-link" title="Riduci (Ctrl -)" onclick={() => cambiaZoom(-1)} disabled={zoom <= LIVELLI_ZOOM[0]}>−</button>
+        <button class="btn btn-xs btn-link percentuale" title="Dimensione reale (Ctrl 0)" onclick={() => cambiaZoom(0)}>{Math.round(zoom * 100)}%</button>
+        <button class="btn btn-xs btn-link" title="Ingrandisci (Ctrl +)" onclick={() => cambiaZoom(1)} disabled={zoom >= LIVELLI_ZOOM[LIVELLI_ZOOM.length - 1]}>+</button>
+      </div>
+      {#if scheda === "xml"}
+        <button class="btn btn-xs btn-link interruttore" aria-pressed={xmlFormattato} title="Alterna tra XML formattato e testo originale del file"
+          onclick={() => (xmlFormattato = !xmlFormattato)}>{xmlFormattato ? "Mostra originale" : "Formatta"}</button>
+      {/if}
       <button class="btn btn-xs btn-link" title={contrassegnata ? "Togli contrassegno" : "Contrassegna"} onclick={onContrassegna}>
         <Icona nome={contrassegnata ? "it-star-full" : "it-star-outline"} classe={contrassegnata ? "stella" : ""} />
       </button>
-      <button class="btn btn-xs btn-link" title="Stampa (Ctrl+P)" onclick={stampa} disabled={scheda === "xml"}>
-        <Icona nome="it-print" />
-      </button>
-      <button class="btn btn-xs btn-link" title="Salva come pagina HTML" onclick={salvaHtml} disabled={scheda === "xml"}>
-        <Icona nome="it-download" />
-      </button>
+      {#if scheda !== "xml"}
+        <button class="btn btn-xs btn-link" title="Stampa (Ctrl+P)" onclick={stampa}>
+          <Icona nome="it-print" />
+        </button>
+        <button class="btn btn-xs btn-link" title="Salva come pagina HTML" onclick={salvaHtml}>
+          <Icona nome="it-download" />
+        </button>
+      {/if}
       <button class="btn btn-xs btn-link" title="Salva l'XML estratto" onclick={salvaXml}>
         <Icona nome="it-file-xml" />
       </button>
@@ -222,10 +287,10 @@
       </div>
     {:else if dettaglio}
       {#if scheda === "moderna"}
-        <iframe bind:this={cornice} title="Fattura" srcdoc={dettaglio.html} sandbox="allow-same-origin allow-modals"></iframe>
+        <iframe bind:this={cornice} title="Fattura" srcdoc={dettaglio.html} sandbox="allow-same-origin allow-modals" onload={() => applicaZoom()}></iframe>
       {:else if scheda === "standard"}
         {#if htmlStandard}
-          <iframe bind:this={cornice} title="Fattura (foglio di stile)" srcdoc={htmlStandard} sandbox="allow-same-origin allow-modals"></iframe>
+          <iframe bind:this={cornice} title="Fattura (foglio di stile)" srcdoc={htmlStandard} sandbox="allow-same-origin allow-modals" onload={() => applicaZoom()}></iframe>
         {:else if erroreStandard}
           <div class="stato">
             <div class="vuoto">
@@ -246,7 +311,8 @@
           <div class="stato"><div class="progress-spinner progress-spinner-active"></div></div>
         {/if}
       {:else}
-        <pre class="xml selezionabile">{dettaglio.xml}</pre>
+        <pre class="xml selezionabile" class:a-capo={!righeXml} style="font-size: {0.8 * zoom}rem">{#if righeXml}{#each righeXml as r, i (i)}<span class="riga-xml" style="padding-left: {r.rientro * 1.5}em">{#each r.parti as p, j (j)}<span class="x-{p.tipo}">{p.testo}</span>{/each}</span>
+{/each}{:else}{dettaglio.xml}{/if}</pre>
       {/if}
     {/if}
   </div>
@@ -360,9 +426,71 @@
     overflow: auto;
     padding: 1rem;
     font-family: "Roboto Mono", monospace;
-    font-size: 0.8rem;
+    white-space: pre;
+    color: var(--ri-testo);
+    line-height: 1.5;
+  }
+  .xml.a-capo {
     white-space: pre-wrap;
     word-break: break-all;
+  }
+  .riga-xml {
+    display: inline-block;
+  }
+  .x-tag {
+    color: #0b5394;
+  }
+  .x-attr {
+    color: #8a4b08;
+  }
+  .x-valore {
+    color: #1d7a3e;
+  }
+  .x-testo {
     color: var(--ri-testo);
+    font-weight: 600;
+  }
+  .x-commento {
+    color: #7a8794;
+    font-style: italic;
+  }
+  .x-pi {
+    color: #7a8794;
+  }
+  :global(:root[data-tema="scuro"]) .x-tag {
+    color: #79b8ff;
+  }
+  :global(:root[data-tema="scuro"]) .x-attr {
+    color: #f0b46b;
+  }
+  :global(:root[data-tema="scuro"]) .x-valore {
+    color: #85e89d;
+  }
+  .zoom {
+    display: flex;
+    align-items: center;
+    margin-right: 0.5rem;
+    border-right: 1px solid var(--ri-bordo);
+    padding-right: 0.5rem;
+  }
+  .zoom .btn {
+    font-weight: 700;
+    font-size: 1.05rem;
+    min-width: 2rem;
+    padding: 0.1rem 0.3rem;
+  }
+  .zoom .percentuale {
+    font-size: 0.8rem;
+    font-weight: 600;
+    min-width: 3.2rem;
+  }
+  .interruttore {
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin-right: 0.5rem;
+    white-space: nowrap;
+  }
+  .azioni .btn {
+    text-decoration: none;
   }
 </style>
