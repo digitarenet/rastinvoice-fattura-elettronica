@@ -1,0 +1,21 @@
+# Copyright (c) 2026 Andrea Re - info@digitare.net
+# Autore: Andrea Re @ 2026 - info@digitare.net
+
+[package]
+name = "rustinvoice-cli"
+description = "Riga di comando per leggere, verificare e analizzare fatture elettroniche"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+rust-version.workspace = true
+repository.workspace = true
+
+[[bin]]
+name = "rustinvoice"
+path = "src/main.rs"
+
+[dependencies]
+rustinvoice-core = { path = "../rustinvoice-core" }
+clap.workspace = true
+serde_json.workspace = true
+walkdir.workspace = true

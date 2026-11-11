@@ -1,0 +1,23 @@
+# Copyright (c) 2026 Andrea Re - info@digitare.net
+# Autore: Andrea Re @ 2026 - info@digitare.net
+
+[package]
+name = "rustinvoice-core"
+description = "Nucleo di lettura e interpretazione delle fatture elettroniche FatturaPA"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+rust-version.workspace = true
+repository.workspace = true
+
+[dependencies]
+roxmltree.workspace = true
+encoding_rs.workspace = true
+rust_decimal.workspace = true
+chrono.workspace = true
+serde.workspace = true
+thiserror.workspace = true
+base64.workspace = true
+
+[dev-dependencies]
+serde_json.workspace = true

@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright (c) 2026 Andrea Re - info@digitare.net
+  Fattura di prova con dati di fantasia, scritta a mano dalle specifiche
+  FatturaPA per i test automatici.
+-->
+<p:FatturaElettronica versione="FPR12"
+    xmlns:ds="http://www.w3.org/2000/09/xmldsig#"
+    xmlns:p="http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v1.2"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <FatturaElettronicaHeader>
+    <DatiTrasmissione>
+      <IdTrasmittente>
+        <IdPaese>IT</IdPaese>
+        <IdCodice>01234567890</IdCodice>
+      </IdTrasmittente>
+      <ProgressivoInvio>0A1B2</ProgressivoInvio>
+      <FormatoTrasmissione>FPR12</FormatoTrasmissione>
+      <CodiceDestinatario>0000000</CodiceDestinatario>
+      <PECDestinatario>cliente@pec.esempio.it</PECDestinatario>
+    </DatiTrasmissione>
+    <CedentePrestatore>
+      <DatiAnagrafici>
+        <IdFiscaleIVA>
+          <IdPaese>IT</IdPaese>
+          <IdCodice>01234567890</IdCodice>
+        </IdFiscaleIVA>
+        <Anagrafica>
+          <Denominazione>Fornitore   Esempio S.r.l.</Denominazione>
+        </Anagrafica>
+        <RegimeFiscale>RF01</RegimeFiscale>
+      </DatiAnagrafici>
+      <Sede>
+        <Indirizzo>Via Roma</Indirizzo>
+        <NumeroCivico>1</NumeroCivico>
+        <CAP>10100</CAP>
+        <Comune>Torino</Comune>
+        <Provincia>TO</Provincia>
+        <Nazione>IT</Nazione>
+      </Sede>
+      <IscrizioneREA>
+        <Ufficio>TO</Ufficio>
+        <NumeroREA>123456</NumeroREA>
+        <CapitaleSociale>10000.00</CapitaleSociale>
+        <SocioUnico>SM</SocioUnico>
+        <StatoLiquidazione>LN</StatoLiquidazione>
+      </IscrizioneREA>
+      <Contatti>
+        <Email>info@fornitore.esempio.it</Email>
+      </Contatti>
+    </CedentePrestatore>
+    <CessionarioCommittente>
+      <DatiAnagrafici>
+        <IdFiscaleIVA>
+          <IdPaese>IT</IdPaese>
+          <IdCodice>09876543210</IdCodice>
+        </IdFiscaleIVA>
+        <Anagrafica>
+          <Denominazione>Cliente Esempio S.p.A.</Denominazione>
+        </Anagrafica>
+      </DatiAnagrafici>
+      <Sede>
+        <Indirizzo>Corso Francia 10</Indirizzo>
+        <CAP>10138</CAP>
+        <Comune>Torino</Comune>
+        <Provincia>TO</Provincia>
+        <Nazione>IT</Nazione>
+      </Sede>
+    </CessionarioCommittente>
+  </FatturaElettronicaHeader>
+  <FatturaElettronicaBody>
+    <DatiGenerali>
+      <DatiGeneraliDocumento>
+        <TipoDocumento>TD01</TipoDocumento>
+        <Divisa>EUR</Divisa>
+        <Data>2026-11-03</Data>
+        <Numero>2026/1184</Numero>
+        <DatiBollo>
+          <BolloVirtuale>SI</BolloVirtuale>
+          <ImportoBollo>2.00</ImportoBollo>
+        </DatiBollo>
+        <Causale>Consulenza tecnica ottobre 2026</Causale>
+        <Causale>Rif. contratto quadro 2026</Causale>
+      </DatiGeneraliDocumento>
+      <DatiOrdineAcquisto>
+        <RiferimentoNumeroLinea>1</RiferimentoNumeroLinea>
+        <IdDocumento>ORD-77</IdDocumento>
+        <Data>2026-09-15</Data>
+        <CodiceCIG>Z123456789</CodiceCIG>
+      </DatiOrdineAcquisto>
+      <DatiDDT>
+        <NumeroDDT>77</NumeroDDT>
+        <DataDDT>2026-10-28</DataDDT>
+        <RiferimentoNumeroLinea>2</RiferimentoNumeroLinea>
+      </DatiDDT>
+    </DatiGenerali>
+    <DatiBeniServizi>
+      <DettaglioLinee>
+        <NumeroLinea>1</NumeroLinea>
+        <CodiceArticolo>
+          <CodiceTipo>INTERNO</CodiceTipo>
+          <CodiceValore>CONS-01</CodiceValore>
+        </CodiceArticolo>
+        <Descrizione>Consulenza tecnica, ottobre 2026</Descrizione>
+        <Quantita>1.00</Quantita>
+        <UnitaMisura>NR</UnitaMisura>
+        <PrezzoUnitario>1000.00</PrezzoUnitario>
+        <PrezzoTotale>1000.00</PrezzoTotale>
+        <AliquotaIVA>22.00</AliquotaIVA>
+        <AltriDatiGestionali>
+          <TipoDato>AswCenCost</TipoDato>
+          <RiferimentoTesto>R&amp;D</RiferimentoTesto>
+        </AltriDatiGestionali>
+      </DettaglioLinee>
+      <DettaglioLinee>
+        <NumeroLinea>2</NumeroLinea>
+        <Descrizione>Licenza software annuale</Descrizione>
+        <Quantita>2.00</Quantita>
+        <PrezzoUnitario>150.00</PrezzoUnitario>
+        <ScontoMaggiorazione>
+          <Tipo>SC</Tipo>
+          <Percentuale>20.00</Percentuale>
+        </ScontoMaggiorazione>
+        <PrezzoTotale>240.00</PrezzoTotale>
+        <AliquotaIVA>22.00</AliquotaIVA>
+      </DettaglioLinee>
+      <DatiRiepilogo>
+        <AliquotaIVA>22.00</AliquotaIVA>
+        <ImponibileImporto>1240.00</ImponibileImporto>
+        <Imposta>272.80</Imposta>
+        <EsigibilitaIVA>I</EsigibilitaIVA>
+      </DatiRiepilogo>
+    </DatiBeniServizi>
+    <DatiPagamento>
+      <CondizioniPagamento>TP02</CondizioniPagamento>
+      <DettaglioPagamento>
+        <ModalitaPagamento>MP05</ModalitaPagamento>
+        <DataScadenzaPagamento>2026-12-03</DataScadenzaPagamento>
+        <ImportoPagamento>1512.80</ImportoPagamento>
+        <IstitutoFinanziario>Banca Esempio</IstitutoFinanziario>
+        <IBAN>IT60 X054 2811 1010 0000 0123 456</IBAN>
+      </DettaglioPagamento>
+    </DatiPagamento>
+    <Allegati>
+      <NomeAttachment>dettaglio.txt</NomeAttachment>
+      <FormatoAttachment>TXT</FormatoAttachment>
+      <DescrizioneAttachment>Dettaglio ore</DescrizioneAttachment>
+      <Attachment>
+        RGV0dGFnbGlvIG9yZTogNDAg
+      </Attachment>
+    </Allegati>
+  </FatturaElettronicaBody>
+</p:FatturaElettronica>

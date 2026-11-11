@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright (c) 2026 Andrea Re - info@digitare.net - fattura semplificata di prova, dati di fantasia -->
+<p:FatturaElettronicaSemplificata versione="FSM10" xmlns:p="http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v1.0">
+  <FatturaElettronicaHeader>
+    <DatiTrasmissione>
+      <IdTrasmittente><IdPaese>IT</IdPaese><IdCodice>01234567890</IdCodice></IdTrasmittente>
+      <ProgressivoInvio>S0001</ProgressivoInvio>
+      <FormatoTrasmissione>FSM10</FormatoTrasmissione>
+      <CodiceDestinatario>0000000</CodiceDestinatario>
+    </DatiTrasmissione>
+    <CedentePrestatore>
+      <IdFiscaleIVA><IdPaese>IT</IdPaese><IdCodice>01234567890</IdCodice></IdFiscaleIVA>
+      <Denominazione>Bar Esempio di Bianchi Anna</Denominazione>
+      <Sede><Indirizzo>Via Garibaldi 3</Indirizzo><CAP>10122</CAP><Comune>Torino</Comune><Provincia>TO</Provincia><Nazione>IT</Nazione></Sede>
+      <RegimeFiscale>RF01</RegimeFiscale>
+    </CedentePrestatore>
+    <CessionarioCommittente>
+      <IdentificativiFiscali><CodiceFiscale>VRDLGU85M01L219Y</CodiceFiscale></IdentificativiFiscali>
+      <AltriDatiIdentificativi><Nome>Luigi</Nome><Cognome>Verdi</Cognome></AltriDatiIdentificativi>
+    </CessionarioCommittente>
+  </FatturaElettronicaHeader>
+  <FatturaElettronicaBody>
+    <DatiGenerali>
+      <DatiGeneraliDocumento>
+        <TipoDocumento>TD07</TipoDocumento>
+        <Divisa>EUR</Divisa>
+        <Data>2026-11-05</Data>
+        <Numero>S-15</Numero>
+      </DatiGeneraliDocumento>
+    </DatiGenerali>
+    <DatiBeniServizi>
+      <Descrizione>Pranzo di lavoro</Descrizione>
+      <Importo>45.00</Importo>
+      <DatiIVA><Imposta>4.09</Imposta></DatiIVA>
+    </DatiBeniServizi>
+    <DatiBeniServizi>
+      <Descrizione>Caffè</Descrizione>
+      <Importo>3.00</Importo>
+      <DatiIVA><Aliquota>22.00</Aliquota></DatiIVA>
+    </DatiBeniServizi>
+  </FatturaElettronicaBody>
+</p:FatturaElettronicaSemplificata>

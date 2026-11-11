@@ -1,0 +1,32 @@
+# Copyright (c) 2026 Andrea Re - info@digitare.net
+# Autore: Andrea Re @ 2026 - info@digitare.net
+#
+# Workspace principale di RustinVoice (nome provvisorio).
+
+[workspace]
+resolver = "2"
+members = ["crates/rustinvoice-core", "crates/rustinvoice-cli"]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2021"
+authors = ["Andrea Re <info@digitare.net>"]
+rust-version = "1.80"
+repository = "https://github.com/digitarenet/rust-in-voice"
+
+[workspace.dependencies]
+roxmltree = "0.21"
+encoding_rs = "0.8"
+rust_decimal = { version = "1.36", features = ["serde-str"] }
+chrono = { version = "0.4", default-features = false, features = ["std", "serde"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+thiserror = "2"
+base64 = "0.22"
+clap = { version = "4", features = ["derive"] }
+walkdir = "2"
+
+[profile.release]
+lto = true
+codegen-units = 1
+strip = true
