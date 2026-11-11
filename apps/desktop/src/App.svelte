@@ -6,7 +6,7 @@
   anteprima; rubrica, messaggi SdI e impostazioni.
 -->
 <script lang="ts">
-  import { onMount, tick } from "svelte";
+  import { onMount, tick, untrack } from "svelte";
   import { getCurrentWebview } from "@tauri-apps/api/webview";
   import { open } from "@tauri-apps/plugin-dialog";
   import { api, type Avvio, type Esito, type Impostazioni as Imp, type StatoFoglio, type Voce } from "./lib/api";
@@ -284,6 +284,115 @@
     al = "";
   }
 
+  // Cronologia di navigazione, come nei browser: ogni cambio di pagina, sezione,
+  // filtro o documento selezionato è un passo che si può annullare con Indietro.
+  type Passo = {
+    vista: Vista;
+    sezione: Sezione;
+    anno: number | null;
+    contatto: string | null;
+    dal: string;
+    al: string;
+    ricerca: string;
+    documento: string | null;
+  };
+  const MAX_PASSI = 100;
+  let passiIndietro = $state<Passo[]>([]);
+  let passiAvanti = $state<Passo[]>([]);
+  let ultimoPasso: Passo | null = null;
+  let inRipristino = false;
+  /** Momento dell'ultimo passo "unibile" (digitazione o frecce): evita un passo per tasto. */
+  let ultimoUnibile = 0;
+  let prossimoUnibile = false;
+
+  const passoAttuale = $derived<Passo>({
+    vista,
+    sezione,
+    anno,
+    contatto,
+    dal,
+    al,
+    ricerca,
+    documento: selezionata?.id ?? null,
+  });
+
+  function stessoPasso(a: Passo, b: Passo): boolean {
+    return (Object.keys(a) as (keyof Passo)[]).every((k) => a[k] === b[k]);
+  }
+
+  /** Vero se tra i due passi cambia solo il campo indicato. */
+  function cambiaSolo(a: Passo, b: Passo, campo: keyof Passo): boolean {
+    return (Object.keys(a) as (keyof Passo)[]).every((k) => k === campo || a[k] === b[k]);
+  }
+
+  $effect(() => {
+    const p = passoAttuale;
+    untrack(() => {
+      const prima = ultimoPasso;
+      ultimoPasso = p;
+      if (inRipristino) {
+        inRipristino = false;
+        return;
+      }
+      if (!prima || stessoPasso(prima, p)) return;
+      const unibile = cambiaSolo(prima, p, "ricerca") || (prossimoUnibile && cambiaSolo(prima, p, "documento"));
+      prossimoUnibile = false;
+      const ora = Date.now();
+      if (unibile && ora - ultimoUnibile < 1500) {
+        ultimoUnibile = ora;
+        return;
+      }
+      ultimoUnibile = unibile ? ora : 0;
+      passiIndietro = [...passiIndietro, prima].slice(-MAX_PASSI);
+      passiAvanti = [];
+    });
+  });
+
+  function ripristina(p: Passo) {
+    if (stessoPasso(p, passoAttuale)) return;
+    inRipristino = true;
+    vista = p.vista;
+    sezione = p.sezione;
+    anno = p.anno;
+    contatto = p.contatto;
+    dal = p.dal;
+    al = p.al;
+    ricerca = p.ricerca;
+    selezionata = p.documento ? (esito.voci.find((v) => v.id === p.documento) ?? null) : null;
+    menuAperto = false;
+    tick().then(() => {
+      const j = selezionata ? visibili.findIndex((v) => v.id === selezionata!.id) : -1;
+      if (j >= 0 && elencoEl) elencoEl.scrollTop = Math.max(0, j * ALTEZZA_RIGA - elencoEl.clientHeight / 2);
+    });
+  }
+
+  function tornaIndietro() {
+    const p = passiIndietro[passiIndietro.length - 1];
+    if (!p) return;
+    passiIndietro = passiIndietro.slice(0, -1);
+    passiAvanti = [...passiAvanti, passoAttuale];
+    ripristina(p);
+  }
+
+  function vaiAvanti() {
+    const p = passiAvanti[passiAvanti.length - 1];
+    if (!p) return;
+    passiAvanti = passiAvanti.slice(0, -1);
+    passiIndietro = [...passiIndietro, passoAttuale];
+    ripristina(p);
+  }
+
+  /** Tasti indietro/avanti del mouse (pulsanti laterali). */
+  function tastiMouse(e: MouseEvent) {
+    if (e.button === 3) {
+      e.preventDefault();
+      tornaIndietro();
+    } else if (e.button === 4) {
+      e.preventDefault();
+      vaiAvanti();
+    }
+  }
+
   function vaiA(s: Sezione, a: number | null = null) {
     vista = "documenti";
     sezione = s;
@@ -295,6 +404,12 @@
     // Con una finestra in primo piano (visualizzatore allegati) i tasti sono suoi.
     if (document.querySelector('[aria-modal="true"]')) return;
     const ctrl = e.ctrlKey || e.metaKey;
+    if (e.altKey && !ctrl && (e.key === "ArrowLeft" || e.key === "ArrowRight")) {
+      e.preventDefault();
+      if (e.key === "ArrowLeft") tornaIndietro();
+      else vaiAvanti();
+      return;
+    }
     if (ctrl && e.key.toLowerCase() === "f") {
       e.preventDefault();
       vista = "documenti";
@@ -314,6 +429,7 @@
       e.preventDefault();
       const i = selezionata ? visibili.findIndex((v) => v.id === selezionata!.id) : -1;
       const j = Math.max(0, Math.min(visibili.length - 1, i + (e.key === "ArrowDown" ? 1 : -1)));
+      prossimoUnibile = true;
       seleziona(visibili[j]);
       mostraRiga(j);
       // Il fuoco segue la selezione, così i lettori di schermo la annunciano.
@@ -365,7 +481,7 @@
   };
 </script>
 
-<svelte:window onkeydown={tastiera} />
+<svelte:window onkeydown={tastiera} onmouseup={tastiMouse} />
 
 {#if info && imp}
   <div class="app">
@@ -376,6 +492,12 @@
       <div class="marchio">
         <span class="logo"><Icona nome="it-file" /></span>
         <span class="nome">RastInvoice</span>
+      </div>
+      <div class="navigazione">
+        <button class="btn btn-xs btn-testata btn-nav" onclick={tornaIndietro} disabled={passiIndietro.length === 0}
+          title="Indietro (Alt+freccia sinistra)" aria-label="Indietro"><Icona nome="it-arrow-left" /></button>
+        <button class="btn btn-xs btn-testata btn-nav" onclick={vaiAvanti} disabled={passiAvanti.length === 0}
+          title="Avanti (Alt+freccia destra)" aria-label="Avanti"><Icona nome="it-arrow-right" /></button>
       </div>
       <div class="cerca">
         <Icona nome="it-search" />
@@ -822,6 +944,19 @@
     font-weight: 700;
     font-size: 1.25rem;
     letter-spacing: 0.01em;
+  }
+  .navigazione {
+    display: flex;
+    gap: 0.35rem;
+  }
+  .btn-nav {
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    justify-content: center;
+  }
+  .btn-nav:disabled {
+    opacity: 0.45;
   }
   .cerca {
     flex: 1;

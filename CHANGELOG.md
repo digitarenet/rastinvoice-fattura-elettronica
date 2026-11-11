@@ -4,6 +4,14 @@ Novità, miglioramenti e correzioni di RastInvoice (fino alla 0.9.0 chiamato Rus
 versione segue lo schema MAGGIORE.MINORE.CORREZIONE: la versione minore cresce con le nuove funzioni, quella
 di correzione con le sole correzioni. Le versioni senza novità nel programma non sono elencate.
 
+## 0.12.0 - 2026-11-11
+
+### Aggiunto
+- Pulsanti **Indietro** e **Avanti** accanto alla ricerca, come in un browser: ogni clic su una pagina, una
+  sezione, un filtro, un cliente o un documento si può annullare. Funzionano anche con Alt+freccia sinistra e
+  destra e con i tasti laterali del mouse. Mentre si scrive nella ricerca o si scorre l'elenco con le frecce
+  viene registrato un solo passo.
+
 ## 0.11.2 - 2026-11-11
 
 ### Migliorato
