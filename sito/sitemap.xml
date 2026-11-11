@@ -1,5 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url><loc>https://www.rastinvoice.it/</loc><lastmod>2026-11-11</lastmod><priority>1.0</priority></url>
-  <url><loc>https://www.rastinvoice.it/privacy.html</loc><lastmod>2026-11-11</lastmod><priority>0.3</priority></url>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+  <url>
+    <loc>https://www.rastinvoice.it/</loc><lastmod>2026-11-11</lastmod>
+    <image:image><image:loc>https://www.rastinvoice.it/img/documenti.webp</image:loc></image:image>
+    <image:image><image:loc>https://www.rastinvoice.it/img/rubrica.webp</image:loc></image:image>
+    <image:image><image:loc>https://www.rastinvoice.it/img/statistiche.webp</image:loc></image:image>
+  </url>
+  <url><loc>https://www.rastinvoice.it/come-aprire-fattura-elettronica-xml.html</loc><lastmod>2026-11-11</lastmod></url>
+  <url><loc>https://www.rastinvoice.it/come-aprire-file-p7m.html</loc><lastmod>2026-11-11</lastmod></url>
+  <url><loc>https://www.rastinvoice.it/fattura-elettronica-in-pdf.html</loc><lastmod>2026-11-11</lastmod></url>
+  <url><loc>https://www.rastinvoice.it/privacy.html</loc><lastmod>2026-11-11</lastmod></url>
 </urlset>

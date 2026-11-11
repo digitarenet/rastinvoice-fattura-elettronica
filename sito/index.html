@@ -10,8 +10,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>RastInvoice: visualizzatore gratuito di fatture elettroniche XML e P7M</title>
-  <meta name="description" content="Visualizzatore gratuito e open source per la fattura elettronica: apri, leggi, cerca, stampa e converti in PDF le fatture XML e P7M (FatturaPA). Offline, per Windows, macOS e Linux.">
+  <title>Visualizzatore fatture elettroniche XML e P7M gratis | RastInvoice</title>
+  <meta name="description" content="Visualizzatore gratuito di fatture elettroniche: apri, cerca, stampa e converti in PDF le fatture XML e P7M. Offline, per Windows, macOS e Linux.">
   <link rel="canonical" href="https://www.rastinvoice.it/">
   <meta name="theme-color" content="#0066cc">
   <meta name="author" content="Andrea Re - digitare.net">
@@ -23,6 +23,7 @@
   <meta property="og:description" content="Apri, cerca, stampa e converti in PDF le fatture elettroniche. Archivio di fatture emesse e ricevute, rubrica clienti e fornitori, statistiche. Gratuito e open source.">
   <meta property="og:url" content="https://www.rastinvoice.it/">
   <meta property="og:image" content="https://www.rastinvoice.it/img/anteprima-social.png">
+  <meta property="og:image:alt" content="RastInvoice, visualizzatore di fatture elettroniche XML e P7M">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
   <meta name="twitter:card" content="summary_large_image">
@@ -30,7 +31,10 @@
   <link rel="icon" href="img/favicon.svg" type="image/svg+xml">
   <link rel="icon" href="img/favicon-32.png" sizes="32x32" type="image/png">
   <link rel="apple-touch-icon" href="img/apple-touch-icon.png">
+  <link rel="manifest" href="manifest.webmanifest">
   <link rel="preload" href="fonts/titillium-web-v10-latin-ext_latin-regular.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="fonts/titillium-web-v10-latin-ext_latin-700.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" as="image" href="img/documenti-800.webp" imagesrcset="img/documenti-800.webp 800w, img/documenti.webp 1600w" imagesizes="(max-width: 1200px) 100vw, 1140px" fetchpriority="high">
   <link rel="stylesheet" href="css/bootstrap-italia.min.css">
   <link rel="stylesheet" href="css/sito.css">
 
@@ -45,12 +49,29 @@
     "applicationSubCategory": "Visualizzatore di fatture elettroniche",
     "operatingSystem": "Windows 10, Windows 11, macOS, Linux",
     "inLanguage": "it",
-    "softwareVersion": "1.0.4",
+    "softwareVersion": "1.0.5",
+    "datePublished": "2026-11-11",
+    "featureList": [
+      "Apertura di fatture elettroniche XML e XML.P7M firmate",
+      "Archivi ZIP ed email PEC",
+      "Conversione della fattura elettronica in PDF",
+      "Ricerca a testo libero e filtri per data e contatto",
+      "Rubrica clienti e fornitori",
+      "Statistiche su fatturato, acquisti e IVA",
+      "Verifica della firma digitale",
+      "Controlli con i codici di errore del Sistema di Interscambio",
+      "Notifiche SdI collegate alle fatture",
+      "Funzionamento offline"
+    ],
+    "fileFormat": ["application/xml", "application/pkcs7-mime", "application/zip", "message/rfc822"],
+    "isAccessibleForFree": true,
+    "publisher": { "@id": "https://www.rastinvoice.it/#editore" },
     "license": "https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12",
     "url": "https://www.rastinvoice.it/",
     "image": "https://www.rastinvoice.it/img/logo-512.png",
     "screenshot": "https://www.rastinvoice.it/img/documenti.webp",
-    "author": { "@type": "Person", "name": "Andrea Re", "url": "https://www.digitare.net" },
+    "author": { "@id": "https://www.rastinvoice.it/#editore" },
+    "sameAs": ["https://github.com/digitarenet/rastinvoice-fattura-elettronica"],
     "offers": [
       { "@type": "Offer", "price": "0", "priceCurrency": "EUR", "description": "Windows e Linux" },
       { "@type": "Offer", "price": "2.99", "priceCurrency": "EUR", "description": "macOS (Mac App Store)" }
@@ -58,20 +79,98 @@
   }
   </script>
   <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Come si apre una fattura elettronica XML?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Apri il file .xml con RastInvoice: con un doppio clic, trascinandolo nella finestra o dal menu Apri. La fattura viene mostrata in una vista leggibile al posto del codice XML. Puoi aprire anche un'intera cartella di fatture."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Come si apre un file .xml.p7m?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Il file .p7m è la fattura elettronica con firma digitale. RastInvoice lo apre direttamente, senza altri programmi di firma, ne estrae l'XML e verifica integrità della firma e firmatario."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Come si converte una fattura elettronica in PDF?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Dall'anteprima della fattura scegli PDF: il file viene creato dal programma, in formato A4 con testo selezionabile. Puoi anche stampare la fattura o salvarla in HTML."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Posso aprire le fatture scaricate dal cassetto fiscale o ricevute via PEC?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Sì. Puoi aprire i file scaricati dal portale Fatture e Corrispettivi dell'Agenzia delle Entrate, gli archivi .zip e le email PEC .eml, senza estrarli."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Funziona con le fatture verso la Pubblica Amministrazione?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Sì: fattura PA (FPA12), fattura tra privati (FPR12) e fattura semplificata (FSM10), secondo le specifiche tecniche FatturaPA 1.9.1, in vigore dal 15 maggio 2026."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Le mie fatture vengono inviate a un server?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "No. RastInvoice funziona senza connessione a Internet e senza account. Si collega a Internet solo se lo chiedi tu, per scaricare il foglio di stile ufficiale o controllare le nuove versioni. Dettagli nell'informativa sulla privacy."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Quanto costa?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Su Windows e Linux è gratuito, senza pubblicità e senza limiti. Su macOS costa 2,99 € una tantum sul Mac App Store, per coprire l'iscrizione al programma per sviluppatori di Apple."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "RastInvoice conserva le fatture a norma?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "No. RastInvoice è un visualizzatore: legge e archivia le fatture sul tuo computer, ma non sostituisce la conservazione digitale a norma, che resta a carico del servizio del tuo intermediario o dell'Agenzia delle Entrate."
+      }
+    }
+  ]
+}
+  </script>
+  <script type="application/ld+json">
   {
     "@context": "https://schema.org",
-    "@type": "FAQPage",
-    "mainEntity": [
-      { "@type": "Question", "name": "Come si apre una fattura elettronica XML?",
-        "acceptedAnswer": { "@type": "Answer", "text": "Si apre il file .xml con RastInvoice, con un doppio clic, trascinandolo nella finestra o dal menu Apri: la fattura viene mostrata in una vista leggibile al posto del codice XML." } },
-      { "@type": "Question", "name": "Come si apre un file .xml.p7m?",
-        "acceptedAnswer": { "@type": "Answer", "text": "Il file .p7m è la fattura elettronica con firma digitale. RastInvoice lo apre direttamente, senza altri programmi di firma, estrae l'XML e verifica integrità della firma e firmatario." } },
-      { "@type": "Question", "name": "Come si converte una fattura elettronica in PDF?",
-        "acceptedAnswer": { "@type": "Answer", "text": "Dall'anteprima della fattura si sceglie PDF: il file viene creato direttamente dal programma, in formato A4 con testo selezionabile." } },
-      { "@type": "Question", "name": "RastInvoice è gratuito?",
-        "acceptedAnswer": { "@type": "Answer", "text": "Sì, su Windows e Linux è gratuito e senza pubblicità. Su macOS si scarica dal Mac App Store a 2,99 euro. Il codice sorgente è libero, con licenza EUPL-1.2." } },
-      { "@type": "Question", "name": "Le fatture vengono inviate a un server?",
-        "acceptedAnswer": { "@type": "Answer", "text": "No. RastInvoice funziona senza connessione a Internet e senza account: le fatture restano sul computer e i file originali non vengono mai modificati." } }
+    "@graph": [
+      {
+        "@type": "Person",
+        "@id": "https://www.rastinvoice.it/#editore",
+        "name": "Andrea Re",
+        "jobTitle": "Sviluppatore software",
+        "email": "info@digitare.net",
+        "url": "https://www.digitare.net",
+        "sameAs": ["https://github.com/digitarenet"]
+      },
+      {
+        "@type": "WebSite",
+        "@id": "https://www.rastinvoice.it/#sito",
+        "url": "https://www.rastinvoice.it/",
+        "name": "RastInvoice",
+        "inLanguage": "it-IT",
+        "publisher": { "@id": "https://www.rastinvoice.it/#editore" }
+      }
     ]
   }
   </script>
@@ -106,8 +205,8 @@
       <div class="container">
         <div class="row">
           <div class="col-lg-9 col-xl-8">
-            <p class="sopratitolo">Visualizzatore di fatture elettroniche</p>
-            <h1 id="titolo">Le tue fatture elettroniche, finalmente leggibili e in ordine</h1>
+            <p class="sopratitolo">Le tue fatture, finalmente leggibili e in ordine</p>
+            <h1 id="titolo">Visualizzatore di fatture elettroniche XML e P7M</h1>
             <p class="lead mt-3">RastInvoice apre le fatture elettroniche XML e P7M, le mostra in modo chiaro e le stampa
               o le salva in PDF. Tiene in ordine l'archivio di fatture ricevute ed emesse, con ricerca, rubrica di
               clienti e fornitori e statistiche.</p>
@@ -125,7 +224,7 @@
         </div>
         <div class="schermo">
           <img src="img/documenti.webp" srcset="img/documenti-800.webp 800w, img/documenti.webp 1600w"
-            sizes="(max-width: 1200px) 100vw, 1140px" width="1600" height="1012"
+            sizes="(max-width: 1200px) 100vw, 1140px" width="1600" height="1012" fetchpriority="high"
             alt="RastInvoice: elenco delle fatture ricevute ed emesse a sinistra e anteprima leggibile della fattura selezionata a destra">
         </div>
       </div>
@@ -284,12 +383,12 @@
             <button type="button" role="tab" id="scheda-notifiche" aria-controls="vista-galleria" aria-selected="false" tabindex="-1" data-img="notifiche" data-testo="Ricevute e notifiche del Sistema di Interscambio collegate alle fatture.">Notifiche SdI</button>
             <button type="button" role="tab" id="scheda-allegato" aria-controls="vista-galleria" aria-selected="false" tabindex="-1" data-img="allegato" data-testo="Gli allegati, come i PDF, si aprono senza uscire dal programma.">Allegati</button>
           </div>
-          <figure id="vista-galleria" role="tabpanel" aria-labelledby="scheda-documenti" tabindex="0">
+          <div id="vista-galleria" role="tabpanel" aria-labelledby="scheda-documenti" tabindex="0"><figure>
             <img id="img-galleria" src="img/documenti.webp" srcset="img/documenti-800.webp 800w, img/documenti.webp 1600w"
               sizes="(max-width: 1200px) 100vw, 1140px" width="1600" height="1012" loading="lazy"
               alt="Fatture ricevute ed emesse in un unico elenco, con la vista Moderna della fattura.">
             <figcaption id="testo-galleria">Fatture ricevute ed emesse in un unico elenco, con la vista Moderna della fattura.</figcaption>
-          </figure>
+          </figure></div>
         </div>
       </div>
     </section>
@@ -359,7 +458,45 @@
       </div>
     </section>
 
-    <section class="sezione" id="domande" aria-labelledby="titolo-domande">
+    <section class="sezione" id="in-breve" aria-labelledby="titolo-breve">
+      <div class="container">
+        <div class="row g-4 g-lg-5">
+          <div class="col-lg-6">
+            <h2 id="titolo-breve">RastInvoice in breve</h2>
+            <p class="intro">RastInvoice è un visualizzatore di fatture elettroniche italiane gratuito e open source, sviluppato
+              in Italia da Andrea Re (<a href="https://www.digitare.net">digitare.net</a>). Apre le fatture in formato FatturaPA
+              (XML e P7M firmato), le mostra in modo leggibile, le converte in PDF e tiene l'archivio di fatture ricevute ed
+              emesse sul computer, senza inviarle a nessun server.</p>
+            <h3 class="h5 mt-4">Guide</h3>
+            <ul class="guide">
+              <li><a href="come-aprire-fattura-elettronica-xml.html">Come aprire una fattura elettronica XML</a></li>
+              <li><a href="come-aprire-file-p7m.html">Come aprire un file .xml.p7m firmato</a></li>
+              <li><a href="fattura-elettronica-in-pdf.html">Come convertire una fattura elettronica in PDF</a></li>
+            </ul>
+          </div>
+          <div class="col-lg-6">
+            <table class="table scheda">
+              <caption class="visually-hidden">Scheda tecnica di RastInvoice</caption>
+              <tbody>
+                <tr><th scope="row">Tipo di programma</th><td>Visualizzatore e archivio di fatture elettroniche</td></tr>
+                <tr><th scope="row">Versione</th><td>1.0.5 (novembre 2026)</td></tr>
+                <tr><th scope="row">Sistemi</th><td>Windows 10 e 11, macOS 10.13 o successivo, Linux a 64 bit</td></tr>
+                <tr><th scope="row">Prezzo</th><td>Gratuito su Windows e Linux, 2,99 € su Mac App Store</td></tr>
+                <tr><th scope="row">Formati</th><td>XML, XML.P7M (DER, BER, base64), ZIP, EML (PEC), lotti</td></tr>
+                <tr><th scope="row">Tipi di fattura</th><td>FPR12 tra privati, FPA12 verso la PA, FSM10 semplificata</td></tr>
+                <tr><th scope="row">Specifiche</th><td>FatturaPA 1.9.1, in vigore dal 15 maggio 2026</td></tr>
+                <tr><th scope="row">Esportazione</th><td>PDF A4, HTML, XML, CSV</td></tr>
+                <tr><th scope="row">Connessione a Internet</th><td>Non necessaria</td></tr>
+                <tr><th scope="row">Licenza</th><td>EUPL-1.2, codice sorgente su GitHub</td></tr>
+                <tr><th scope="row">Lingua</th><td>Italiano</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="sezione chiara" id="domande" aria-labelledby="titolo-domande">
       <div class="container">
         <div class="row">
           <div class="col-lg-9">

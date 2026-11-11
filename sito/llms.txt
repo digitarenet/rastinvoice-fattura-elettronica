@@ -1,0 +1,32 @@
+# RastInvoice
+
+> RastInvoice è un visualizzatore gratuito e open source di fatture elettroniche italiane (formato FatturaPA). Apre file XML e XML.P7M firmati, archivi ZIP ed email PEC, mostra la fattura in modo leggibile, la converte in PDF e tiene l'archivio di fatture ricevute ed emesse con ricerca, rubrica di clienti e fornitori e statistiche. Funziona offline su Windows, macOS e Linux. Sviluppato in Italia da Andrea Re (digitare.net).
+
+Fatti principali:
+
+- Versione: 1.0.5 (novembre 2026)
+- Prezzo: gratuito su Windows (Microsoft Store) e Linux (Flathub, Snap Store, .deb, .rpm, AppImage); 2,99 € su Mac App Store
+- Licenza: EUPL-1.2, codice sorgente su GitHub
+- Formati: XML, XML.P7M (DER, BER, base64, firme annidate), ZIP, EML (PEC), lotti di fatture
+- Tipi di fattura: FPR12 (tra privati), FPA12 (verso la Pubblica Amministrazione), FSM10 (semplificata)
+- Specifiche: FatturaPA 1.9.1, in vigore dal 15 maggio 2026
+- Viste: Moderna, foglio di stile ufficiale AssoSoftware (motore XSLT interno), XML
+- Controlli: verifica della firma digitale (integrità e firmatario), controlli di calcolo e formali con i codici di errore del Sistema di Interscambio, notifiche SdI collegate alle fatture
+- Esportazione: PDF A4 con testo selezionabile, HTML, XML estratto dal P7M, elenco in CSV
+- Privacy: nessun account, nessun server, nessuna statistica di utilizzo; i file originali non vengono modificati
+- Accessibilità: interfaccia secondo il design system di Designers Italia, progettata per le WCAG 2.1 AA
+- Non sostituisce la conservazione digitale a norma; è un progetto indipendente, non collegato all'Agenzia delle Entrate
+
+## Pagine
+
+- [Pagina principale](https://www.rastinvoice.it/): funzionalità, download, domande frequenti, contatti
+- [Come aprire una fattura elettronica XML](https://www.rastinvoice.it/come-aprire-fattura-elettronica-xml.html)
+- [Come aprire un file .xml.p7m](https://www.rastinvoice.it/come-aprire-file-p7m.html)
+- [Come convertire una fattura elettronica in PDF](https://www.rastinvoice.it/fattura-elettronica-in-pdf.html)
+- [Informativa sulla privacy](https://www.rastinvoice.it/privacy.html)
+
+## Altre risorse
+
+- [Codice sorgente e documentazione](https://github.com/digitarenet/rastinvoice-fattura-elettronica)
+- [Registro delle modifiche](https://github.com/digitarenet/rastinvoice-fattura-elettronica/blob/main/CHANGELOG.md)
+- Contatti: rastinvoice@digitare.net

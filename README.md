@@ -159,7 +159,7 @@ Le immagini usano un archivio dimostrativo con dati di fantasia.
 | ![Notifiche del Sistema di Interscambio collegate alle fatture](docs/immagini/notifiche.png) | ![Elenco dei documenti e vista Moderna](docs/immagini/documenti.png) |
 | **Notifiche SdI** collegate alle fatture | **Documenti** e vista Moderna |
 
-Versione attuale: **1.0.4** (vedi il [registro delle modifiche](CHANGELOG.md)).
+Versione attuale: **1.0.5** (vedi il [registro delle modifiche](CHANGELOG.md)).
 
 ## Domande frequenti
 

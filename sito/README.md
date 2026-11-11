@@ -9,13 +9,17 @@ contatti usa un piccolo script PHP.
 
 | File | Cosa contiene |
 | --- | --- |
-| `index.html` | pagina unica: presentazione, funzionalità, immagini, download, domande frequenti, contatti |
+| `index.html` | pagina principale: presentazione, funzionalità, scheda tecnica, immagini, download, domande frequenti, contatti |
+| `come-aprire-fattura-elettronica-xml.html`, `come-aprire-file-p7m.html`, `fattura-elettronica-in-pdf.html` | guide per le ricerche più frequenti, con dati strutturati HowTo e FAQ |
+| `404.html` | pagina non trovata |
+| `llms.txt` | riassunto del prodotto per gli assistenti AI (ChatGPT, Claude, Perplexity, Gemini) |
+| `manifest.webmanifest` | nome e icone per browser e dispositivi |
 | `privacy.html` | informativa sulla privacy del sito e del modulo contatti |
 | `grazie.html` | conferma dopo l'invio del modulo quando JavaScript è disattivato |
 | `contatti.php` | invio del modulo per email, con `mail()` di PHP o SMTP autenticato |
 | `config-esempio.php` | modello della configurazione SMTP, da copiare come `rastinvoice-config.php` fuori dalla radice del sito |
-| `.htaccess` | blocca l'accesso ai file di configurazione sui server Apache |
-| `css/bootstrap-italia.min.css` | [Bootstrap Italia](https://italia.github.io/bootstrap-italia/) 2.18.0 (BSD-3-Clause), solo il foglio di stile |
+| `.htaccess` | per Apache: HTTPS e dominio unico www, compressione, cache, intestazioni di sicurezza, pagina 404, blocco dei file di configurazione |
+| `css/bootstrap-italia.min.css` | [Bootstrap Italia](https://italia.github.io/bootstrap-italia/) 2.18.0 (BSD-3-Clause), ridotto alle sole regole usate (32 KB invece di 600 KB) |
 | `css/sito.css` | stili propri del sito |
 | `js/sito.js` | menu su schermi piccoli, galleria, invio del modulo |
 | `fonts/` | Titillium Web (SIL Open Font License), ospitato localmente |
@@ -94,4 +98,20 @@ salvati in `img/`, senza collegarli dai server esterni, così il sito continua a
 - **Nuova versione del programma:** aggiornare `softwareVersion` nei dati strutturati in `index.html`.
 - **Nuove schermate:** sostituire i file in `docs/immagini/` e rigenerare le versioni WebP (1600 e 800 pixel
   di larghezza) in `img/`.
-- **Bootstrap Italia:** copiare `dist/css/bootstrap-italia.min.css` e `dist/svg/sprites.svg` dal pacchetto npm.
+- **Bootstrap Italia:** copiare `dist/svg/sprites.svg` dal pacchetto npm e ridurre il foglio di stile alle
+  regole usate: `npx purgecss --css bootstrap-italia.min.css --content 'sito/*.html' sito/js/sito.js --safelist aperto show active alert alert-success alert-danger alert-info alert-warning visually-hidden --output sito/css/`.
+  Se si aggiungono pagine o classi nuove, ripetere la riduzione.
+- **Nuove guide:** aggiungerle a `sitemap.xml`, a `llms.txt` e all'elenco Guide della pagina principale.
+
+## SEO e motori di risposta AI
+
+- Titolo, descrizione e H1 con le parole chiave principali (visualizzatore, fattura elettronica, XML, P7M, PDF).
+- Dati strutturati schema.org: SoftwareApplication, FAQPage, WebSite e Person nella pagina principale; HowTo,
+  FAQPage, BreadcrumbList e Article nelle guide. Si controllano con il
+  [Test dei risultati multimediali](https://search.google.com/test/rich-results).
+- Scheda tecnica con dati precisi (versione, prezzo, formati, licenza) e `llms.txt`: sono le parti che gli
+  assistenti AI citano più volentieri.
+- `robots.txt` ammette esplicitamente i crawler dei motori di ricerca e degli assistenti AI.
+- Prestazioni: Lighthouse 96-99 in locale; sul server `.htaccess` aggiunge compressione e cache.
+- Su Nginx servono le stesse regole di `.htaccess`: redirect a `https://www.`, gzip, `expires`, intestazioni,
+  `error_page 404 /404.html` e il blocco di `rastinvoice-config.php`.

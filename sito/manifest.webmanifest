@@ -1,0 +1,14 @@
+{
+  "name": "RastInvoice - visualizzatore di fatture elettroniche",
+  "short_name": "RastInvoice",
+  "lang": "it",
+  "start_url": "/",
+  "display": "browser",
+  "background_color": "#ffffff",
+  "theme_color": "#0066cc",
+  "icons": [
+    { "src": "img/logo-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "img/apple-touch-icon.png", "sizes": "180x180", "type": "image/png" },
+    { "src": "img/favicon.svg", "sizes": "any", "type": "image/svg+xml" }
+  ]
+}

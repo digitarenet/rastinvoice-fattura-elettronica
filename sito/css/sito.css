@@ -6,13 +6,13 @@
  */
 
 /* Caratteri inclusi localmente: nessuna richiesta a server esterni. */
-@font-face { font-family: "Titillium Web"; font-style: normal; font-weight: 300; font-display: swap;
+@font-face { font-family: "Titillium Web"; font-style: normal; font-weight: 300; font-display: optional;
   src: url("../fonts/titillium-web-v10-latin-ext_latin-300.woff2") format("woff2"); }
-@font-face { font-family: "Titillium Web"; font-style: normal; font-weight: 400; font-display: swap;
+@font-face { font-family: "Titillium Web"; font-style: normal; font-weight: 400; font-display: optional;
   src: url("../fonts/titillium-web-v10-latin-ext_latin-regular.woff2") format("woff2"); }
-@font-face { font-family: "Titillium Web"; font-style: normal; font-weight: 600; font-display: swap;
+@font-face { font-family: "Titillium Web"; font-style: normal; font-weight: 600; font-display: optional;
   src: url("../fonts/titillium-web-v10-latin-ext_latin-600.woff2") format("woff2"); }
-@font-face { font-family: "Titillium Web"; font-style: normal; font-weight: 700; font-display: swap;
+@font-face { font-family: "Titillium Web"; font-style: normal; font-weight: 700; font-display: optional;
   src: url("../fonts/titillium-web-v10-latin-ext_latin-700.woff2") format("woff2"); }
 
 :root {
@@ -172,3 +172,23 @@ a:focus-visible, button:focus-visible, .btn:focus-visible, summary:focus-visible
 .btn-bianco:hover, .btn-bianco:focus { background: var(--ri-chiaro); color: var(--ri-blu-scuro); border-color: var(--ri-chiaro); }
 .sostegno h2 { font-size: 1.5rem; }
 @media (max-width: 991.98px) { .testata nav { margin-left: 0; } }
+
+/* Scheda tecnica e guide */
+.scheda { background: #fff; border: 1px solid var(--ri-bordo); border-radius: .75rem; overflow: hidden; margin: 0; }
+.scheda th { width: 40%; font-weight: 600; color: var(--ri-blu-notte); background: var(--ri-chiaro); }
+.scheda th, .scheda td { padding: .65rem 1rem; border-color: var(--ri-bordo); }
+.guide { padding-left: 1.1rem; }
+.guide li { margin-bottom: .4rem; font-size: 1.1rem; }
+
+/* Pagine guida */
+.guida .passi { counter-reset: passo; list-style: none; padding: 0; }
+.guida .passi li { counter-increment: passo; position: relative; padding-left: 3rem; margin-bottom: 1.25rem; }
+.guida .passi li::before { content: counter(passo); position: absolute; left: 0; top: 0; width: 2rem; height: 2rem;
+  border-radius: 50%; background: var(--ri-blu); color: #fff; font-weight: 700; display: flex; align-items: center;
+  justify-content: center; }
+.guida figure img { width: 100%; height: auto; border-radius: .75rem; border: 1px solid var(--ri-bordo); }
+.guida figcaption { color: #5c6f82; margin-top: .5rem; }
+.briciole { font-size: .95rem; margin-bottom: 1rem; }
+.briciole ol { list-style: none; padding: 0; margin: 0; display: flex; flex-wrap: wrap; gap: .4rem; }
+.briciole li + li::before { content: "/"; margin-right: .4rem; color: #5c6f82; }
+.invito { background: var(--ri-chiaro); border-radius: .75rem; padding: 1.5rem; margin-top: 2rem; }

@@ -1,4 +1,20 @@
+# Motori di ricerca e assistenti AI sono benvenuti: il sito è pubblico e senza dati personali.
 User-agent: *
+Allow: /
+Disallow: /grazie.html
+Disallow: /contatti.php
+
+# Crawler dei motori di risposta AI (indicati esplicitamente)
+User-agent: GPTBot
+User-agent: OAI-SearchBot
+User-agent: ChatGPT-User
+User-agent: ClaudeBot
+User-agent: Claude-SearchBot
+User-agent: Claude-User
+User-agent: PerplexityBot
+User-agent: Google-Extended
+User-agent: Applebot-Extended
+User-agent: Bingbot
 Allow: /
 Disallow: /grazie.html
 Disallow: /contatti.php
