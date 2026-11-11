@@ -409,7 +409,7 @@ fn mostra_nella_cartella(file: String) -> Result<(), String> {
 #[tauri::command]
 fn apri_sito() -> Result<(), String> {
     tauri_plugin_opener::open_url(
-        "https://www.digitare.net/?s=fatture&utm_source=rustinvoice&utm_medium=desktop&utm_campaign=credits",
+        "https://www.digitare.net/?s=fatture&utm_source=rastinvoice&utm_medium=desktop&utm_campaign=credits",
         None::<&str>,
     )
     .map_err(|e| e.to_string())

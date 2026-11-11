@@ -4,6 +4,19 @@ Tutte le modifiche rilevanti di RastInvoice (fino alla 0.9.0 chiamato RustinVoic
 MAGGIORE.MINORE.CORREZIONE: la versione minore cresce con le nuove funzioni, quella di
 correzione con le sole correzioni.
 
+## 0.10.2 - 2026-11-11
+
+### Corretto
+- La casella "Ricorda la scelta" nella finestra dei file trascinati mostrava due quadrati: ora usa lo stile
+  di Bootstrap Italia come le altre caselle.
+- La barra dei pulsanti dell'anteprima va a capo quando lo spazio non basta, invece di nascondere gli ultimi
+  pulsanti.
+- Analisi statica conforme alla nuova versione di Clippy (lettura dei certificati con `as_chunks`).
+
+### Aggiunto
+- Informativa sulla privacy (`PRIVACY.md`), richiesta dagli store.
+- Schermate aggiornate con il nuovo nome in `docs/immagini`.
+
 ## 0.10.1 - 2026-11-11
 
 ### Modificato

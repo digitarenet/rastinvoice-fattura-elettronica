@@ -1348,22 +1348,10 @@
     border-radius: 10px;
     box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25);
   }
-  .form-check {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-  }
+  /* Casella di controllo di Bootstrap Italia: il quadrato è disegnato
+     dall'etichetta, la casella nativa resta nascosta. */
   .form-check label {
-    position: static;
-    transform: none;
     font-size: 0.9rem;
-    padding-left: 0;
-  }
-  .form-check input {
-    position: static;
-    opacity: 1;
-    width: auto;
-    height: auto;
   }
 
   .notifica {

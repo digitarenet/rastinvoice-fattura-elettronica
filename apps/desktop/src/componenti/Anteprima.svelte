@@ -511,6 +511,10 @@
     border-bottom: 1px solid var(--ri-bordo);
     padding: 0 0.75rem;
     min-height: 48px;
+    /* Con finestre strette o ingrandimento alto i pulsanti vanno a capo
+       invece di uscire dallo schermo. */
+    flex-wrap: wrap;
+    column-gap: 0.5rem;
   }
   .schede {
     display: flex;
@@ -532,7 +536,10 @@
   }
   .azioni {
     display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
     gap: 0.1rem;
+    margin-left: auto;
   }
   .azioni :global(.icon) {
     fill: var(--ri-primario);

@@ -218,8 +218,10 @@ fn nomi(d: &Der<'_>, nome: &Tlv) -> Vec<(Vec<u8>, String)> {
                     0x1E => {
                         let u: Vec<u16> = d
                             .contenuto(valore)
-                            .chunks_exact(2)
-                            .map(|c| u16::from_be_bytes([c[0], c[1]]))
+                            .as_chunks::<2>()
+                            .0
+                            .iter()
+                            .map(|c| u16::from_be_bytes(*c))
                             .collect();
                         String::from_utf16_lossy(&u)
                     }
