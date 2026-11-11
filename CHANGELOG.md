@@ -4,6 +4,12 @@ Tutte le modifiche rilevanti di RustinVoice. Il numero di versione segue lo sche
 MAGGIORE.MINORE.CORREZIONE: la versione minore cresce con le nuove funzioni, quella di
 correzione con le sole correzioni.
 
+## 0.8.1 - 2026-11-11
+
+### Modificato
+- README aggiornato con le novità principali, la versione attuale e lo stato delle nuove funzioni
+  (notifiche SdI, design system, accessibilità).
+
 ## 0.8.0 - 2026-11-11
 
 ### Aggiunto

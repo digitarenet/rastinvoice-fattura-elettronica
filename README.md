@@ -6,9 +6,23 @@ Visualizzatore di fatture elettroniche italiane (formato **FatturaPA**), portabl
 
 Apre fatture emesse e ricevute in tutti i formati in cui arrivano di solito: `.xml`, `.xml.p7m` firmati (anche in base64 o con più firme), lotti con più documenti, fatture semplificate. Riconosce ricevute e notifiche del Sistema di Interscambio senza confonderle con le fatture.
 
+In breve:
+- **funziona senza installazione e senza connessione**: nessun dato lascia il computer e i file originali non
+  vengono mai modificati;
+- **due viste della fattura**: "Moderna" e foglio di stile ufficiale AssoSoftware, applicato da un motore XSLT
+  nativo;
+- **ricerca, rubrica, statistiche e IVA**: ricerca a testo libero, rubrica clienti e fornitori, statistiche con
+  IVA per anno, mese e controparte;
+- **allegati e notifiche**: visualizzatore integrato degli allegati e stato delle notifiche SdI per ogni fattura;
+- **interfaccia accessibile**: segue il design system di Designers Italia ed è progettata per le WCAG 2.1 AA
+  (vedi [Accessibilità](#accessibilità)).
+
+Versione attuale: **0.8.1** (vedi il [registro delle modifiche](CHANGELOG.md)).
+
 ## Stato del progetto
 
 Fase 2 in corso: applicazione desktop con interfaccia grafica, costruita sul nucleo di lettura della fase 1.
+Sono previste in seguito un'edizione web (SaaS) e una mobile.
 
 | Funzione | Stato |
 | --- | --- |
@@ -35,6 +49,9 @@ Fase 2 in corso: applicazione desktop con interfaccia grafica, costruita sul nuc
 | Visualizzatore allegati (PDF, immagini, Word, Excel, ODS, CSV, testo, zip) | fatto |
 | Esportazione PDF diretta | da fare |
 | Trasformazione XSL nativa (indipendente dal motore web di sistema) | fatto |
+| Notifiche SdI collegate alle fatture, con spiegazione delle sigle | fatto |
+| Interfaccia secondo il design system di Designers Italia (Bootstrap Italia) | fatto |
+| Accessibilità WCAG 2.1 AA: tastiera, contrasti, nomi accessibili, ingrandimento al 200% | fatto, prove con lettori di schermo da fare |
 
 ## Struttura
 
@@ -150,6 +167,8 @@ tipografia Titillium Web, palette e icone ufficiali, componenti (pulsanti, campi
 Gli elementi propri di un'applicazione desktop (elenco documenti, anteprima, grafici) sono costruiti con gli
 stessi colori, caratteri e spaziature.
 
+L'elenco completo delle dipendenze, incluse quelle indirette, si ottiene con `cargo tree` e `npm ls`.
+
 ## Accessibilità
 
 RustinVoice è progettato per i requisiti **WCAG 2.1 livello AA**, richiamati dalla norma EN 301 549 e dalle
@@ -162,8 +181,6 @@ Linee guida AgID (Legge Stanca):
 
 Lo strumento axe-core non rileva alcuna violazione su tutte le schermate. Restano da fare le prove con i
 lettori di schermo NVDA e VoiceOver. Stato, verifiche e limiti sono descritti in [ACCESSIBILITA.md](ACCESSIBILITA.md).
-
-L'elenco completo delle dipendenze, incluse quelle indirette, si ottiene con `cargo tree` e `npm ls`.
 
 ## Segnalazioni di sicurezza
 
