@@ -9,7 +9,7 @@
 //   rustinvoice scansiona <cartella>  elenco dei documenti trovati (CSV)
 
 use clap::{Parser, Subcommand};
-use rustinvoice_core::{apri_file, codici, Contenuto, Documento};
+use rustinvoice_core::{apri_byte, apri_file, codici, contenitori, Contenuto, Documento};
 use std::path::{Path, PathBuf};
 use std::process::ExitCode;
 
@@ -168,45 +168,73 @@ fn scansiona(cartella: &Path) -> Result<(), String> {
             .file_name()
             .map(|n| n.to_string_lossy().to_lowercase())
             .unwrap_or_default();
-        if !(nome.ends_with(".xml") || nome.ends_with(".p7m")) {
-            continue;
-        }
-        match apri_file(percorso) {
-            Ok(doc) => match &doc.contenuto {
-                Contenuto::Fattura(f) => {
-                    let h = &f.intestazione;
-                    for c in &f.corpi {
-                        let d = &c.dati_generali.documento;
-                        let riga = [
-                            percorso.display().to_string(),
-                            "fattura".into(),
-                            h.cedente_prestatore.nome_visualizzato(),
-                            h.cedente_prestatore.chiave().unwrap_or_default(),
-                            h.cessionario_committente.nome_visualizzato(),
-                            h.cessionario_committente.chiave().unwrap_or_default(),
-                            d.tipo_documento.clone().unwrap_or_default(),
-                            d.numero.clone().unwrap_or_default(),
-                            d.data.map(|x| x.to_string()).unwrap_or_default(),
-                            c.totale().map(|t| t.to_string()).unwrap_or_default(),
-                        ];
+        // Documenti singoli oppure contenuti in archivi .zip ed email .eml.
+        let documenti: Vec<(String, Result<Documento, String>)> =
+            if let Some(tipo) = contenitori::tipo_contenitore(&nome) {
+                match std::fs::read(percorso)
+                    .map_err(|e| e.to_string())
+                    .and_then(|b| contenitori::espandi(tipo, &b))
+                {
+                    Ok(interni) => interni
+                        .into_iter()
+                        .map(|i| {
+                            let virtuale = format!(
+                                "{}{}{}",
+                                percorso.display(),
+                                contenitori::SEPARATORE,
+                                i.percorso
+                            );
+                            (virtuale, apri_byte(&i.byte).map_err(|e| e.to_string()))
+                        })
+                        .collect(),
+                    Err(e) => vec![(percorso.display().to_string(), Err(e))],
+                }
+            } else if contenitori::e_documento(&nome) {
+                vec![(
+                    percorso.display().to_string(),
+                    apri_file(percorso).map_err(|e| e.to_string()),
+                )]
+            } else {
+                continue;
+            };
+        for (percorso, letto) in documenti {
+            match letto {
+                Ok(doc) => match &doc.contenuto {
+                    Contenuto::Fattura(f) => {
+                        let h = &f.intestazione;
+                        for c in &f.corpi {
+                            let d = &c.dati_generali.documento;
+                            let riga = [
+                                percorso.clone(),
+                                "fattura".into(),
+                                h.cedente_prestatore.nome_visualizzato(),
+                                h.cedente_prestatore.chiave().unwrap_or_default(),
+                                h.cessionario_committente.nome_visualizzato(),
+                                h.cessionario_committente.chiave().unwrap_or_default(),
+                                d.tipo_documento.clone().unwrap_or_default(),
+                                d.numero.clone().unwrap_or_default(),
+                                d.data.map(|x| x.to_string()).unwrap_or_default(),
+                                c.totale().map(|t| t.to_string()).unwrap_or_default(),
+                            ];
+                            println!(
+                                "{}",
+                                riga.iter().map(|c| csv(c)).collect::<Vec<_>>().join(";")
+                            );
+                        }
+                    }
+                    Contenuto::MessaggioSdi(m) => {
                         println!(
-                            "{}",
-                            riga.iter().map(|c| csv(c)).collect::<Vec<_>>().join(";")
+                            "{};{};;;;;;{};;",
+                            csv(&percorso),
+                            m.tipo.sigla(),
+                            csv(m.nome_file.as_deref().unwrap_or(""))
                         );
                     }
+                },
+                Err(e) => {
+                    errori += 1;
+                    eprintln!("Ignorato {percorso}: {e}");
                 }
-                Contenuto::MessaggioSdi(m) => {
-                    println!(
-                        "{};{};;;;;;{};;",
-                        csv(&percorso.display().to_string()),
-                        m.tipo.sigla(),
-                        csv(m.nome_file.as_deref().unwrap_or(""))
-                    );
-                }
-            },
-            Err(e) => {
-                errori += 1;
-                eprintln!("Ignorato {}: {e}", percorso.display());
             }
         }
     }

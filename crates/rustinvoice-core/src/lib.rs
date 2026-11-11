@@ -8,8 +8,10 @@
 // di comando, dall'applicazione desktop e, in futuro, dal servizio web.
 
 pub mod codici;
+pub mod contenitori;
 pub mod documento;
 pub mod errore;
+pub mod firma;
 pub mod modello;
 pub mod p7m;
 pub mod parser;

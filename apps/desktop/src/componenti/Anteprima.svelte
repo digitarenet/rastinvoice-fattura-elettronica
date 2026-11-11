@@ -159,6 +159,28 @@
     e.preventDefault();
   }
 
+  // Riepilogo della verifica delle firme.
+  let firmeAperte = $state(false);
+  const esitoFirme = $derived.by(() => {
+    const f = dettaglio?.firme ?? [];
+    if (f.length === 0) return "non_verificabile";
+    if (f.some((x) => x.esito === "non_valida")) return "non_valida";
+    if (f.every((x) => x.esito === "valida")) return "valida";
+    return "non_verificabile";
+  });
+  const etichettaFirme = $derived.by(() => {
+    const f = dettaglio?.firme ?? [];
+    const nomi = [...new Set(f.map((x) => x.nome).filter(Boolean))].join(", ");
+    const base =
+      esitoFirme === "valida" ? "Firma valida" : esitoFirme === "non_valida" ? "Firma NON valida" : "Firma non verificabile";
+    return nomi ? `${base} · ${nomi}` : base;
+  });
+
+  function dataOra(s: string): string {
+    // "2026-11-03 10:15:00" → "03/11/2026 10:15"
+    return s.length >= 16 ? `${s.slice(8, 10)}/${s.slice(5, 7)}/${s.slice(0, 4)} ${s.slice(11, 16)}` : s;
+  }
+
   // XML formattato per la lettura (il file resta com'è).
   let xmlFormattato = $state(true);
   const righeXml = $derived<Riga[] | null>(dettaglio && scheda === "xml" && xmlFormattato ? formatta(dettaglio.xml) : null);
@@ -251,7 +273,7 @@
       <button class="btn btn-xs btn-link" title="Salva l'XML estratto" onclick={salvaXml}>
         <Icona nome="it-file-xml" />
       </button>
-      <button class="btn btn-xs btn-link" title="Mostra il file nella cartella" onclick={() => revealItemInDir(voce.file)}>
+      <button class="btn btn-xs btn-link" title="Mostra il file nella cartella" onclick={() => revealItemInDir(voce.file.split("!/")[0])}>
         <Icona nome="it-folder" />
       </button>
     </div>
@@ -260,11 +282,11 @@
   {#if dettaglio && (dettaglio.firmato || allegati.length > 0)}
     <div class="info">
       {#if dettaglio.firmato}
-        <span class="chip-ri firmato" title="Busta CAdES (.p7m): contenuto estratto. La verifica della firma non è ancora disponibile.">
-          <Icona nome="it-file-signed" dimensione="xs" />
-          Firmato digitalmente{dettaglio.livelli_firma > 1 ? ` (${dettaglio.livelli_firma} buste)` : ""} · {dettaglio.certificati}
-          {dettaglio.certificati === 1 ? "certificato" : "certificati"}
-        </span>
+        <button class="chip-ri firma-{esitoFirme}" onclick={() => (firmeAperte = !firmeAperte)} aria-expanded={firmeAperte}
+          title="Mostra i dettagli della firma">
+          <Icona nome={esitoFirme === "non_valida" ? "it-warning-circle" : "it-file-signed"} dimensione="xs" />
+          {etichettaFirme}
+        </button>
       {/if}
       {#each allegati as a, i (i)}
         <span class="chip-ri allegato">
@@ -275,6 +297,34 @@
           <button class="btn btn-link p-0" title="Salva" onclick={() => salvaAllegato(i)}><Icona nome="it-download" dimensione="xs" /></button>
         </span>
       {/each}
+    </div>
+  {/if}
+
+  {#if dettaglio && firmeAperte && dettaglio.firme.length > 0}
+    <div class="pannello-firme">
+      {#each dettaglio.firme as f, i (i)}
+        <div class="firma-voce firma-{f.esito}">
+          <div class="d-flex justify-content-between gap-3">
+            <strong>{f.nome || "Firmatario sconosciuto"}</strong>
+            <span class="esito">{f.esito === "valida" ? "Firma valida" : f.esito === "non_valida" ? "Firma NON valida" : "Non verificabile"}</span>
+          </div>
+          <div>{f.dettaglio}</div>
+          <dl>
+            {#if f.codice_fiscale}<dt>Codice fiscale</dt><dd class="selezionabile">{f.codice_fiscale}</dd>{/if}
+            {#if f.organizzazione}<dt>Organizzazione</dt><dd>{f.organizzazione}</dd>{/if}
+            {#if f.data_firma}<dt>Firmato il</dt><dd>{dataOra(f.data_firma)} (UTC)</dd>{/if}
+            {#if f.emittente}<dt>Certificatore</dt><dd>{f.emittente}</dd>{/if}
+            {#if f.valido_dal}<dt>Certificato valido</dt><dd>dal {dataOra(f.valido_dal)} al {dataOra(f.valido_al)}
+              {#if !f.certificato_in_corso_di_validita}<span class="text-danger"> · non valido alla data della firma</span>{/if}</dd>{/if}
+            {#if f.algoritmo}<dt>Algoritmo</dt><dd>{f.algoritmo}</dd>{/if}
+            {#if dettaglio.livelli_firma > 1}<dt>Busta</dt><dd>{f.livello} di {dettaglio.livelli_firma}</dd>{/if}
+          </dl>
+        </div>
+      {/each}
+      <p class="nota">
+        La verifica controlla l'integrità del documento e la corrispondenza con il certificato del firmatario. Non
+        controlla ancora l'accreditamento del certificatore né la revoca del certificato.
+      </p>
     </div>
   {/if}
 
@@ -379,12 +429,83 @@
     padding: 0.15rem 0.6rem;
     background: var(--ri-pannello);
   }
-  .chip-ri.firmato {
+  button.chip-ri {
+    cursor: pointer;
+    font-weight: 600;
+  }
+  .chip-ri.firma-valida {
     color: var(--ri-successo);
     border-color: color-mix(in srgb, var(--ri-successo) 40%, transparent);
   }
-  .chip-ri.firmato :global(.icon) {
+  .chip-ri.firma-valida :global(.icon) {
     fill: var(--ri-successo);
+  }
+  .chip-ri.firma-non_valida {
+    color: var(--ri-errore);
+    border-color: var(--ri-errore);
+    background: color-mix(in srgb, var(--ri-errore) 8%, var(--ri-pannello));
+  }
+  .chip-ri.firma-non_valida :global(.icon) {
+    fill: var(--ri-errore);
+  }
+  .chip-ri.firma-non_verificabile {
+    color: var(--ri-avviso);
+  }
+  .chip-ri.firma-non_verificabile :global(.icon) {
+    fill: var(--ri-avviso);
+  }
+  .pannello-firme {
+    padding: 0.75rem;
+    border-bottom: 1px solid var(--ri-bordo);
+    background: var(--ri-sfondo);
+    font-size: 0.88rem;
+    max-height: 40%;
+    overflow: auto;
+  }
+  .firma-voce {
+    background: var(--ri-pannello);
+    border: 1px solid var(--ri-bordo);
+    border-left: 4px solid var(--ri-avviso);
+    border-radius: 6px;
+    padding: 0.6rem 0.8rem;
+    margin-bottom: 0.5rem;
+  }
+  .firma-voce.firma-valida {
+    border-left-color: var(--ri-successo);
+  }
+  .firma-voce.firma-non_valida {
+    border-left-color: var(--ri-errore);
+  }
+  .firma-valida .esito {
+    color: var(--ri-successo);
+    font-weight: 700;
+  }
+  .firma-non_valida .esito {
+    color: var(--ri-errore);
+    font-weight: 700;
+  }
+  .firma-non_verificabile .esito {
+    color: var(--ri-avviso);
+    font-weight: 700;
+  }
+  .firma-voce dl {
+    font-size: 0.85rem;
+    display: grid;
+    grid-template-columns: max-content 1fr;
+    gap: 0.1rem 0.75rem;
+    margin: 0.4rem 0 0;
+  }
+  .firma-voce dt {
+    font-weight: 400;
+    color: var(--ri-testo-2);
+  }
+  .firma-voce dd {
+    margin: 0;
+  }
+  .nota {
+    margin: 0;
+    font-size: 0.8rem;
+    color: var(--ri-testo-2);
   }
   .chip-ri .nome {
     max-width: 260px;

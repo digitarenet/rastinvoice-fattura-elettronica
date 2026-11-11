@@ -6,7 +6,7 @@
 // tutti i core disponibili.
 
 use rayon::prelude::*;
-use rustinvoice_core::{apri_file, codici, Contenuto};
+use rustinvoice_core::{apri_byte, apri_file, codici, contenitori, Contenuto, Documento};
 use serde::Serialize;
 use std::path::{Path, PathBuf};
 
@@ -42,6 +42,8 @@ pub struct Voce {
     pub divisa: String,
     pub prima_scadenza: String,
     pub firmato: bool,
+    /// Nome del file .zip o .eml da cui proviene il documento (vuoto se è un file singolo).
+    pub contenitore: String,
     pub allegati: usize,
     pub avvisi: usize,
     /// Testo normalizzato su cui eseguire la ricerca libera.
@@ -78,7 +80,7 @@ fn e_candidato(p: &Path) -> bool {
         .file_name()
         .map(|n| n.to_string_lossy().to_lowercase())
         .unwrap_or_default();
-    nome.ends_with(".xml") || nome.ends_with(".p7m")
+    contenitori::e_documento(&nome) || contenitori::tipo_contenitore(&nome).is_some()
 }
 
 /// Elenca i file candidati partendo da file e cartelle (ricorsivamente).
@@ -116,13 +118,33 @@ enum Letto {
     Scartato(FileScartato),
 }
 
-fn leggi(percorso: &Path) -> Letto {
+/// Legge un file: un documento singolo oppure tutti quelli di un contenitore.
+fn leggi(percorso: &Path) -> Vec<Letto> {
     let file = percorso.to_string_lossy().to_string();
     let nome_file = percorso
         .file_name()
         .map(|n| n.to_string_lossy().to_string())
         .unwrap_or_default();
-    let doc = match apri_file(percorso) {
+    let Some(tipo) = contenitori::tipo_contenitore(&nome_file) else {
+        return vec![leggi_documento(file, nome_file, apri_file(percorso))];
+    };
+    let interni = std::fs::read(percorso)
+        .map_err(|e| e.to_string())
+        .and_then(|b| contenitori::espandi(tipo, &b));
+    match interni {
+        Ok(interni) => interni
+            .into_iter()
+            .map(|i| {
+                let virtuale = format!("{file}{}{}", contenitori::SEPARATORE, i.percorso);
+                leggi_documento(virtuale, i.nome, apri_byte(&i.byte))
+            })
+            .collect(),
+        Err(motivo) => vec![Letto::Scartato(FileScartato { file, motivo })],
+    }
+}
+
+fn leggi_documento(file: String, nome_file: String, letto: rustinvoice_core::Risultato<Documento>) -> Letto {
+    let doc = match letto {
         Ok(d) => d,
         Err(e) => {
             return Letto::Scartato(FileScartato {
@@ -132,6 +154,21 @@ fn leggi(percorso: &Path) -> Letto {
         }
     };
     let firmato = doc.firmato();
+    // Documento dentro uno zip o un'email: nome del contenitore e catena dei livelli.
+    let (disco, interni) = contenitori::dividi(&file);
+    let (contenitore, catena) = if interni.is_empty() {
+        (String::new(), String::new())
+    } else {
+        let nome_disco = Path::new(disco)
+            .file_name()
+            .map(|n| n.to_string_lossy().to_string())
+            .unwrap_or_default();
+        let catena = std::iter::once(nome_disco.as_str())
+            .chain(interni.iter().copied())
+            .collect::<Vec<_>>()
+            .join(" ");
+        (nome_disco, catena)
+    };
     match doc.contenuto {
         Contenuto::MessaggioSdi(m) => Letto::Messaggio(VoceMessaggio {
             file,
@@ -167,6 +204,7 @@ fn leggi(percorso: &Path) -> Letto {
                         cessionario.nome.clone(),
                         cessionario.chiave.clone(),
                         nome_file.clone(),
+                        catena.clone(),
                         d.causale.join(" "),
                     ];
                     for l in &c.linee {
@@ -211,6 +249,7 @@ fn leggi(percorso: &Path) -> Letto {
                             .map(|x| x.to_string())
                             .unwrap_or_default(),
                         firmato,
+                        contenitore: contenitore.clone(),
                         allegati: c.allegati.len(),
                         avvisi: f.avvisi.len(),
                         testo: normalizza(&testo.join(" ")),
@@ -225,7 +264,7 @@ fn leggi(percorso: &Path) -> Letto {
 /// Legge in parallelo tutti i file indicati (o contenuti nelle cartelle).
 pub fn scansiona(percorsi: &[String]) -> Esito {
     let file = elenca(percorsi);
-    let letti: Vec<Letto> = file.par_iter().map(|p| leggi(p)).collect();
+    let letti: Vec<Letto> = file.par_iter().flat_map(|p| leggi(p)).collect();
     let mut esito = Esito::default();
     for l in letti {
         match l {

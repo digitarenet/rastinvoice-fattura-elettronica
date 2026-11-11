@@ -150,13 +150,13 @@
   async function apriFile() {
     const scelta = await open({
       multiple: true,
-      filters: [{ name: "Fatture elettroniche", extensions: ["xml", "p7m", "XML", "P7M"] }],
+      filters: [{ name: "Fatture elettroniche, archivi zip, email", extensions: ["xml", "p7m", "zip", "eml", "XML", "P7M", "ZIP", "EML"] }],
     });
     if (!scelta) return;
     gestisciRilascio(Array.isArray(scelta) ? scelta : [scelta]);
   }
 
-  const eFattura = (p: string) => /\.(xml|p7m)$/i.test(p);
+  const eFattura = (p: string) => /\.(xml|p7m|zip|eml)$/i.test(p);
 
   function gestisciRilascio(percorsi: string[]) {
     if (!imp || percorsi.length === 0) return;
@@ -392,7 +392,7 @@
                 <h1 class="h3">Benvenuto in RustinVoice</h1>
                 <p class="lead">Il visualizzatore di fatture elettroniche che funziona senza installazione e senza connessione.</p>
                 <ol>
-                  <li><strong>Scegli una cartella</strong> che contiene fatture .xml o .p7m: verrà letta con tutte le sottocartelle.</li>
+                  <li><strong>Scegli una cartella</strong> che contiene fatture .xml o .p7m, anche dentro archivi .zip o email PEC .eml: verrà letta con tutte le sottocartelle.</li>
                   <li><strong>Oppure trascina i file</strong> direttamente in questa finestra: potrai copiarli nell'archivio dell'app o lasciarli dove sono.</li>
                   <li><strong>Indica la tua partita IVA</strong> nelle impostazioni per separare le fatture ricevute da quelle emesse.</li>
                 </ol>
@@ -471,6 +471,7 @@
                           <span class="segni">
                             {#if contrassegnate.has(v.id)}<Icona nome="it-star-full" dimensione="xs" classe="stella" titolo="Contrassegnata" />{/if}
                             {#if v.firmato}<Icona nome="it-file-signed" dimensione="xs" titolo="Firmata (.p7m)" />{/if}
+                            {#if v.contenitore}<Icona nome={/\.eml$/i.test(v.contenitore) ? "it-mail" : "it-box"} dimensione="xs" titolo="Contenuta in {v.contenitore}" />{/if}
                             {#if v.allegati > 0}<Icona nome="it-clip" dimensione="xs" titolo="{v.allegati} allegati" />{/if}
                             {#if v.avvisi > 0}<Icona nome="it-warning-circle" dimensione="xs" classe="anomalia" titolo="{v.avvisi} anomalie di lettura" />{/if}
                             {#if v.prima_scadenza}<small class="scadenza">scade {data(v.prima_scadenza)}</small>{/if}
@@ -579,7 +580,7 @@
     <div class="rilascio">
       <div>
         <Icona nome="it-upload" dimensione="lg" />
-        <p class="h4 mt-3">Rilascia qui fatture .xml, .p7m o cartelle</p>
+        <p class="h4 mt-3">Rilascia qui fatture .xml, .p7m, archivi .zip, email .eml o cartelle</p>
       </div>
     </div>
   {/if}

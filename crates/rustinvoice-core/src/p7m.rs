@@ -13,7 +13,7 @@
 // - file .p7m codificati in base64 (con o senza intestazioni PEM);
 // - buste annidate (file firmato più volte, es. `.xml.p7m.p7m`).
 //
-// La verifica crittografica della firma è un passo separato e successivo.
+// La verifica crittografica della firma è nel modulo `firma`.
 
 use crate::errore::{Errore, Risultato};
 
@@ -112,8 +112,41 @@ fn da_base64(byte: &[u8]) -> Option<Vec<u8>> {
     }
 }
 
+/// Un livello di busta: contenuto firmato, certificati e firmatari (in DER).
+pub(crate) struct Livello {
+    pub contenuto: Vec<u8>,
+    pub certificati: Vec<Vec<u8>>,
+    pub firmatari: Vec<Vec<u8>>,
+}
+
+/// Apre tutte le buste annidate, dalla più esterna alla più interna.
+pub(crate) fn livelli(byte: &[u8]) -> Risultato<Vec<Livello>> {
+    let iniziale = if byte.first() == Some(&0x30) {
+        byte.to_vec()
+    } else {
+        da_base64(byte).ok_or_else(|| Errore::P7mNonValido("il file non è né DER né base64 valido".to_owned()))?
+    };
+    let mut out = vec![apri_livello(&iniziale)?];
+    while out.len() < MAX_ANNIDAMENTO {
+        let ultimo = &out[out.len() - 1].contenuto;
+        if ultimo.first() != Some(&0x30) {
+            break;
+        }
+        match apri_livello(ultimo) {
+            Ok(l) => out.push(l),
+            Err(_) => break,
+        }
+    }
+    Ok(out)
+}
+
 /// Apre un singolo livello `ContentInfo` → `SignedData`.
 fn apri_signed_data(byte: &[u8]) -> Risultato<(Vec<u8>, Vec<Vec<u8>>)> {
+    let l = apri_livello(byte)?;
+    Ok((l.contenuto, l.certificati))
+}
+
+fn apri_livello(byte: &[u8]) -> Risultato<Livello> {
     let errore = |m: &str| Errore::P7mNonValido(m.to_owned());
 
     // ContentInfo ::= SEQUENCE { contentType OID, content [0] EXPLICIT ANY }
@@ -169,25 +202,37 @@ fn apri_signed_data(byte: &[u8]) -> Risultato<(Vec<u8>, Vec<Vec<u8>>)> {
     let mut contenuto = Vec::new();
     raccogli_ottetti(byte, &ottetti, &mut contenuto, 0)
         .ok_or_else(|| errore("OCTET STRING del contenuto malformato"))?;
-    Ok((contenuto, certificati))
+
+    // signerInfos è l'ultimo campo di SignedData (un SET).
+    let mut firmatari = Vec::new();
+    if let Some(insieme) = campi.last().filter(|t| t.tag == 0x31) {
+        for f in figli_tlv(byte, insieme).unwrap_or_default() {
+            firmatari.push(byte[f.inizio..f.fine].to_vec());
+        }
+    }
+    Ok(Livello {
+        contenuto,
+        certificati,
+        firmatari,
+    })
 }
 
 /// Un elemento TLV letto dal buffer.
 #[derive(Debug, Clone, Copy)]
-struct Tlv {
+pub(crate) struct Tlv {
     /// Primo byte dell'identificatore (classe + costruito + numero breve).
-    tag: u8,
+    pub tag: u8,
     /// Posizione del primo byte dell'elemento.
-    inizio: usize,
-    inizio_contenuto: usize,
+    pub inizio: usize,
+    pub inizio_contenuto: usize,
     /// Fine del contenuto (esclusi gli ottetti di fine 00 00).
-    fine_contenuto: usize,
+    pub fine_contenuto: usize,
     /// Posizione successiva all'elemento.
-    fine: usize,
+    pub fine: usize,
 }
 
 impl Tlv {
-    fn costruito(&self) -> bool {
+    pub fn costruito(&self) -> bool {
         self.tag & 0x20 != 0
     }
     fn e_sequenza(&self) -> bool {
@@ -196,7 +241,7 @@ impl Tlv {
 }
 
 /// Legge un elemento BER a partire da `pos`.
-fn leggi_tlv(buf: &[u8], pos: usize, profondita: usize) -> Option<Tlv> {
+pub(crate) fn leggi_tlv(buf: &[u8], pos: usize, profondita: usize) -> Option<Tlv> {
     if profondita > MAX_PROFONDITA {
         return None;
     }
@@ -264,7 +309,7 @@ fn leggi_tlv(buf: &[u8], pos: usize, profondita: usize) -> Option<Tlv> {
 }
 
 /// Elenca i figli di un elemento costruito.
-fn figli_tlv(buf: &[u8], padre: &Tlv) -> Option<Vec<Tlv>> {
+pub(crate) fn figli_tlv(buf: &[u8], padre: &Tlv) -> Option<Vec<Tlv>> {
     if !padre.costruito() {
         return None;
     }
@@ -279,7 +324,7 @@ fn figli_tlv(buf: &[u8], padre: &Tlv) -> Option<Vec<Tlv>> {
 }
 
 /// Concatena il contenuto di un OCTET STRING, anche se spezzato in parti.
-fn raccogli_ottetti(buf: &[u8], t: &Tlv, uscita: &mut Vec<u8>, profondita: usize) -> Option<()> {
+pub(crate) fn raccogli_ottetti(buf: &[u8], t: &Tlv, uscita: &mut Vec<u8>, profondita: usize) -> Option<()> {
     if profondita > MAX_PROFONDITA {
         return None;
     }

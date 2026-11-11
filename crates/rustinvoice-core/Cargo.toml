@@ -14,10 +14,16 @@ repository.workspace = true
 roxmltree.workspace = true
 encoding_rs.workspace = true
 rust_decimal.workspace = true
-chrono.workspace = true
+chrono = { workspace = true, features = ["clock"] }
 serde.workspace = true
 thiserror.workspace = true
 base64.workspace = true
+zip.workspace = true
+rsa.workspace = true
+sha1.workspace = true
+sha2.workspace = true
+p256.workspace = true
+p384.workspace = true
 
 [dev-dependencies]
 serde_json.workspace = true

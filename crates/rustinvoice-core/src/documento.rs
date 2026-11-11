@@ -190,7 +190,8 @@ pub fn apri_byte(byte: &[u8]) -> Risultato<Documento> {
 
 /// Apre un documento da file.
 pub fn apri_file(percorso: impl AsRef<Path>) -> Risultato<Documento> {
-    let byte = std::fs::read(percorso)?;
+    // Il percorso può indicare un documento dentro uno zip o un'email.
+    let byte = crate::contenitori::leggi(percorso)?;
     apri_byte(&byte)
 }
 

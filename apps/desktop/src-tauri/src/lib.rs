@@ -66,13 +66,21 @@ struct Dettaglio {
     firmato: bool,
     livelli_firma: usize,
     certificati: usize,
+    /// Esito della verifica di ciascuna firma.
+    firme: Vec<rustinvoice_core::firma::Firmatario>,
 }
 
 #[tauri::command]
 async fn dettaglio(file: String, corpo: usize) -> Result<Dettaglio, String> {
     tauri::async_runtime::spawn_blocking(move || {
-        let doc = apri_file(&file).map_err(|e| e.to_string())?;
+        let grezzo = rustinvoice_core::contenitori::leggi(&file).map_err(|e| e.to_string())?;
+        let doc = rustinvoice_core::apri_byte(&grezzo).map_err(|e| e.to_string())?;
         let firmato = doc.firmato();
+        let firme = if firmato {
+            rustinvoice_core::firma::verifica(&grezzo)
+        } else {
+            Vec::new()
+        };
         let (livelli_firma, certificati) = doc
             .busta
             .as_ref()
@@ -93,6 +101,7 @@ async fn dettaglio(file: String, corpo: usize) -> Result<Dettaglio, String> {
             firmato,
             livelli_firma,
             certificati,
+            firme,
         })
     })
     .await

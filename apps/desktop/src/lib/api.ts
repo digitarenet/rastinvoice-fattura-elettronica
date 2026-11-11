@@ -29,6 +29,7 @@ export interface Voce {
   divisa: string;
   prima_scadenza: string;
   firmato: boolean;
+  contenitore: string;
   allegati: number;
   avvisi: number;
   testo: string;
@@ -85,6 +86,21 @@ export interface Fattura {
   avvisi: string[];
 }
 
+export interface Firmatario {
+  livello: number;
+  esito: "valida" | "non_valida" | "non_verificabile";
+  dettaglio: string;
+  nome: string;
+  codice_fiscale: string;
+  organizzazione: string;
+  emittente: string;
+  valido_dal: string;
+  valido_al: string;
+  data_firma: string;
+  certificato_in_corso_di_validita: boolean;
+  algoritmo: string;
+}
+
 export interface Dettaglio {
   html: string;
   xml: string;
@@ -92,6 +108,7 @@ export interface Dettaglio {
   firmato: boolean;
   livelli_firma: number;
   certificati: number;
+  firme: Firmatario[];
 }
 
 export interface StatoFoglio {
