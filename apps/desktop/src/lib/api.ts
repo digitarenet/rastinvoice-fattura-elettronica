@@ -32,6 +32,7 @@ export interface Voce {
   contenitore: string;
   allegati: number;
   avvisi: number;
+  controlli: number;
   testo: string;
 }
 
@@ -51,6 +52,7 @@ export interface Esito {
   voci: Voce[];
   messaggi: VoceMessaggio[];
   scartati: FileScartato[];
+  non_raggiungibili: string[];
 }
 
 export interface Impostazioni {
@@ -101,6 +103,13 @@ export interface Firmatario {
   algoritmo: string;
 }
 
+export interface Controllo {
+  gravita: "errore" | "avviso";
+  codice: string | null;
+  messaggio: string;
+  corpo: number | null;
+}
+
 export interface Dettaglio {
   html: string;
   xml: string;
@@ -109,6 +118,7 @@ export interface Dettaglio {
   livelli_firma: number;
   certificati: number;
   firme: Firmatario[];
+  controlli: Controllo[];
 }
 
 export interface StatoFoglio {
@@ -129,7 +139,10 @@ export const api = {
   salvaAllegato: (file: string, corpo: number, indice: number, destinazione: string) =>
     invoke<void>("salva_allegato", { file, corpo, indice, destinazione }),
   apriAllegato: (file: string, corpo: number, indice: number) =>
-    invoke<string>("apri_allegato", { file, corpo, indice }),
+    invoke<void>("apri_allegato", { file, corpo, indice }),
+  apriCartella: (percorso: string) => invoke<void>("apri_cartella", { percorso }),
+  mostraNellaCartella: (file: string) => invoke<void>("mostra_nella_cartella", { file }),
+  apriSito: () => invoke<void>("apri_sito"),
   copiaInArchivio: (percorsi: string[]) =>
     invoke<string[]>("copia_in_archivio", { percorsi }),
   cartellaArchivio: () => invoke<string>("cartella_archivio"),

@@ -31,3 +31,10 @@ chrono = { workspace = true, features = ["clock"] }
 rayon = "1.10"
 ureq = "3"
 zip.workspace = true
+
+[features]
+# Predefinita: l'interfaccia compilata (cartella dist) è inclusa nell'eseguibile,
+# così `cargo run` e il pulsante Run dell'IDE funzionano senza server di sviluppo.
+# `npm run app:dev` la disattiva per usare il server Vite con ricarica automatica.
+default = ["interfaccia-inclusa"]
+interfaccia-inclusa = ["tauri/custom-protocol"]

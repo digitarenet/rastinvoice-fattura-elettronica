@@ -78,7 +78,11 @@ pub fn elementi(tipo: TipoContenitore, byte: &[u8]) -> Result<Vec<(String, Vec<u
         .map(|(nome, b)| {
             let n = visti.entry(nome.to_lowercase()).or_insert(0);
             *n += 1;
-            let nome = if *n == 1 { nome } else { aggiungi_suffisso(&nome, *n) };
+            let nome = if *n == 1 {
+                nome
+            } else {
+                aggiungi_suffisso(&nome, *n)
+            };
             (nome, b)
         })
         .collect())
@@ -119,7 +123,11 @@ fn espandi_in(
             // Un contenitore interno rovinato non blocca gli altri documenti.
             let _ = espandi_in(t, &b, &percorso, profondita + 1, out);
         } else if e_documento(&nome) {
-            out.push(Interno { percorso, nome, byte: b });
+            out.push(Interno {
+                percorso,
+                nome,
+                byte: b,
+            });
         }
     }
     Ok(())
@@ -140,14 +148,23 @@ pub fn leggi(percorso: impl AsRef<Path>) -> std::io::Result<Vec<u8>> {
     let mut nome_corrente = file.to_owned();
     for nome in interni {
         let tipo = tipo_contenitore(&nome_corrente).ok_or_else(|| {
-            std::io::Error::new(std::io::ErrorKind::InvalidInput, format!("{nome_corrente} non è un contenitore"))
+            std::io::Error::new(
+                std::io::ErrorKind::InvalidInput,
+                format!("{nome_corrente} non è un contenitore"),
+            )
         })?;
-        let elementi = elementi(tipo, &byte).map_err(|e| std::io::Error::new(std::io::ErrorKind::InvalidData, e))?;
+        let elementi = elementi(tipo, &byte)
+            .map_err(|e| std::io::Error::new(std::io::ErrorKind::InvalidData, e))?;
         byte = elementi
             .into_iter()
             .find(|(n, _)| n == nome)
             .map(|(_, b)| b)
-            .ok_or_else(|| std::io::Error::new(std::io::ErrorKind::NotFound, format!("{nome} non trovato in {nome_corrente}")))?;
+            .ok_or_else(|| {
+                std::io::Error::new(
+                    std::io::ErrorKind::NotFound,
+                    format!("{nome} non trovato in {nome_corrente}"),
+                )
+            })?;
         nome_corrente = nome.to_owned();
     }
     Ok(byte)
@@ -159,11 +176,14 @@ pub fn leggi(percorso: impl AsRef<Path>) -> std::io::Result<Vec<u8>> {
 
 fn elementi_zip(byte: &[u8]) -> Result<Vec<(String, Vec<u8>)>, String> {
     use std::io::Read;
-    let mut archivio = zip::ZipArchive::new(std::io::Cursor::new(byte)).map_err(|e| format!("archivio zip non valido: {e}"))?;
+    let mut archivio = zip::ZipArchive::new(std::io::Cursor::new(byte))
+        .map_err(|e| format!("archivio zip non valido: {e}"))?;
     let mut out = Vec::new();
     let mut totale = 0u64;
     for i in 0..archivio.len() {
-        let Ok(mut voce) = archivio.by_index(i) else { continue };
+        let Ok(mut voce) = archivio.by_index(i) else {
+            continue;
+        };
         if voce.is_dir() {
             continue;
         }
@@ -177,7 +197,12 @@ fn elementi_zip(byte: &[u8]) -> Result<Vec<(String, Vec<u8>)>, String> {
             continue;
         }
         let mut b = Vec::with_capacity(voce.size() as usize);
-        if (&mut voce).take(MASSIMO_ELEMENTO + 1).read_to_end(&mut b).is_err() || b.len() as u64 > MASSIMO_ELEMENTO {
+        if (&mut voce)
+            .take(MASSIMO_ELEMENTO + 1)
+            .read_to_end(&mut b)
+            .is_err()
+            || b.len() as u64 > MASSIMO_ELEMENTO
+        {
             continue;
         }
         totale += b.len() as u64;
@@ -226,7 +251,10 @@ fn analizza_parte(byte: &[u8]) -> Parte<'_> {
             intestazioni.push((n.trim().to_owned(), v.trim().to_owned()));
         }
     }
-    Parte { intestazioni, corpo }
+    Parte {
+        intestazioni,
+        corpo,
+    }
 }
 
 fn trova(dove: &[u8], cosa: &[u8]) -> Option<usize> {
@@ -240,7 +268,10 @@ fn parametri(valore: &str) -> (String, Vec<(String, String)>) {
     let mut out = Vec::new();
     for p in pezzi {
         if let Some((n, v)) = p.split_once('=') {
-            out.push((n.trim().to_lowercase(), v.trim().trim_matches('"').to_owned()));
+            out.push((
+                n.trim().to_lowercase(),
+                v.trim().trim_matches('"').to_owned(),
+            ));
         }
     }
     (principale, out)
@@ -267,17 +298,28 @@ fn dividi_parametri(s: &str) -> Vec<String> {
 
 /// Nome del file di una parte, da Content-Disposition o Content-Type.
 fn nome_allegato(parte: &Parte<'_>) -> Option<String> {
-    for (intestazione, chiave) in [("Content-Disposition", "filename"), ("Content-Type", "name")] {
-        let Some(v) = parte.intestazione(intestazione) else { continue };
+    for (intestazione, chiave) in [
+        ("Content-Disposition", "filename"),
+        ("Content-Type", "name"),
+    ] {
+        let Some(v) = parte.intestazione(intestazione) else {
+            continue;
+        };
         let (_, par) = parametri(v);
         // Forma RFC 2231 (filename*=utf-8''nome%20file.xml), anche spezzata in più parti.
-        let estesi: Vec<&(String, String)> = par.iter().filter(|(n, _)| n.starts_with(&format!("{chiave}*"))).collect();
+        let estesi: Vec<&(String, String)> = par
+            .iter()
+            .filter(|(n, _)| n.starts_with(&format!("{chiave}*")))
+            .collect();
         if !estesi.is_empty() {
             let mut unito = String::new();
             for (_, v) in &estesi {
                 unito.push_str(v);
             }
-            let valore = unito.split_once("''").map(|(_, r)| r.to_owned()).unwrap_or(unito);
+            let valore = unito
+                .split_once("''")
+                .map(|(_, r)| r.to_owned())
+                .unwrap_or(unito);
             return Some(pulisci_nome(&decodifica_percentuale(&valore)));
         }
         if let Some((_, v)) = par.iter().find(|(n, _)| n == chiave) {
@@ -289,7 +331,11 @@ fn nome_allegato(parte: &Parte<'_>) -> Option<String> {
 
 /// Toglie eventuali percorsi dal nome (un allegato non deve poter "uscire").
 fn pulisci_nome(n: &str) -> String {
-    n.rsplit(['/', '\\']).next().unwrap_or_default().trim().to_owned()
+    n.rsplit(['/', '\\'])
+        .next()
+        .unwrap_or_default()
+        .trim()
+        .to_owned()
 }
 
 fn decodifica_percentuale(s: &str) -> String {
@@ -322,10 +368,14 @@ fn decodifica_parole(s: &str) -> String {
         if pezzi.len() < 3 {
             break;
         }
-        let Some(fine_testo) = pezzi[2].find("?=") else { break };
+        let Some(fine_testo) = pezzi[2].find("?=") else {
+            break;
+        };
         let (charset, codifica, testo) = (pezzi[0], pezzi[1], &pezzi[2][..fine_testo]);
         let byte = match codifica.to_ascii_uppercase().as_str() {
-            "B" => base64::engine::general_purpose::STANDARD.decode(testo.trim()).unwrap_or_default(),
+            "B" => base64::engine::general_purpose::STANDARD
+                .decode(testo.trim())
+                .unwrap_or_default(),
             "Q" => decodifica_qp(testo.replace('_', " ").as_bytes()),
             _ => testo.as_bytes().to_vec(),
         };
@@ -385,10 +435,18 @@ fn decodifica_corpo(parte: &Parte<'_>) -> Vec<u8> {
         .to_lowercase();
     match codifica.as_str() {
         "base64" => {
-            let pulito: Vec<u8> = parte.corpo.iter().copied().filter(|c| !c.is_ascii_whitespace()).collect();
+            let pulito: Vec<u8> = parte
+                .corpo
+                .iter()
+                .copied()
+                .filter(|c| !c.is_ascii_whitespace())
+                .collect();
             base64::engine::general_purpose::STANDARD
                 .decode(&pulito)
-                .or_else(|_| base64::engine::general_purpose::STANDARD_NO_PAD.decode(pulito.strip_suffix(b"=").unwrap_or(&pulito)))
+                .or_else(|_| {
+                    base64::engine::general_purpose::STANDARD_NO_PAD
+                        .decode(pulito.strip_suffix(b"=").unwrap_or(&pulito))
+                })
                 .unwrap_or_default()
         }
         "quoted-printable" => decodifica_qp(parte.corpo),
@@ -405,7 +463,9 @@ fn allegati_email(byte: &[u8], profondita: usize, out: &mut Vec<(String, Vec<u8>
     let (tipo, par) = parametri(parte.intestazione("Content-Type").unwrap_or("text/plain"));
 
     if tipo.starts_with("multipart/") {
-        let Some((_, confine)) = par.iter().find(|(n, _)| n == "boundary") else { return };
+        let Some((_, confine)) = par.iter().find(|(n, _)| n == "boundary") else {
+            return;
+        };
         for sotto in dividi_multipart(parte.corpo, confine) {
             allegati_email(sotto, profondita + 1, out);
         }
@@ -485,8 +545,16 @@ mod test {
     #[test]
     fn pec_con_fattura_annidata() {
         let trovati = espandi(TipoContenitore::Email, &email_pec()).unwrap();
-        assert_eq!(trovati.len(), 1, "{:?}", trovati.iter().map(|t| &t.percorso).collect::<Vec<_>>());
-        assert_eq!(trovati[0].percorso, "postacert.eml!/IT01234567890_00001.xml");
+        assert_eq!(
+            trovati.len(),
+            1,
+            "{:?}",
+            trovati.iter().map(|t| &t.percorso).collect::<Vec<_>>()
+        );
+        assert_eq!(
+            trovati[0].percorso,
+            "postacert.eml!/IT01234567890_00001.xml"
+        );
         assert_eq!(trovati[0].byte, FATTURA.as_bytes());
     }
 
@@ -497,7 +565,8 @@ mod test {
         {
             let mut z = zip::ZipWriter::new(&mut buf);
             let opz = zip::write::SimpleFileOptions::default();
-            z.start_file("cartella/IT01234567890_00002.xml", opz).unwrap();
+            z.start_file("cartella/IT01234567890_00002.xml", opz)
+                .unwrap();
             z.write_all(FATTURA.as_bytes()).unwrap();
             z.start_file("pec.eml", opz).unwrap();
             z.write_all(&email_pec()).unwrap();
@@ -508,21 +577,36 @@ mod test {
         let dati = buf.into_inner();
         let trovati = espandi(TipoContenitore::Zip, &dati).unwrap();
         let percorsi: Vec<_> = trovati.iter().map(|t| t.percorso.as_str()).collect();
-        assert_eq!(percorsi, ["IT01234567890_00002.xml", "pec.eml!/postacert.eml!/IT01234567890_00001.xml"]);
+        assert_eq!(
+            percorsi,
+            [
+                "IT01234567890_00002.xml",
+                "pec.eml!/postacert.eml!/IT01234567890_00001.xml"
+            ]
+        );
 
         let dir = std::env::temp_dir().join(format!("ri_test_{}", std::process::id()));
         std::fs::create_dir_all(&dir).unwrap();
         let file = dir.join("archivio.zip");
         std::fs::write(&file, &dati).unwrap();
-        let virtuale = format!("{}!/pec.eml!/postacert.eml!/IT01234567890_00001.xml", file.display());
+        let virtuale = format!(
+            "{}!/pec.eml!/postacert.eml!/IT01234567890_00001.xml",
+            file.display()
+        );
         assert_eq!(leggi(&virtuale).unwrap(), FATTURA.as_bytes());
         let _ = std::fs::remove_dir_all(dir);
     }
 
     #[test]
     fn nomi_codificati_e_duplicati() {
-        assert_eq!(decodifica_parole("=?iso-8859-1?Q?fattura_n=B0_1.xml?="), "fattura n° 1.xml");
-        assert_eq!(decodifica_parole("=?UTF-8?B?Y2lhbw==?= =?UTF-8?B?IG1vbmRv?="), "ciao mondo");
+        assert_eq!(
+            decodifica_parole("=?iso-8859-1?Q?fattura_n=B0_1.xml?="),
+            "fattura n° 1.xml"
+        );
+        assert_eq!(
+            decodifica_parole("=?UTF-8?B?Y2lhbw==?= =?UTF-8?B?IG1vbmRv?="),
+            "ciao mondo"
+        );
         assert_eq!(aggiungi_suffisso("IT0_1.xml.p7m", 2), "IT0_1 (2).xml.p7m");
         assert_eq!(pulisci_nome("..\\..\\x.xml"), "x.xml");
     }

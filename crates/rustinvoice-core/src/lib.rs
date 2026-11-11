@@ -9,6 +9,7 @@
 
 pub mod codici;
 pub mod contenitori;
+pub mod controlli;
 pub mod documento;
 pub mod errore;
 pub mod firma;

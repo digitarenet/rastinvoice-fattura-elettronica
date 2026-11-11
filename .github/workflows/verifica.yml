@@ -1,0 +1,42 @@
+# Copyright (c) 2026 Andrea Re - info@digitare.net
+# Verifica automatica a ogni push e pull request: formattazione, analisi
+# statica e test del nucleo, controllo dei tipi dell'interfaccia.
+name: Verifica
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  rust:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: clippy, rustfmt
+      - name: Formattazione
+        run: cargo fmt --all --check
+      - name: Analisi statica
+        run: cargo clippy -p rustinvoice-core -p rustinvoice-render -p rustinvoice-cli --all-targets -- -D warnings
+      - name: Test
+        run: cargo test -p rustinvoice-core -p rustinvoice-render -p rustinvoice-cli
+
+  interfaccia:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: apps/desktop
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: apps/desktop/package-lock.json
+      - run: npm ci
+      - run: npm run check
+      - run: npm run build

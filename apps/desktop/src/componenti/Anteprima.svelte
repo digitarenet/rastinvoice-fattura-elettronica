@@ -8,7 +8,6 @@
 <script lang="ts">
   import { untrack } from "svelte";
   import { save } from "@tauri-apps/plugin-dialog";
-  import { openPath, revealItemInDir } from "@tauri-apps/plugin-opener";
   import { api, type Dettaglio, type Voce } from "../lib/api";
   import * as xslt from "../lib/xslt";
   import { formatta, type Riga } from "../lib/xmlformato";
@@ -159,6 +158,10 @@
     e.preventDefault();
   }
 
+  // Controlli formali e di calcolo.
+  let controlliAperti = $state(false);
+  const erroriControlli = $derived((dettaglio?.controlli ?? []).filter((c) => c.gravita === "errore").length);
+
   // Riepilogo della verifica delle firme.
   let firmeAperte = $state(false);
   const esitoFirme = $derived.by(() => {
@@ -216,8 +219,7 @@
 
   async function apriAllegato(i: number) {
     try {
-      const p = await api.apriAllegato(voce.file, voce.corpo, i);
-      await openPath(p);
+      await api.apriAllegato(voce.file, voce.corpo, i);
     } catch (e) {
       onErrore(String(e));
     }
@@ -273,19 +275,28 @@
       <button class="btn btn-xs btn-link" title="Salva l'XML estratto" onclick={salvaXml}>
         <Icona nome="it-file-xml" />
       </button>
-      <button class="btn btn-xs btn-link" title="Mostra il file nella cartella" onclick={() => revealItemInDir(voce.file.split("!/")[0])}>
+      <button class="btn btn-xs btn-link" title="Mostra il file nella cartella" onclick={() => api.mostraNellaCartella(voce.file).catch((e) => onErrore(String(e)))}>
         <Icona nome="it-folder" />
       </button>
     </div>
   </div>
 
-  {#if dettaglio && (dettaglio.firmato || allegati.length > 0)}
+  {#if dettaglio && (dettaglio.firmato || allegati.length > 0 || dettaglio.controlli.length > 0)}
     <div class="info">
       {#if dettaglio.firmato}
         <button class="chip-ri firma-{esitoFirme}" onclick={() => (firmeAperte = !firmeAperte)} aria-expanded={firmeAperte}
           title="Mostra i dettagli della firma">
           <Icona nome={esitoFirme === "non_valida" ? "it-warning-circle" : "it-file-signed"} dimensione="xs" />
           {etichettaFirme}
+        </button>
+      {/if}
+      {#if dettaglio.controlli.length > 0}
+        <button class="chip-ri controlli-{erroriControlli > 0 ? 'errore' : 'avviso'}" onclick={() => (controlliAperti = !controlliAperti)}
+          aria-expanded={controlliAperti} title="Mostra i controlli">
+          <Icona nome={erroriControlli > 0 ? "it-error" : "it-warning-circle"} dimensione="xs" />
+          {erroriControlli > 0
+            ? `${erroriControlli} ${erroriControlli === 1 ? "controllo non superato" : "controlli non superati"}`
+            : `${dettaglio.controlli.length} ${dettaglio.controlli.length === 1 ? "avviso" : "avvisi"}`}
         </button>
       {/if}
       {#each allegati as a, i (i)}
@@ -297,6 +308,23 @@
           <button class="btn btn-link p-0" title="Salva" onclick={() => salvaAllegato(i)}><Icona nome="it-download" dimensione="xs" /></button>
         </span>
       {/each}
+    </div>
+  {/if}
+
+  {#if dettaglio && controlliAperti && dettaglio.controlli.length > 0}
+    <div class="pannello-firme">
+      <ul class="elenco-controlli">
+        {#each dettaglio.controlli as c, i (i)}
+          <li class="controllo-{c.gravita}">
+            <Icona nome={c.gravita === "errore" ? "it-error" : "it-warning-circle"} dimensione="xs" />
+            <span>{c.messaggio}{#if c.codice}<small class="codice"> · codice SdI {c.codice}</small>{/if}</span>
+          </li>
+        {/each}
+      </ul>
+      <p class="nota">
+        Controlli formali e di calcolo basati sulle specifiche pubbliche del Sistema di Interscambio: aiutano a individuare
+        le anomalie più comuni, ma non sostituiscono i controlli dello SdI.
+      </p>
     </div>
   {/if}
 
@@ -453,6 +481,47 @@
   }
   .chip-ri.firma-non_verificabile :global(.icon) {
     fill: var(--ri-avviso);
+  }
+  .chip-ri.controlli-errore {
+    color: var(--ri-errore);
+    border-color: var(--ri-errore);
+  }
+  .chip-ri.controlli-errore :global(.icon) {
+    fill: var(--ri-errore);
+  }
+  .chip-ri.controlli-avviso {
+    color: var(--ri-avviso);
+  }
+  .chip-ri.controlli-avviso :global(.icon) {
+    fill: var(--ri-avviso);
+  }
+  .elenco-controlli {
+    list-style: none;
+    margin: 0 0 0.5rem;
+    padding: 0;
+  }
+  .elenco-controlli li {
+    display: flex;
+    gap: 0.5rem;
+    align-items: flex-start;
+    background: var(--ri-pannello);
+    border: 1px solid var(--ri-bordo);
+    border-radius: 6px;
+    padding: 0.4rem 0.6rem;
+    margin-bottom: 0.35rem;
+  }
+  .elenco-controlli :global(.icon) {
+    flex: none;
+    margin-top: 0.2rem;
+  }
+  .controllo-errore :global(.icon) {
+    fill: var(--ri-errore);
+  }
+  .controllo-avviso :global(.icon) {
+    fill: var(--ri-avviso);
+  }
+  .codice {
+    color: var(--ri-testo-2);
   }
   .pannello-firme {
     padding: 0.75rem;

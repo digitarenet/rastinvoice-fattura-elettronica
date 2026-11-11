@@ -124,7 +124,9 @@ pub(crate) fn livelli(byte: &[u8]) -> Risultato<Vec<Livello>> {
     let iniziale = if byte.first() == Some(&0x30) {
         byte.to_vec()
     } else {
-        da_base64(byte).ok_or_else(|| Errore::P7mNonValido("il file non è né DER né base64 valido".to_owned()))?
+        da_base64(byte).ok_or_else(|| {
+            Errore::P7mNonValido("il file non è né DER né base64 valido".to_owned())
+        })?
     };
     let mut out = vec![apri_livello(&iniziale)?];
     while out.len() < MAX_ANNIDAMENTO {
@@ -324,7 +326,12 @@ pub(crate) fn figli_tlv(buf: &[u8], padre: &Tlv) -> Option<Vec<Tlv>> {
 }
 
 /// Concatena il contenuto di un OCTET STRING, anche se spezzato in parti.
-pub(crate) fn raccogli_ottetti(buf: &[u8], t: &Tlv, uscita: &mut Vec<u8>, profondita: usize) -> Option<()> {
+pub(crate) fn raccogli_ottetti(
+    buf: &[u8],
+    t: &Tlv,
+    uscita: &mut Vec<u8>,
+    profondita: usize,
+) -> Option<()> {
     if profondita > MAX_PROFONDITA {
         return None;
     }

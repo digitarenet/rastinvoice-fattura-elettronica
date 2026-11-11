@@ -1,0 +1,14 @@
+# Copyright (c) 2026 Andrea Re - info@digitare.net
+# Fine riga normalizzata nel repository (LF), convertita da git in locale.
+* text=auto eol=lf
+*.bat text eol=crlf
+*.cmd text eol=crlf
+*.ps1 text eol=crlf
+
+# File binari: nessuna conversione.
+*.png binary
+*.ico binary
+*.icns binary
+*.p7m binary
+*.zip binary
+*.woff2 binary

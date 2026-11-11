@@ -24,12 +24,13 @@
   import Anteprima from "./componenti/Anteprima.svelte";
   import Rubrica from "./componenti/Rubrica.svelte";
   import Impostazioni from "./componenti/Impostazioni.svelte";
+  import Credits from "./componenti/Credits.svelte";
 
-  type Vista = "documenti" | "rubrica" | "messaggi" | "impostazioni";
+  type Vista = "documenti" | "rubrica" | "messaggi" | "impostazioni" | "credits";
 
   let info = $state<Avvio | null>(null);
   let imp = $state<Imp | null>(null);
-  let esito = $state<Esito>({ voci: [], messaggi: [], scartati: [] });
+  let esito = $state<Esito>({ voci: [], messaggi: [], scartati: [], non_raggiungibili: [] });
   let foglio = $state<StatoFoglio | null>(null);
   let scansione = $state(false);
   let vista = $state<Vista>("documenti");
@@ -67,7 +68,7 @@
     emesse: esito.voci.filter((v) => direzione(v, propri) === "emessa").length,
     da_leggere: esito.voci.filter((v) => !lette.has(v.id)).length,
     contrassegnate: esito.voci.filter((v) => contrassegnate.has(v.id)).length,
-    anomalie: esito.voci.filter((v) => v.avvisi > 0).length,
+    anomalie: esito.voci.filter((v) => v.avvisi > 0 || v.controlli > 0).length,
   });
   const totaleVisibili = $derived(
     visibili.reduce((s, v) => s + (v.nota_credito ? -1 : 1) * Math.abs(Number(v.totale) || 0), 0),
@@ -374,6 +375,11 @@
               <Icona nome="it-settings" /> <span>Impostazioni</span>
             </button>
           </li>
+          <li>
+            <button class:attivo={vista === "credits"} onclick={() => (vista = "credits")}>
+              <Icona nome="it-info-circle" /> <span>Credits</span>
+            </button>
+          </li>
         </ul>
 
         {#if propri.size === 0 && suggerito}
@@ -442,6 +448,17 @@
                   {/if}
                 </div>
 
+                {#if esito.non_raggiungibili.length > 0}
+                  <div class="irraggiungibili" role="status">
+                    <Icona nome="it-warning-circle" />
+                    <span>
+                      {esito.non_raggiungibili.length === 1 ? "Cartella non raggiungibile" : "Cartelle non raggiungibili"}:
+                      <strong class="selezionabile">{esito.non_raggiungibili.join(", ")}</strong>.
+                      Sono mostrati i documenti letti l'ultima volta.
+                    </span>
+                    <button class="btn btn-link btn-xs p-0" onclick={scansiona}>Riprova</button>
+                  </div>
+                {/if}
                 <ul class="voci ri-scroll" bind:this={elencoEl}>
                   {#each visibili as v (v.id)}
                     {@const altro = controparte(v, propri)}
@@ -473,6 +490,7 @@
                             {#if v.firmato}<Icona nome="it-file-signed" dimensione="xs" titolo="Firmata (.p7m)" />{/if}
                             {#if v.contenitore}<Icona nome={/\.eml$/i.test(v.contenitore) ? "it-mail" : "it-box"} dimensione="xs" titolo="Contenuta in {v.contenitore}" />{/if}
                             {#if v.allegati > 0}<Icona nome="it-clip" dimensione="xs" titolo="{v.allegati} allegati" />{/if}
+                            {#if v.controlli > 0}<Icona nome="it-error" dimensione="xs" classe="errore-controllo" titolo="{v.controlli} controlli non superati" />{/if}
                             {#if v.avvisi > 0}<Icona nome="it-warning-circle" dimensione="xs" classe="anomalia" titolo="{v.avvisi} anomalie di lettura" />{/if}
                             {#if v.prima_scadenza}<small class="scadenza">scade {data(v.prima_scadenza)}</small>{/if}
                           </span>
@@ -571,6 +589,8 @@
             onFoglio={(s) => (foglio = s)}
             onAggiungiCartella={aggiungiCartella}
           />
+        {:else if vista === "credits"}
+          <Credits versione={info?.versione ?? ""} onErrore={(m) => mostra(m, "errore")} />
         {/if}
       </main>
     </div>
@@ -868,6 +888,24 @@
   .pannello-filtri label:last-child {
     grid-column: span 2;
   }
+  .irraggiungibili {
+    display: flex;
+    gap: 0.5rem;
+    align-items: flex-start;
+    padding: 0.5rem 0.75rem;
+    background: #fdf3e1;
+    color: #5c3a00;
+    font-size: 0.82rem;
+    line-height: 1.35;
+    border-bottom: 1px solid var(--ri-bordo);
+  }
+  .irraggiungibili :global(.icon) {
+    fill: var(--ri-avviso);
+    flex: none;
+  }
+  .irraggiungibili strong {
+    word-break: break-all;
+  }
   .voci {
     list-style: none;
     margin: 0;
@@ -987,6 +1025,9 @@
   }
   .segni :global(.icon.stella) {
     fill: #e8a400;
+  }
+  .segni :global(.icon.errore-controllo) {
+    fill: var(--ri-errore);
   }
   .segni :global(.icon.anomalia) {
     fill: var(--ri-avviso);

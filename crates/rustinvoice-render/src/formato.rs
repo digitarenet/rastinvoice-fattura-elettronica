@@ -24,7 +24,8 @@ pub fn esc(s: &str) -> String {
 
 /// Data nel formato gg/mm/aaaa, oppure stringa vuota.
 pub fn data(d: Option<NaiveDate>) -> String {
-    d.map(|x| x.format("%d/%m/%Y").to_string()).unwrap_or_default()
+    d.map(|x| x.format("%d/%m/%Y").to_string())
+        .unwrap_or_default()
 }
 
 /// Raggruppa le migliaia con il punto e usa la virgola per i decimali.
@@ -45,7 +46,11 @@ fn all_italiana(valore: Decimal, decimali_min: u32) -> String {
         }
         gruppi.push(c);
     }
-    let segno = if valore.is_sign_negative() && !valore.is_zero() { "-" } else { "" };
+    let segno = if valore.is_sign_negative() && !valore.is_zero() {
+        "-"
+    } else {
+        ""
+    };
     match frazione {
         Some(f) => format!("{segno}{gruppi},{f}"),
         None => format!("{segno}{gruppi}"),
@@ -54,7 +59,8 @@ fn all_italiana(valore: Decimal, decimali_min: u32) -> String {
 
 /// Importo con almeno due decimali (es. `1.234,50`); `-` se assente.
 pub fn importo(v: Option<Decimal>) -> String {
-    v.map(|x| all_italiana(x, 2)).unwrap_or_else(|| "-".to_owned())
+    v.map(|x| all_italiana(x, 2))
+        .unwrap_or_else(|| "-".to_owned())
 }
 
 /// Numero senza zeri superflui (quantità, riferimenti numerici).
@@ -64,7 +70,8 @@ pub fn numero(v: Option<Decimal>) -> String {
 
 /// Percentuale (es. `22%`, `4,5%`).
 pub fn percentuale(v: Option<Decimal>) -> String {
-    v.map(|x| format!("{}%", all_italiana(x, 0))).unwrap_or_default()
+    v.map(|x| format!("{}%", all_italiana(x, 0)))
+        .unwrap_or_default()
 }
 
 /// IBAN a gruppi di quattro caratteri, per una lettura più agevole.
@@ -101,6 +108,9 @@ mod test {
     #[test]
     fn varie() {
         assert_eq!(esc("<a&\"b\">"), "&lt;a&amp;&quot;b&quot;&gt;");
-        assert_eq!(iban("IT60X0542811101000000123456"), "IT60 X054 2811 1010 0000 0123 456");
+        assert_eq!(
+            iban("IT60X0542811101000000123456"),
+            "IT60 X054 2811 1010 0000 0123 456"
+        );
     }
 }

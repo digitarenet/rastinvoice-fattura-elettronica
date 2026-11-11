@@ -41,15 +41,22 @@ fn avvio(stato: tauri::State<'_, Stato>) -> Avvio {
 }
 
 #[tauri::command]
-fn salva_impostazioni(stato: tauri::State<'_, Stato>, impostazioni: Impostazioni) -> Result<(), String> {
+fn salva_impostazioni(
+    stato: tauri::State<'_, Stato>,
+    impostazioni: Impostazioni,
+) -> Result<(), String> {
     impostazioni::salva(&stato.dir_dati, &impostazioni).map_err(|e| e.to_string())?;
     *stato.impostazioni.lock().unwrap() = impostazioni;
     Ok(())
 }
 
 #[tauri::command]
-async fn scansiona(percorsi: Vec<String>) -> Result<archivio::Esito, String> {
-    tauri::async_runtime::spawn_blocking(move || archivio::scansiona(&percorsi))
+async fn scansiona(
+    stato: tauri::State<'_, Stato>,
+    percorsi: Vec<String>,
+) -> Result<archivio::Esito, String> {
+    let dir = stato.dir_dati.clone();
+    tauri::async_runtime::spawn_blocking(move || archivio::scansiona(&percorsi, &dir))
         .await
         .map_err(|e| e.to_string())
 }
@@ -68,6 +75,8 @@ struct Dettaglio {
     certificati: usize,
     /// Esito della verifica di ciascuna firma.
     firme: Vec<rustinvoice_core::firma::Firmatario>,
+    /// Controlli formali e di calcolo sul documento selezionato.
+    controlli: Vec<rustinvoice_core::controlli::Controllo>,
 }
 
 #[tauri::command]
@@ -89,6 +98,7 @@ async fn dettaglio(file: String, corpo: usize) -> Result<Dettaglio, String> {
         let Contenuto::Fattura(f) = doc.contenuto else {
             return Err("il file non contiene una fattura".to_owned());
         };
+        let controlli = rustinvoice_core::controlli::controlla_documento(&f, corpo);
         // Per i lotti la vista Moderna mostra solo il documento selezionato.
         let mut singolo = (*f).clone();
         if corpo < singolo.corpi.len() && singolo.corpi.len() > 1 {
@@ -102,6 +112,7 @@ async fn dettaglio(file: String, corpo: usize) -> Result<Dettaglio, String> {
             livelli_firma,
             certificati,
             firme,
+            controlli,
         })
     })
     .await
@@ -116,7 +127,10 @@ fn allegato(file: &str, corpo: usize, indice: usize) -> Result<(String, Vec<u8>)
         .get(corpo)
         .and_then(|c| c.allegati.get(indice))
         .ok_or("allegato inesistente")?;
-    let mut nome = a.nome.clone().unwrap_or_else(|| format!("allegato_{}", indice + 1));
+    let mut nome = a
+        .nome
+        .clone()
+        .unwrap_or_else(|| format!("allegato_{}", indice + 1));
     // Aggiunge l'estensione dichiarata se il nome ne è privo.
     if Path::new(&nome).extension().is_none() {
         if let Some(fmt) = &a.formato {
@@ -129,7 +143,12 @@ fn allegato(file: &str, corpo: usize, indice: usize) -> Result<(String, Vec<u8>)
 }
 
 #[tauri::command]
-fn salva_allegato(file: String, corpo: usize, indice: usize, destinazione: String) -> Result<(), String> {
+fn salva_allegato(
+    file: String,
+    corpo: usize,
+    indice: usize,
+    destinazione: String,
+) -> Result<(), String> {
     let (_, dati) = allegato(&file, corpo, indice)?;
     std::fs::write(destinazione, dati).map_err(|e| e.to_string())
 }
@@ -141,19 +160,70 @@ fn nome_allegato(file: String, corpo: usize, indice: usize) -> Result<String, St
 
 /// Scrive l'allegato in una cartella temporanea e ne restituisce il percorso,
 /// così l'interfaccia può aprirlo con il programma predefinito.
+/// Estensioni degli allegati che si possono aprire direttamente: documenti,
+/// immagini e testo. Gli altri (eseguibili, script, collegamenti...) si
+/// possono solo salvare, perché il nome e il contenuto li sceglie il mittente.
+const ALLEGATI_APRIBILI: &[&str] = &[
+    "pdf", "txt", "csv", "xml", "png", "jpg", "jpeg", "gif", "bmp", "tif", "tiff", "webp", "odt",
+    "ods", "doc", "docx", "xls", "xlsx", "rtf", "p7m", "zip",
+];
+
 #[tauri::command]
-fn apri_allegato(file: String, corpo: usize, indice: usize) -> Result<String, String> {
+fn apri_allegato(file: String, corpo: usize, indice: usize) -> Result<(), String> {
     let (nome, dati) = allegato(&file, corpo, indice)?;
+    let estensione = Path::new(&nome)
+        .extension()
+        .map(|e| e.to_string_lossy().to_lowercase())
+        .unwrap_or_default();
+    if !ALLEGATI_APRIBILI.contains(&estensione.as_str()) {
+        return Err(format!(
+            "Per sicurezza i file .{estensione} non si aprono direttamente: usa \"Salva\" e controllalo prima di aprirlo."
+        ));
+    }
     let dir = std::env::temp_dir().join("rustinvoice-allegati");
     std::fs::create_dir_all(&dir).map_err(|e| e.to_string())?;
     let p = dir.join(nome);
     std::fs::write(&p, dati).map_err(|e| e.to_string())?;
-    Ok(p.to_string_lossy().to_string())
+    tauri_plugin_opener::open_path(&p, None::<&str>).map_err(|e| e.to_string())
+}
+
+/// Apre in Esplora risorse una delle cartelle configurate o la cartella dati.
+#[tauri::command]
+fn apri_cartella(stato: tauri::State<'_, Stato>, percorso: String) -> Result<(), String> {
+    let consentita = {
+        let imp = stato.impostazioni.lock().unwrap();
+        imp.cartelle.iter().any(|c| c == &percorso)
+    } || Path::new(&percorso) == stato.dir_dati;
+    if !consentita || !Path::new(&percorso).is_dir() {
+        return Err("cartella non disponibile".into());
+    }
+    tauri_plugin_opener::open_path(&percorso, None::<&str>).map_err(|e| e.to_string())
+}
+
+/// Mostra un documento nella sua cartella (per i documenti dentro zip o email,
+/// il file contenitore).
+#[tauri::command]
+fn mostra_nella_cartella(file: String) -> Result<(), String> {
+    let (disco, _) = rustinvoice_core::contenitori::dividi(&file);
+    tauri_plugin_opener::reveal_item_in_dir(disco).map_err(|e| e.to_string())
+}
+
+/// Apre il sito dell'autore nel browser predefinito (indirizzo fisso).
+#[tauri::command]
+fn apri_sito() -> Result<(), String> {
+    tauri_plugin_opener::open_url(
+        "https://www.digitare.net/?s=fatture&utm_source=rustinvoice&utm_medium=desktop&utm_campaign=credits",
+        None::<&str>,
+    )
+    .map_err(|e| e.to_string())
 }
 
 /// Copia i file indicati nella cartella "archivio" dei dati dell'applicazione.
 #[tauri::command]
-fn copia_in_archivio(stato: tauri::State<'_, Stato>, percorsi: Vec<String>) -> Result<Vec<String>, String> {
+fn copia_in_archivio(
+    stato: tauri::State<'_, Stato>,
+    percorsi: Vec<String>,
+) -> Result<Vec<String>, String> {
     let dest = stato.dir_dati.join("archivio");
     std::fs::create_dir_all(&dest).map_err(|e| e.to_string())?;
     let mut copiati = Vec::new();
@@ -179,7 +249,11 @@ fn copia_in_archivio(stato: tauri::State<'_, Stato>, percorsi: Vec<String>) -> R
 
 #[tauri::command]
 fn cartella_archivio(stato: tauri::State<'_, Stato>) -> String {
-    stato.dir_dati.join("archivio").to_string_lossy().to_string()
+    stato
+        .dir_dati
+        .join("archivio")
+        .to_string_lossy()
+        .to_string()
 }
 
 #[tauri::command]
@@ -188,7 +262,9 @@ fn foglio_stile_stato(stato: tauri::State<'_, Stato>) -> foglio_stile::Stato {
 }
 
 #[tauri::command]
-async fn foglio_stile_aggiorna(stato: tauri::State<'_, Stato>) -> Result<foglio_stile::Stato, String> {
+async fn foglio_stile_aggiorna(
+    stato: tauri::State<'_, Stato>,
+) -> Result<foglio_stile::Stato, String> {
     let dir = stato.dir_dati.clone();
     tauri::async_runtime::spawn_blocking(move || foglio_stile::aggiorna(&dir))
         .await
@@ -196,7 +272,10 @@ async fn foglio_stile_aggiorna(stato: tauri::State<'_, Stato>) -> Result<foglio_
 }
 
 #[tauri::command]
-fn foglio_stile_importa(stato: tauri::State<'_, Stato>, sorgente: String) -> Result<foglio_stile::Stato, String> {
+fn foglio_stile_importa(
+    stato: tauri::State<'_, Stato>,
+    sorgente: String,
+) -> Result<foglio_stile::Stato, String> {
     foglio_stile::importa(&stato.dir_dati, Path::new(&sorgente))
 }
 
@@ -240,6 +319,9 @@ pub fn avvia() {
             salva_allegato,
             nome_allegato,
             apri_allegato,
+            apri_cartella,
+            mostra_nella_cartella,
+            apri_sito,
             copia_in_archivio,
             cartella_archivio,
             foglio_stile_stato,

@@ -14,6 +14,8 @@ export default defineConfig({
     port: 1420,
     strictPort: true,
     watch: { ignored: ["**/src-tauri/**"] },
+    // Il registro delle modifiche è nella radice del repository.
+    fs: { allow: ["..", "../../CHANGELOG.md"] },
   },
   build: {
     target: ["es2021", "chrome105", "safari15"],

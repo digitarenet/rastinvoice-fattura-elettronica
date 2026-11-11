@@ -14,7 +14,8 @@ use std::io::Read;
 use std::path::{Path, PathBuf};
 
 /// Indirizzo ufficiale dell'archivio con il foglio di stile.
-pub const URL_STANDARD: &str = "https://assosoftware.it/allegati/assoinvoice/FoglioStileAssoSoftware.zip";
+pub const URL_STANDARD: &str =
+    "https://assosoftware.it/allegati/assoinvoice/FoglioStileAssoSoftware.zip";
 
 const NOME_LOCALE: &str = "foglio_stile_standard.xsl";
 
@@ -38,7 +39,11 @@ pub fn stato(dir: &Path) -> Stato {
     let p = percorso(dir);
     let aggiornato_il = std::fs::metadata(&p)
         .and_then(|m| m.modified())
-        .map(|t| chrono::DateTime::<chrono::Local>::from(t).format("%Y-%m-%d").to_string())
+        .map(|t| {
+            chrono::DateTime::<chrono::Local>::from(t)
+                .format("%Y-%m-%d")
+                .to_string()
+        })
         .unwrap_or_default();
     Stato {
         presente: p.is_file(),

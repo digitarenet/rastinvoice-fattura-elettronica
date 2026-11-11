@@ -18,9 +18,13 @@ Fase 2 in corso: applicazione desktop con interfaccia grafica, costruita sul nuc
 | Riconoscimento ricevute e notifiche SdI | fatto |
 | Tabelle codici (specifiche 1.9.1) | fatto |
 | Riga di comando (`info`, `json`, `scansiona`) | fatto |
-| Validazione XSD e controlli SdI | da fare |
-| Verifica crittografica della firma | da fare |
-| Email PEC `.eml`, Outlook `.msg`, archivi `.zip` | da fare |
+| Controlli di validità con codici errore SdI (calcoli, partite IVA, codici fiscali, IBAN) | fatto |
+| Validazione XSD completa | da fare |
+| Verifica crittografica della firma (integrità e firmatario) | fatto |
+| Verifica della catena di certificazione e revoca | da fare |
+| Email PEC `.eml` e archivi `.zip` | fatto |
+| Outlook `.msg` | da fare |
+| Indice locale per avvii rapidi, cartelle di rete e NAS | fatto |
 | Applicazione desktop (Windows, Linux, macOS) | prima versione |
 | Vista "Moderna" e foglio di stile ufficiale AssoSoftware (scaricabile) | fatto |
 | Ricerca a testo libero, filtri per sezione, anno, date, contatto | fatto |
@@ -61,12 +65,19 @@ Servono anche [Node.js](https://nodejs.org) 20 o successivo e i prerequisiti di 
 su Linux i pacchetti di sviluppo di WebKitGTK 4.1.
 
 ```sh
+cargo run -p rustinvoice-desktop                    # avvio (anche dal pulsante Run dell'IDE)
+cargo build --release -p rustinvoice-desktop        # eseguibile in target/release
+
 cd apps/desktop
-npm install
-npx tauri dev                 # avvio in sviluppo con ricarica automatica
-npx tauri build --no-bundle   # eseguibile singolo in target/release
-npx tauri build               # anche installer/pacchetti (NSIS, AppImage, DMG)
+npm run app:dev     # sviluppo con ricarica automatica dell'interfaccia
+npm run app:build   # eseguibile singolo in target/release
+npx tauri build     # anche installer/pacchetti (NSIS, AppImage, DMG)
 ```
+
+Con `cargo build` e `cargo run` l'interfaccia viene ricompilata automaticamente (con `npm`) quando i suoi
+sorgenti sono più recenti dell'ultima compilazione. Per disattivare questo passaggio impostare la variabile
+d'ambiente `RUSTINVOICE_SENZA_NPM=1`. In RustRover sono già pronte le configurazioni di avvio
+"RustinVoice desktop", "Crea EXE" e "Test".
 
 L'eseguibile `target/release/rustinvoice-desktop` non richiede installazione. Per la **modalità portable**
 basta creare una cartella `dati` accanto all'eseguibile: impostazioni e archivio verranno salvati lì,
@@ -87,6 +98,11 @@ rustinvoice json IT01234567890_0A1B2.xml
 # elenco CSV di tutti i documenti di una cartella e delle sottocartelle
 rustinvoice scansiona ./Fatture > elenco.csv
 ```
+
+## Versioni
+
+Le modifiche di ogni versione sono descritte nel [registro delle modifiche](CHANGELOG.md), consultabile
+anche dalla voce **Credits** dell'applicazione.
 
 ## Riferimenti normativi
 
@@ -111,6 +127,7 @@ Si ringraziano gli autori delle librerie open source su cui si basa il progetto.
 | [rayon](https://github.com/rayon-rs/rayon) | Niko Matsakis, Josh Stone | MIT / Apache-2.0 |
 | [ureq](https://github.com/algesten/ureq) | Martin Algesten | MIT / Apache-2.0 |
 | [zip](https://github.com/zip-rs/zip2) | Mathijs van de Nes, Marli Frost, Ryan Levick, Chris Hennick | MIT |
+| [rsa](https://github.com/RustCrypto/RSA), [sha1, sha2](https://github.com/RustCrypto/hashes), [p256, p384](https://github.com/RustCrypto/elliptic-curves) | RustCrypto Developers | MIT / Apache-2.0 |
 | [Svelte](https://svelte.dev) | Rich Harris e contributori | MIT |
 | [Vite](https://vite.dev) | Evan You e contributori | MIT |
 | [TypeScript](https://www.typescriptlang.org) | Microsoft | Apache-2.0 |
@@ -121,6 +138,10 @@ Si ringraziano gli autori delle librerie open source su cui si basa il progetto.
 L'interfaccia segue il [design system di Designers Italia](https://designers.italia.it/design-system/).
 
 L'elenco completo delle dipendenze, incluse quelle indirette, si ottiene con `cargo tree` e `npm ls`.
+
+## Segnalazioni di sicurezza
+
+Vedere [SECURITY.md](SECURITY.md).
 
 ## Licenza
 

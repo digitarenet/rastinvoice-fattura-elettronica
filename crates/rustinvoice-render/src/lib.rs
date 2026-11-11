@@ -43,7 +43,13 @@ pub fn html_moderna(f: &FatturaElettronica) -> String {
     h
 }
 
-fn documento(h: &mut String, f: &FatturaElettronica, c: &Corpo, indice: usize, totale_corpi: usize) {
+fn documento(
+    h: &mut String,
+    f: &FatturaElettronica,
+    c: &Corpo,
+    indice: usize,
+    totale_corpi: usize,
+) {
     let d = &c.dati_generali.documento;
     let tipo = d.tipo_documento.as_deref().unwrap_or("");
     let descr_tipo = codici::tipo_documento(tipo).unwrap_or("Documento");
@@ -78,7 +84,12 @@ fn documento(h: &mut String, f: &FatturaElettronica, c: &Corpo, indice: usize, t
     let int = &f.intestazione;
     h.push_str("<section class=\"parti\">");
     soggetto(h, "Cedente / prestatore", &int.cedente_prestatore, true);
-    soggetto(h, "Cessionario / committente", &int.cessionario_committente, false);
+    soggetto(
+        h,
+        "Cessionario / committente",
+        &int.cessionario_committente,
+        false,
+    );
     h.push_str("</section>");
     if let Some(r) = &int.rappresentante_fiscale {
         h.push_str("<section class=\"parti\">");
@@ -130,7 +141,11 @@ fn documento(h: &mut String, f: &FatturaElettronica, c: &Corpo, indice: usize, t
     h.push_str(&format!(
         "Formato {} · Trasmittente {} · Progressivo {}",
         esc(f.versione.as_deref().unwrap_or("-")),
-        esc(&t.id_trasmittente.as_ref().map(|i| i.compatto()).unwrap_or_default()),
+        esc(&t
+            .id_trasmittente
+            .as_ref()
+            .map(|i| i.compatto())
+            .unwrap_or_default()),
         esc(t.progressivo_invio.as_deref().unwrap_or("-"))
     ));
     if let Some(cd) = &t.codice_destinatario {
@@ -299,7 +314,9 @@ fn righe(h: &mut String, c: &Corpo) {
         return;
     }
     h.push_str("<section class=\"blocco\"><table class=\"righe\"><thead><tr>");
-    h.push_str("<th class=\"desc\">Descrizione</th><th class=\"n\">Q.tà</th><th class=\"n\">Prezzo</th>");
+    h.push_str(
+        "<th class=\"desc\">Descrizione</th><th class=\"n\">Q.tà</th><th class=\"n\">Prezzo</th>",
+    );
     h.push_str("<th class=\"n\">Sconti</th><th class=\"n\">Importo</th><th class=\"n\">IVA</th></tr></thead><tbody>");
     for l in &c.linee {
         h.push_str("<tr><td class=\"desc\">");
@@ -310,7 +327,10 @@ fn righe(h: &mut String, c: &Corpo) {
             .map(esc)
             .collect();
         if !codici_art.is_empty() {
-            h.push_str(&format!("<span class=\"codice\">{}</span> ", codici_art.join(" / ")));
+            h.push_str(&format!(
+                "<span class=\"codice\">{}</span> ",
+                codici_art.join(" / ")
+            ));
         }
         h.push_str(&esc(l.descrizione.as_deref().unwrap_or("")));
         if l.data_inizio_periodo.is_some() || l.data_fine_periodo.is_some() {
@@ -347,12 +367,19 @@ fn righe(h: &mut String, c: &Corpo) {
             _ => String::new(),
         };
         h.push_str(&format!("<td class=\"n\">{qta}</td>"));
-        h.push_str(&format!("<td class=\"n\">{}</td>", importo_facoltativo(l.prezzo_unitario)));
+        h.push_str(&format!(
+            "<td class=\"n\">{}</td>",
+            importo_facoltativo(l.prezzo_unitario)
+        ));
         let sconti: Vec<String> = l
             .sconti_maggiorazioni
             .iter()
             .map(|s| {
-                let segno = if s.tipo.as_deref() == Some("MG") { "+" } else { "-" };
+                let segno = if s.tipo.as_deref() == Some("MG") {
+                    "+"
+                } else {
+                    "-"
+                };
                 match (s.percentuale, s.importo) {
                     (Some(p), _) => format!("{segno}{}", percentuale(Some(p))),
                     (None, Some(i)) => format!("{segno}{}", importo(Some(i))),
@@ -361,15 +388,25 @@ fn righe(h: &mut String, c: &Corpo) {
             })
             .collect();
         h.push_str(&format!("<td class=\"n\">{}</td>", sconti.join(" ")));
-        h.push_str(&format!("<td class=\"n\">{}</td>", importo_facoltativo(l.prezzo_totale)));
-        h.push_str(&format!("<td class=\"n\">{}</td></tr>", iva(l.aliquota_iva, l.natura.as_deref())));
+        h.push_str(&format!(
+            "<td class=\"n\">{}</td>",
+            importo_facoltativo(l.prezzo_totale)
+        ));
+        h.push_str(&format!(
+            "<td class=\"n\">{}</td></tr>",
+            iva(l.aliquota_iva, l.natura.as_deref())
+        ));
     }
     h.push_str("</tbody></table></section>");
 }
 
 fn iva(aliquota: Option<Decimal>, natura: Option<&str>) -> String {
     match natura {
-        Some(n) => format!("<abbr title=\"{}\">{}</abbr>", esc(codici::natura(n).unwrap_or("codice non previsto")), esc(n)),
+        Some(n) => format!(
+            "<abbr title=\"{}\">{}</abbr>",
+            esc(codici::natura(n).unwrap_or("codice non previsto")),
+            esc(n)
+        ),
         None => percentuale(aliquota),
     }
 }
@@ -436,12 +473,20 @@ fn altri_importi(h: &mut String, d: &DatiGeneraliDocumento) {
     }
     if let Some(b) = &d.bollo {
         voci.push((
-            if b.virtuale { "Bollo virtuale".to_owned() } else { "Bollo".to_owned() },
+            if b.virtuale {
+                "Bollo virtuale".to_owned()
+            } else {
+                "Bollo".to_owned()
+            },
             importo_facoltativo(b.importo),
         ));
     }
     for s in &d.sconti_maggiorazioni {
-        let nome = if s.tipo.as_deref() == Some("MG") { "Maggiorazione" } else { "Sconto" };
+        let nome = if s.tipo.as_deref() == Some("MG") {
+            "Maggiorazione"
+        } else {
+            "Sconto"
+        };
         let valore = match (s.percentuale, s.importo) {
             (Some(p), _) => percentuale(Some(p)),
             (None, Some(i)) => importo(Some(i)),
@@ -453,7 +498,10 @@ fn altri_importi(h: &mut String, d: &DatiGeneraliDocumento) {
         voci.push(("Arrotondamento".to_owned(), importo(Some(a))));
     }
     if d.art73 {
-        voci.push(("Emesso ai sensi dell'art. 73 DPR 633/72".to_owned(), String::new()));
+        voci.push((
+            "Emesso ai sensi dell'art. 73 DPR 633/72".to_owned(),
+            String::new(),
+        ));
     }
     if voci.is_empty() {
         return;
@@ -493,7 +541,10 @@ fn pagamenti(h: &mut String, c: &Corpo) {
             coord.push(format!("Beneficiario {}", esc(b)));
         }
         if let Some(iban) = &d.iban {
-            coord.push(format!("<span class=\"iban\">{}</span>", esc(&formato::iban(iban))));
+            coord.push(format!(
+                "<span class=\"iban\">{}</span>",
+                esc(&formato::iban(iban))
+            ));
         }
         if let Some(ist) = &d.istituto_finanziario {
             coord.push(esc(ist));

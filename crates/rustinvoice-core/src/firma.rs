@@ -53,7 +53,9 @@ pub struct Firmatario {
 
 /// Verifica tutte le firme di una busta .p7m.
 pub fn verifica(byte: &[u8]) -> Vec<Firmatario> {
-    let Ok(livelli) = livelli(byte) else { return Vec::new() };
+    let Ok(livelli) = livelli(byte) else {
+        return Vec::new();
+    };
     let mut out = Vec::new();
     for (i, l) in livelli.iter().enumerate() {
         for f in &l.firmatari {
@@ -168,8 +170,14 @@ fn leggi_certificato(der: &[u8]) -> Option<Certificato<'_>> {
         seriale,
         soggetto: nomi(&d, &soggetto),
         emittente: nomi(&d, &emittente),
-        dal: date.first().map(|t| data_asn1(t.tag, d.contenuto(t))).unwrap_or_default(),
-        al: date.get(1).map(|t| data_asn1(t.tag, d.contenuto(t))).unwrap_or_default(),
+        dal: date
+            .first()
+            .map(|t| data_asn1(t.tag, d.contenuto(t)))
+            .unwrap_or_default(),
+        al: date
+            .get(1)
+            .map(|t| data_asn1(t.tag, d.contenuto(t)))
+            .unwrap_or_default(),
         spki: d.intero(&spki),
         ski: None,
     };
@@ -183,9 +191,12 @@ fn leggi_certificato(der: &[u8]) -> Option<Certificato<'_>> {
                 let parti = d.figli(&e);
                 if parti.first().map(|o| d.contenuto(o)) == Some(OID_SKI) {
                     if let Some(valore) = parti.last() {
-                        let interno = Der { buf: d.contenuto(valore) };
+                        let interno = Der {
+                            buf: d.contenuto(valore),
+                        };
                         if let Some(t) = interno.radice() {
-                            c.ski = Some(&d.contenuto(valore)[t.inizio_contenuto..t.fine_contenuto]);
+                            c.ski =
+                                Some(&d.contenuto(valore)[t.inizio_contenuto..t.fine_contenuto]);
                         }
                     }
                 }
@@ -236,15 +247,26 @@ fn data_asn1(tag: u8, b: &[u8]) -> String {
     let s = String::from_utf8_lossy(b);
     let (anno, resto) = if tag == 0x17 {
         let aa: i32 = s.get(0..2).and_then(|x| x.parse().ok()).unwrap_or(0);
-        (if aa >= 50 { 1900 + aa } else { 2000 + aa }, s.get(2..).unwrap_or(""))
+        (
+            if aa >= 50 { 1900 + aa } else { 2000 + aa },
+            s.get(2..).unwrap_or(""),
+        )
     } else {
-        (s.get(0..4).and_then(|x| x.parse().ok()).unwrap_or(0), s.get(4..).unwrap_or(""))
+        (
+            s.get(0..4).and_then(|x| x.parse().ok()).unwrap_or(0),
+            s.get(4..).unwrap_or(""),
+        )
     };
     let p = |i: usize| resto.get(i..i + 2).unwrap_or("00");
     format!("{anno:04}-{}-{} {}:{}:{}", p(0), p(2), p(4), p(6), p(8))
 }
 
-fn verifica_firmatario(livello: usize, firmatario: &[u8], contenuto: &[u8], certificati: &[Vec<u8>]) -> Firmatario {
+fn verifica_firmatario(
+    livello: usize,
+    firmatario: &[u8],
+    contenuto: &[u8],
+    certificati: &[Vec<u8>],
+) -> Firmatario {
     let mut r = Firmatario {
         livello,
         esito: Esito::NonVerificabile,
@@ -282,7 +304,10 @@ fn verifica_firmatario(livello: usize, firmatario: &[u8], contenuto: &[u8], cert
     };
 
     // Certificato del firmatario: per emittente e seriale o per identificativo di chiave.
-    let certificati: Vec<Certificato<'_>> = certificati.iter().filter_map(|c| leggi_certificato(c)).collect();
+    let certificati: Vec<Certificato<'_>> = certificati
+        .iter()
+        .filter_map(|c| leggi_certificato(c))
+        .collect();
     let cert = if sid.tag == 0x30 {
         let parti = d.figli(sid);
         match (parti.first(), parti.get(1)) {
@@ -295,21 +320,34 @@ fn verifica_firmatario(livello: usize, firmatario: &[u8], contenuto: &[u8], cert
         let ski = d.contenuto(sid);
         certificati.iter().find(|c| c.ski == Some(ski))
     }
-    .or(if certificati.len() == 1 { certificati.first() } else { None });
+    .or(if certificati.len() == 1 {
+        certificati.first()
+    } else {
+        None
+    });
 
     let Some(cert) = cert else {
         r.dettaglio = "il certificato del firmatario non è incluso nella busta".into();
         return r;
     };
     let cn = attributo(&cert.soggetto, OID_CN).unwrap_or_default();
-    r.nome = match (attributo(&cert.soggetto, OID_NOME), attributo(&cert.soggetto, OID_COGNOME)) {
+    r.nome = match (
+        attributo(&cert.soggetto, OID_NOME),
+        attributo(&cert.soggetto, OID_COGNOME),
+    ) {
         (Some(n), Some(c)) => format!("{n} {c}"),
         _ => cn.to_owned(),
     };
     r.codice_fiscale = attributo(&cert.soggetto, OID_SERIAL)
-        .map(|s| s.trim_start_matches("TINIT-").trim_start_matches("IT:").to_owned())
+        .map(|s| {
+            s.trim_start_matches("TINIT-")
+                .trim_start_matches("IT:")
+                .to_owned()
+        })
         .unwrap_or_default();
-    r.organizzazione = attributo(&cert.soggetto, OID_O).unwrap_or_default().to_owned();
+    r.organizzazione = attributo(&cert.soggetto, OID_O)
+        .unwrap_or_default()
+        .to_owned();
     r.emittente = attributo(&cert.emittente, OID_O)
         .or(attributo(&cert.emittente, OID_CN))
         .unwrap_or_default()
@@ -318,7 +356,11 @@ fn verifica_firmatario(livello: usize, firmatario: &[u8], contenuto: &[u8], cert
     r.valido_al = cert.al.clone();
 
     // Algoritmo di impronta del documento.
-    let Some(hash) = d.figli(alg_hash).first().and_then(|o| Hash::da_oid(d.contenuto(o))) else {
+    let Some(hash) = d
+        .figli(alg_hash)
+        .first()
+        .and_then(|o| Hash::da_oid(d.contenuto(o)))
+    else {
         r.dettaglio = "algoritmo di impronta non supportato".into();
         return r;
     };
@@ -330,17 +372,22 @@ fn verifica_firmatario(livello: usize, firmatario: &[u8], contenuto: &[u8], cert
             let mut digest_firmato = None;
             for attr in d.figli(&a) {
                 let parti = d.figli(&attr);
-                let (Some(oid), Some(valori)) = (parti.first(), parti.get(1)) else { continue };
+                let (Some(oid), Some(valori)) = (parti.first(), parti.get(1)) else {
+                    continue;
+                };
                 let valore = d.figli(valori).first().copied();
                 match (d.contenuto(oid), valore) {
-                    (OID_MESSAGE_DIGEST, Some(v)) => digest_firmato = Some(d.contenuto(&v).to_vec()),
+                    (OID_MESSAGE_DIGEST, Some(v)) => {
+                        digest_firmato = Some(d.contenuto(&v).to_vec())
+                    }
                     (OID_SIGNING_TIME, Some(v)) => r.data_firma = data_asn1(v.tag, d.contenuto(&v)),
                     _ => {}
                 }
             }
             if digest_firmato.as_deref() != Some(impronta_doc.as_slice()) {
                 r.esito = Esito::NonValida;
-                r.dettaglio = "il documento è stato modificato dopo la firma (impronta diversa)".into();
+                r.dettaglio =
+                    "il documento è stato modificato dopo la firma (impronta diversa)".into();
                 return r;
             }
             // Per la verifica gli attributi si codificano come SET (tag 0x31).
@@ -356,7 +403,11 @@ fn verifica_firmatario(livello: usize, firmatario: &[u8], contenuto: &[u8], cert
     };
 
     // Algoritmo di firma.
-    let oid_firma = d.figli(alg_firma).first().map(|o| d.contenuto(o).to_vec()).unwrap_or_default();
+    let oid_firma = d
+        .figli(alg_firma)
+        .first()
+        .map(|o| d.contenuto(o).to_vec())
+        .unwrap_or_default();
     let byte_firma = d.contenuto(firma);
     let esito = if oid_firma.starts_with(PREFISSO_PKCS1) {
         // rsaEncryption usa l'impronta indicata nel firmatario; gli altri la dichiarano nell'OID.
@@ -396,9 +447,12 @@ fn verifica_firmatario(livello: usize, firmatario: &[u8], contenuto: &[u8], cert
         Ok(true) => {
             r.esito = Esito::Valida;
             if hash == Hash::Sha1 {
-                r.dettaglio = "firma integra, ma con algoritmo SHA-1 non più ammesso per le nuove firme".into();
+                r.dettaglio =
+                    "firma integra, ma con algoritmo SHA-1 non più ammesso per le nuove firme"
+                        .into();
             } else {
-                r.dettaglio = "firma integra: il documento non è stato modificato dopo la firma".into();
+                r.dettaglio =
+                    "firma integra: il documento non è stato modificato dopo la firma".into();
             }
         }
         Ok(false) => {
@@ -421,7 +475,8 @@ fn verifica_firmatario(livello: usize, firmatario: &[u8], contenuto: &[u8], cert
 fn verifica_rsa(spki: &[u8], h: Hash, dati: &[u8], firma: &[u8]) -> Result<bool, String> {
     use rsa::pkcs8::DecodePublicKey;
     use rsa::{Pkcs1v15Sign, RsaPublicKey};
-    let chiave = RsaPublicKey::from_public_key_der(spki).map_err(|_| "chiave pubblica RSA illeggibile".to_owned())?;
+    let chiave = RsaPublicKey::from_public_key_der(spki)
+        .map_err(|_| "chiave pubblica RSA illeggibile".to_owned())?;
     let schema = match h {
         Hash::Sha1 => Pkcs1v15Sign::new::<Sha1>(),
         Hash::Sha256 => Pkcs1v15Sign::new::<Sha256>(),
@@ -446,13 +501,17 @@ fn verifica_ecdsa(spki: &[u8], h: Hash, dati: &[u8], firma: &[u8]) -> Result<boo
         .unwrap_or_default();
     match curva.as_slice() {
         OID_P256 => {
-            let k = p256::ecdsa::VerifyingKey::from_public_key_der(spki).map_err(|_| "chiave ECDSA illeggibile".to_owned())?;
-            let s = p256::ecdsa::Signature::from_der(firma).map_err(|_| "firma ECDSA illeggibile".to_owned())?;
+            let k = p256::ecdsa::VerifyingKey::from_public_key_der(spki)
+                .map_err(|_| "chiave ECDSA illeggibile".to_owned())?;
+            let s = p256::ecdsa::Signature::from_der(firma)
+                .map_err(|_| "firma ECDSA illeggibile".to_owned())?;
             Ok(k.verify_prehash(&impronta, &s).is_ok())
         }
         OID_P384 => {
-            let k = p384::ecdsa::VerifyingKey::from_public_key_der(spki).map_err(|_| "chiave ECDSA illeggibile".to_owned())?;
-            let s = p384::ecdsa::Signature::from_der(firma).map_err(|_| "firma ECDSA illeggibile".to_owned())?;
+            let k = p384::ecdsa::VerifyingKey::from_public_key_der(spki)
+                .map_err(|_| "chiave ECDSA illeggibile".to_owned())?;
+            let s = p384::ecdsa::Signature::from_der(firma)
+                .map_err(|_| "firma ECDSA illeggibile".to_owned())?;
             Ok(k.verify_prehash(&impronta, &s).is_ok())
         }
         _ => Err("curva ellittica non supportata".to_owned()),

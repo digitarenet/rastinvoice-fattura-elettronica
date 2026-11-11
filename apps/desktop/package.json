@@ -1,7 +1,7 @@
 {
   "name": "rustinvoice-desktop",
   "private": true,
-  "version": "0.1.0",
+  "version": "0.3.0",
   "description": "Interfaccia dell'applicazione desktop RustinVoice",
   "author": "Andrea Re <info@digitare.net>",
   "type": "module",
@@ -9,7 +9,9 @@
     "dev": "vite",
     "build": "vite build",
     "check": "svelte-check --tsconfig ./tsconfig.json",
-    "tauri": "tauri"
+    "tauri": "tauri",
+    "app:dev": "tauri dev -- --no-default-features",
+    "app:build": "tauri build --no-bundle"
   },
   "dependencies": {
     "@tauri-apps/api": "^2.12.0",

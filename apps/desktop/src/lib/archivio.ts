@@ -75,7 +75,7 @@ export function filtra(
         if (!contrassegnate.has(v.id)) return false;
         break;
       case "anomalie":
-        if (v.avvisi === 0) return false;
+        if (v.avvisi === 0 && v.controlli === 0) return false;
         break;
     }
     if (f.anno !== null && v.anno !== f.anno) return false;

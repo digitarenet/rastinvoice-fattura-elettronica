@@ -6,7 +6,6 @@
 -->
 <script lang="ts">
   import { open } from "@tauri-apps/plugin-dialog";
-  import { openPath } from "@tauri-apps/plugin-opener";
   import { api, type Avvio, type Impostazioni, type StatoFoglio } from "../lib/api";
   import { normalizzaIdentificativo } from "../lib/archivio";
   import Icona from "./Icona.svelte";
@@ -120,7 +119,7 @@
     <ul class="percorsi">
       {#each imp.cartelle as c (c)}
         <li><Icona nome="it-folder" /> <span class="selezionabile">{c}</span>
-          <button class="btn btn-link btn-xs" onclick={() => openPath(c)}>Apri</button>
+          <button class="btn btn-link btn-xs" onclick={() => api.apriCartella(c)}>Apri</button>
           <button class="btn btn-link btn-xs text-danger" onclick={() => togliCartella(c)}>Rimuovi</button></li>
       {/each}
       {#each imp.file_singoli as f (f)}
@@ -190,15 +189,9 @@
       {/if}
     </p>
     <p class="selezionabile"><code>{info.cartella_dati}</code>
-      <button class="btn btn-link btn-xs" onclick={() => openPath(info.cartella_dati)}>Apri</button></p>
+      <button class="btn btn-link btn-xs" onclick={() => api.apriCartella(info.cartella_dati)}>Apri</button></p>
   </section>
 
-  <section class="info-app">
-    <h2 class="h5">Informazioni</h2>
-    <p class="mb-1"><strong>RustinVoice</strong> versione {info.versione}</p>
-    <p class="mb-1">Visualizzatore di fatture elettroniche FatturaPA (specifiche 1.9.1).</p>
-    <p class="text-secondary-ri">Copyright © 2026 Andrea Re · digitare.net</p>
-  </section>
 </div>
 
 <style>

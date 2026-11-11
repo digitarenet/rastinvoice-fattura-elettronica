@@ -7,11 +7,12 @@
 
 use rayon::prelude::*;
 use rustinvoice_core::{apri_byte, apri_file, codici, contenitori, Contenuto, Documento};
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
+use std::collections::HashMap;
 use std::path::{Path, PathBuf};
 
 /// Soggetto in forma sintetica.
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct SoggettoBreve {
     pub nome: String,
     /// Chiave stabile: partita IVA (es. `IT01234567890`) o `CF:...`.
@@ -21,7 +22,7 @@ pub struct SoggettoBreve {
 
 /// Una riga dell'elenco: un singolo documento (un file con un lotto
 /// produce più voci, una per corpo).
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Voce {
     pub id: String,
     pub file: String,
@@ -46,12 +47,14 @@ pub struct Voce {
     pub contenitore: String,
     pub allegati: usize,
     pub avvisi: usize,
+    /// Controlli formali e di calcolo non superati (solo errori).
+    pub controlli: usize,
     /// Testo normalizzato su cui eseguire la ricerca libera.
     pub testo: String,
 }
 
 /// Messaggio SdI trovato durante la scansione.
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct VoceMessaggio {
     pub file: String,
     pub sigla: String,
@@ -60,7 +63,7 @@ pub struct VoceMessaggio {
 }
 
 /// File che non è stato possibile interpretare.
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct FileScartato {
     pub file: String,
     pub motivo: String,
@@ -72,6 +75,8 @@ pub struct Esito {
     pub voci: Vec<Voce>,
     pub messaggi: Vec<VoceMessaggio>,
     pub scartati: Vec<FileScartato>,
+    /// Cartelle non raggiungibili (es. NAS spento): si mostrano i dati dell'indice.
+    pub non_raggiungibili: Vec<String>,
 }
 
 /// Estensioni prese in considerazione.
@@ -109,9 +114,13 @@ pub fn elenca(percorsi: &[String]) -> Vec<PathBuf> {
 
 /// Normalizza il testo per la ricerca: minuscole e spazi singoli.
 fn normalizza(s: &str) -> String {
-    s.to_lowercase().split_whitespace().collect::<Vec<_>>().join(" ")
+    s.to_lowercase()
+        .split_whitespace()
+        .collect::<Vec<_>>()
+        .join(" ")
 }
 
+#[derive(Debug, Clone, Serialize, Deserialize)]
 enum Letto {
     Voci(Vec<Voce>),
     Messaggio(VoceMessaggio),
@@ -143,7 +152,11 @@ fn leggi(percorso: &Path) -> Vec<Letto> {
     }
 }
 
-fn leggi_documento(file: String, nome_file: String, letto: rustinvoice_core::Risultato<Documento>) -> Letto {
+fn leggi_documento(
+    file: String,
+    nome_file: String,
+    letto: rustinvoice_core::Risultato<Documento>,
+) -> Letto {
     let doc = match letto {
         Ok(d) => d,
         Err(e) => {
@@ -190,6 +203,14 @@ fn leggi_documento(file: String, nome_file: String, letto: rustinvoice_core::Ris
             let cedente = breve(&h.cedente_prestatore);
             let cessionario = breve(&h.cessionario_committente);
             let n = f.corpi.len();
+            let esiti_controlli = rustinvoice_core::controlli::controlla(&f);
+            let errori_controlli = |corpo: usize| {
+                esiti_controlli
+                    .iter()
+                    .filter(|c| c.gravita == rustinvoice_core::controlli::Gravita::Errore)
+                    .filter(|c| c.corpo.is_none() || c.corpo == Some(corpo))
+                    .count()
+            };
             let voci = f
                 .corpi
                 .iter()
@@ -252,6 +273,7 @@ fn leggi_documento(file: String, nome_file: String, letto: rustinvoice_core::Ris
                         contenitore: contenitore.clone(),
                         allegati: c.allegati.len(),
                         avvisi: f.avvisi.len(),
+                        controlli: errori_controlli(i),
                         testo: normalizza(&testo.join(" ")),
                     }
                 })
@@ -261,19 +283,130 @@ fn leggi_documento(file: String, nome_file: String, letto: rustinvoice_core::Ris
     }
 }
 
-/// Legge in parallelo tutti i file indicati (o contenuti nelle cartelle).
-pub fn scansiona(percorsi: &[String]) -> Esito {
-    let file = elenca(percorsi);
-    let letti: Vec<Letto> = file.par_iter().flat_map(|p| leggi(p)).collect();
+/// Indice locale dei file già letti, per non rileggere a ogni avvio quelli
+/// non modificati (utile soprattutto con cartelle di rete).
+#[derive(Default, Serialize, Deserialize)]
+struct Indice {
+    versione: String,
+    file: HashMap<String, VoceIndice>,
+}
+
+#[derive(Clone, Serialize, Deserialize)]
+struct VoceIndice {
+    dimensione: u64,
+    modificato: u128,
+    letti: Vec<Letto>,
+}
+
+const NOME_INDICE: &str = "indice.json";
+
+fn carica_indice(dir: &Path) -> Indice {
+    let indice: Indice = std::fs::read(dir.join(NOME_INDICE))
+        .ok()
+        .and_then(|b| serde_json::from_slice(&b).ok())
+        .unwrap_or_default();
+    // Con una nuova versione del programma la lettura può essere cambiata: si riparte da zero.
+    if indice.versione != env!("CARGO_PKG_VERSION") {
+        return Indice::default();
+    }
+    indice
+}
+
+fn salva_indice(dir: &Path, indice: &Indice) {
+    let Ok(b) = serde_json::to_vec(indice) else {
+        return;
+    };
+    let tmp = dir.join(format!("{NOME_INDICE}.tmp"));
+    if std::fs::write(&tmp, b).is_ok() {
+        let _ = std::fs::rename(&tmp, dir.join(NOME_INDICE));
+    }
+}
+
+/// Firma del file: dimensione e data di modifica.
+fn impronta(p: &Path) -> Option<(u64, u128)> {
+    let m = std::fs::metadata(p).ok()?;
+    let t = m
+        .modified()
+        .ok()?
+        .duration_since(std::time::UNIX_EPOCH)
+        .ok()?
+        .as_nanos();
+    Some((m.len(), t))
+}
+
+/// Vero se `file` si trova sotto la cartella o coincide con il file indicato.
+fn sotto(file: &str, radice: &str) -> bool {
+    let r = radice.trim_end_matches(['/', '\\']);
+    file == r
+        || file
+            .strip_prefix(r)
+            .is_some_and(|resto| resto.starts_with('/') || resto.starts_with('\\'))
+}
+
+/// Legge in parallelo tutti i file indicati (o contenuti nelle cartelle),
+/// riutilizzando l'indice per quelli non modificati.
+pub fn scansiona(percorsi: &[String], dir_dati: &Path) -> Esito {
+    let vecchio = carica_indice(dir_dati);
+    let mut nuovo = Indice {
+        versione: env!("CARGO_PKG_VERSION").to_owned(),
+        file: HashMap::new(),
+    };
     let mut esito = Esito::default();
-    for l in letti {
-        match l {
-            Letto::Voci(v) => esito.voci.extend(v),
-            Letto::Messaggio(m) => esito.messaggi.push(m),
-            Letto::Scartato(s) => esito.scartati.push(s),
+
+    // Cartelle o file non raggiungibili: si conservano i dati già noti.
+    let mut raggiungibili = Vec::new();
+    for p in percorsi {
+        if Path::new(p).exists() {
+            raggiungibili.push(p.clone());
+        } else {
+            esito.non_raggiungibili.push(p.clone());
+            for (k, v) in &vecchio.file {
+                if sotto(k, p) {
+                    nuovo.file.insert(k.clone(), v.clone());
+                }
+            }
         }
     }
+
+    let file = elenca(&raggiungibili);
+    let letti: Vec<(String, VoceIndice)> = file
+        .par_iter()
+        .map(|p| {
+            let chiave = p.to_string_lossy().to_string();
+            let (dimensione, modificato) = impronta(p).unwrap_or_default();
+            if let Some(v) = vecchio.file.get(&chiave) {
+                if v.dimensione == dimensione && v.modificato == modificato && modificato != 0 {
+                    return (chiave, v.clone());
+                }
+            }
+            (
+                chiave,
+                VoceIndice {
+                    dimensione,
+                    modificato,
+                    letti: leggi(p),
+                },
+            )
+        })
+        .collect();
+    nuovo.file.extend(letti);
+
+    for v in nuovo.file.values() {
+        for l in &v.letti {
+            match l {
+                Letto::Voci(x) => esito.voci.extend(x.iter().cloned()),
+                Letto::Messaggio(m) => esito.messaggi.push(m.clone()),
+                Letto::Scartato(s) => esito.scartati.push(s.clone()),
+            }
+        }
+    }
+    salva_indice(dir_dati, &nuovo);
+
     // Più recenti per primi.
-    esito.voci.sort_by(|a, b| b.data.cmp(&a.data).then(a.numero.cmp(&b.numero)));
+    esito
+        .voci
+        .sort_by(|a, b| b.data.cmp(&a.data).then(a.numero.cmp(&b.numero)));
+    esito.messaggi.sort_by(|a, b| a.file.cmp(&b.file));
+    esito.scartati.sort_by(|a, b| a.file.cmp(&b.file));
     esito
 }
