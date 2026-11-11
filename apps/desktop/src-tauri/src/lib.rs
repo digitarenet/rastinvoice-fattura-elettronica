@@ -18,7 +18,10 @@ use tauri::Manager;
 /// Stato condiviso tra i comandi.
 struct Stato {
     dir_dati: PathBuf,
+    /// Cartella dati standard del profilo utente.
+    dir_standard: PathBuf,
     portable: bool,
+    primo_avvio: bool,
     impostazioni: Mutex<Impostazioni>,
 }
 
@@ -29,6 +32,11 @@ struct Avvio {
     cartella_dati: String,
     portable: bool,
     versione: String,
+    /// Al primo avvio l'interfaccia chiede dove salvare i dati.
+    primo_avvio: bool,
+    cartella_standard: String,
+    cartella_portable: String,
+    portable_possibile: bool,
 }
 
 #[tauri::command]
@@ -38,7 +46,55 @@ fn avvio(stato: tauri::State<'_, Stato>) -> Avvio {
         cartella_dati: stato.dir_dati.to_string_lossy().to_string(),
         portable: stato.portable,
         versione: env!("CARGO_PKG_VERSION").to_owned(),
+        primo_avvio: stato.primo_avvio,
+        cartella_standard: stato.dir_standard.to_string_lossy().to_string(),
+        cartella_portable: impostazioni::cartella_portable()
+            .map(|p| p.to_string_lossy().to_string())
+            .unwrap_or_default(),
+        portable_possibile: impostazioni::portable_possibile(),
     }
+}
+
+/// Sceglie dove salvare i dati: accanto al programma (`portable`) o nel
+/// profilo utente. Se la cartella cambia, i dati vengono copiati nella nuova
+/// posizione e l'applicazione si riavvia. Lasciando la modalità portable, la
+/// vecchia cartella `dati` viene rinominata (non cancellata), altrimenti al
+/// riavvio verrebbe usata di nuovo.
+#[tauri::command]
+fn cambia_cartella_dati(
+    app: tauri::AppHandle,
+    stato: tauri::State<'_, Stato>,
+    portable: bool,
+) -> Result<(), String> {
+    let destinazione = if portable {
+        if !impostazioni::portable_possibile() {
+            return Err("nella cartella del programma non si può scrivere".into());
+        }
+        impostazioni::cartella_portable().ok_or("cartella del programma non trovata")?
+    } else {
+        stato.dir_standard.clone()
+    };
+    let attuale = stato.dir_dati.clone();
+    if destinazione == attuale {
+        // Scelta confermata: si salvano le impostazioni, così non verrà più chiesta.
+        std::fs::create_dir_all(&attuale).map_err(|e| e.to_string())?;
+        let imp = stato.impostazioni.lock().unwrap().clone();
+        return impostazioni::salva(&attuale, &imp).map_err(|e| e.to_string());
+    }
+    impostazioni::copia_dati(&attuale, &destinazione).map_err(|e| e.to_string())?;
+    // I file copiati nell'archivio cambiano posizione: si aggiornano i percorsi.
+    let imp = stato
+        .impostazioni
+        .lock()
+        .unwrap()
+        .con_radice_cambiata(&attuale, &destinazione);
+    impostazioni::salva(&destinazione, &imp).map_err(|e| e.to_string())?;
+    if stato.portable {
+        let data = chrono::Local::now().format("%Y%m%d-%H%M%S");
+        let accantonata = attuale.with_file_name(format!("dati (non usata {data})"));
+        std::fs::rename(&attuale, &accantonata).map_err(|e| e.to_string())?;
+    }
+    app.restart()
 }
 
 #[tauri::command]
@@ -458,11 +514,14 @@ pub fn avvia() {
                 .unwrap_or_else(|_| std::env::temp_dir().join("rustinvoice"));
             let dir_dati = impostazioni::cartella_dati(&standard);
             let portable = dir_dati != standard;
+            let primo_avvio = impostazioni::primo_avvio(&dir_dati);
             let _ = std::fs::create_dir_all(&dir_dati);
             let imp = impostazioni::carica(&dir_dati);
             app.manage(Stato {
                 dir_dati,
+                dir_standard: standard,
                 portable,
+                primo_avvio,
                 impostazioni: Mutex::new(imp),
             });
             Ok(())
@@ -485,7 +544,8 @@ pub fn avvia() {
             foglio_stile_leggi,
             salva_testo,
             anteprima_allegato,
-            byte_allegato
+            byte_allegato,
+            cambia_cartella_dati
         ])
         .run(tauri::generate_context!())
         .expect("errore durante l'avvio dell'applicazione");

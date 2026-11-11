@@ -77,6 +77,10 @@ export interface Avvio {
   cartella_dati: string;
   portable: boolean;
   versione: string;
+  primo_avvio: boolean;
+  cartella_standard: string;
+  cartella_portable: string;
+  portable_possibile: boolean;
 }
 
 export interface Allegato {
@@ -166,6 +170,8 @@ export const api = {
     invoke<ArrayBuffer>("byte_allegato", { file, corpo, indice, interno }),
   apriCartella: (percorso: string) => invoke<void>("apri_cartella", { percorso }),
   mostraNellaCartella: (file: string) => invoke<void>("mostra_nella_cartella", { file }),
+  /** Cambia la cartella dati; se cambia davvero, l'applicazione si riavvia. */
+  cambiaCartellaDati: (portable: boolean) => invoke<void>("cambia_cartella_dati", { portable }),
   apriSito: () => invoke<void>("apri_sito"),
   copiaInArchivio: (percorsi: string[]) =>
     invoke<string[]>("copia_in_archivio", { percorsi }),

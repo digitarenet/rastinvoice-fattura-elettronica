@@ -6,6 +6,7 @@
 -->
 <script lang="ts">
   import { open } from "@tauri-apps/plugin-dialog";
+  import SceltaDati from "./SceltaDati.svelte";
   import { api, type Avvio, type Impostazioni, type StatoFoglio } from "../lib/api";
   import { normalizzaIdentificativo } from "../lib/archivio";
   import Icona from "./Icona.svelte";
@@ -180,15 +181,8 @@
 
   <section>
     <h2 class="h5">Dati dell'applicazione</h2>
-    <p class="mb-1">
-      {#if info.portable}
-        Modalità portable: impostazioni e archivio sono nella cartella <code>dati</code> accanto al programma.
-      {:else}
-        Impostazioni e archivio sono nella cartella utente. Per la modalità portable crea una cartella <code>dati</code>
-        accanto al programma.
-      {/if}
-    </p>
-    <p class="selezionabile"><code>{info.cartella_dati}</code>
+    <SceltaDati {info} onFatto={() => {}} />
+    <p class="selezionabile mt-3 mb-0"><small>In uso: <code>{info.cartella_dati}</code></small>
       <button class="btn btn-link btn-xs" onclick={() => api.apriCartella(info.cartella_dati)}>Apri</button></p>
   </section>
 

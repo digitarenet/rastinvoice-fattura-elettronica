@@ -26,6 +26,7 @@
   import Rubrica from "./componenti/Rubrica.svelte";
   import Impostazioni from "./componenti/Impostazioni.svelte";
   import Credits from "./componenti/Credits.svelte";
+  import SceltaDati from "./componenti/SceltaDati.svelte";
 
   type Vista = "documenti" | "rubrica" | "messaggi" | "impostazioni" | "credits";
 
@@ -81,6 +82,7 @@
   const fatturePerNome = $derived(indiceFatture(esito.voci));
   const notificheOrdinate = $derived([...esito.messaggi].sort((a, b) => b.data.localeCompare(a.data)));
   let legendaAperta = $state(false);
+  let sceltaDatiFatta = $state(false);
 
   const anni = $derived([...new Set(esito.voci.map((v) => v.anno).filter((a) => a > 0))].sort((a, b) => b - a));
   const conteggi = $derived({
@@ -682,6 +684,16 @@
       <div>
         <Icona nome="it-upload" dimensione="lg" />
         <p class="h4 mt-3">Rilascia qui fatture .xml, .p7m, archivi .zip, email .eml o cartelle</p>
+      </div>
+    </div>
+  {/if}
+
+  {#if info && info.primo_avvio && !sceltaDatiFatta}
+    <div class="velo" role="dialog" aria-modal="true" aria-labelledby="titolo-dati">
+      <div class="finestra ri-pannello">
+        <h2 id="titolo-dati" class="h5">Dove vuoi salvare i dati di RustinVoice?</h2>
+        <SceltaDati {info} etichettaConferma="Inizia" onFatto={() => (sceltaDatiFatta = true)} />
+        <p class="text-secondary-ri mt-3 mb-0"><small>Si può cambiare in seguito dalle Impostazioni.</small></p>
       </div>
     </div>
   {/if}

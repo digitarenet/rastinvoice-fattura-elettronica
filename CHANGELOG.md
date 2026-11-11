@@ -4,6 +4,15 @@ Tutte le modifiche rilevanti di RustinVoice. Il numero di versione segue lo sche
 MAGGIORE.MINORE.CORREZIONE: la versione minore cresce con le nuove funzioni, quella di
 correzione con le sole correzioni.
 
+## 0.5.0 - 2026-11-11
+
+### Aggiunto
+- **Scelta della cartella dati** al primo avvio e nelle Impostazioni: nel profilo utente
+  oppure accanto al programma (modalità portable, la cartella `dati` viene creata
+  automaticamente). Cambiando scelta, impostazioni, indice, foglio di stile e archivio
+  vengono copiati nella nuova cartella e l'applicazione si riavvia; la vecchia cartella
+  portable viene rinominata, non cancellata.
+
 ## 0.4.1 - 2026-11-11
 
 ### Modificato

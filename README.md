@@ -80,9 +80,9 @@ sorgenti sono più recenti dell'ultima compilazione. Per disattivare questo pass
 d'ambiente `RUSTINVOICE_SENZA_NPM=1`. In RustRover sono già pronte le configurazioni di avvio
 "RustinVoice desktop", "Crea EXE" e "Test".
 
-L'eseguibile `target/release/rustinvoice-desktop` non richiede installazione. Per la **modalità portable**
-basta creare una cartella `dati` accanto all'eseguibile: impostazioni e archivio verranno salvati lì,
-ad esempio su una chiavetta USB. Senza quella cartella si usa la cartella dati dell'utente.
+L'eseguibile `target/release/rustinvoice-desktop` non richiede installazione. Al primo avvio chiede dove
+salvare i dati: nel profilo utente oppure accanto al programma (**modalità portable**, per esempio su una
+chiavetta USB, con la cartella `dati` creata automaticamente). La scelta si può cambiare dalle Impostazioni.
 
 Il foglio di stile ufficiale AssoSoftware non è incluso: si scarica dalle impostazioni dell'applicazione
 (dal sito ufficiale) oppure si importa da un file `.xsl` o `.zip`.
