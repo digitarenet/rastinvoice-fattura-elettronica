@@ -1,8 +1,8 @@
 # Copyright (c) 2026 Andrea Re - info@digitare.net
 # Autore: Andrea Re @ 2026 - info@digitare.net
 #
-# Rilascio: alla pubblicazione di un tag `v*` (o su richiesta manuale)
-# compila l'applicazione per Windows, macOS e Linux e allega i pacchetti a
+# Rilascio: solo su richiesta manuale (scheda Actions > Rilascio > Run
+# workflow), compila l'applicazione per Windows, macOS e Linux e allega i pacchetti a
 # una release in bozza su GitHub, da controllare e pubblicare a mano.
 #
 # Su Windows produce anche il pacchetto MSIX per il Microsoft Store se nel
@@ -11,8 +11,6 @@
 name: Rilascio
 
 on:
-  push:
-    tags: ["v*"]
   workflow_dispatch:
 
 permissions:
@@ -33,14 +31,14 @@ jobs:
             nome: linux-x64
     runs-on: ${{ matrix.piattaforma }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: dtolnay/rust-toolchain@stable
         with:
           # Su macOS si produce un'unica app per processori Intel e Apple.
           targets: ${{ runner.os == 'macOS' && 'aarch64-apple-darwin,x86_64-apple-darwin' || '' }}
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v5
         with:
-          node-version: 22
+          node-version: 24
           cache: npm
           cache-dependency-path: apps/desktop/package-lock.json
 

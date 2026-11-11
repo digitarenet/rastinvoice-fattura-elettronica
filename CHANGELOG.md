@@ -4,6 +4,15 @@ Tutte le modifiche rilevanti di RastInvoice (fino alla 0.9.0 chiamato RustinVoic
 MAGGIORE.MINORE.CORREZIONE: la versione minore cresce con le nuove funzioni, quella di
 correzione con le sole correzioni.
 
+## 0.10.1 - 2026-11-11
+
+### Modificato
+- Verifica e rilascio su GitHub si avviano solo a mano (scheda Actions), non più a ogni push o pull request,
+  per non consumare minuti.
+- Azioni aggiornate alle versioni per Node.js 24 (`actions/checkout@v5`, `actions/setup-node@v5`) e
+  Node.js 24 per la compilazione dell'interfaccia.
+- Il controllo delle vulnerabilità usa `cargo-audit` già compilato: alcuni minuti in meno per ogni verifica.
+
 ## 0.10.0 - 2026-11-11
 
 ### Modificato
