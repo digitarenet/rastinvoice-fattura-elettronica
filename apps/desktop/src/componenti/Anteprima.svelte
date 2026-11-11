@@ -6,6 +6,7 @@
   standard, XML originale e allegati.
 -->
 <script lang="ts">
+  import { untrack } from "svelte";
   import { save } from "@tauri-apps/plugin-dialog";
   import { openPath, revealItemInDir } from "@tauri-apps/plugin-opener";
   import { api, type Dettaglio, type Voce } from "../lib/api";
@@ -53,8 +54,6 @@
     let annullato = false;
     caricamento = true;
     errore = "";
-    htmlStandard = "";
-    erroreStandard = "";
     api
       .dettaglio(file, corpo)
       .then((d) => {
@@ -72,18 +71,29 @@
     };
   });
 
-  // Applica il foglio di stile standard solo quando serve.
+  // Applica il foglio di stile standard solo quando serve. La trasformazione
+  // è legata al dettaglio da cui nasce: cambiando documento si rifà, senza
+  // mai mostrare il risultato di un documento precedente.
+  let standardPer: Dettaglio | null = null;
+  let tentativoFoglio = $state(0);
   $effect(() => {
-    if (scheda !== "standard" || !dettaglio || htmlStandard || erroreStandard) return;
-    const xml = dettaglio.xml;
+    void tentativoFoglio;
+    const d = dettaglio;
+    if (scheda !== "standard" || !d || standardPer === d) return;
+    standardPer = d;
+    erroreStandard = "";
     (async () => {
       try {
         if (!xslt.disponibile()) throw new Error("il motore XSLT non è disponibile in questo sistema");
         foglioXsl ??= await api.foglioLeggi();
         if (!foglioXsl) throw new Error("foglio di stile non presente");
-        htmlStandard = xslt.trasforma(xml, foglioXsl);
+        const html = xslt.trasforma(d.xml, foglioXsl);
+        if (dettaglio === d) htmlStandard = html;
       } catch (e) {
-        erroreStandard = String(e instanceof Error ? e.message : e);
+        if (dettaglio === d) {
+          htmlStandard = "";
+          erroreStandard = String(e instanceof Error ? e.message : e);
+        }
       }
     })();
   });
@@ -92,7 +102,8 @@
   $effect(() => {
     if (foglioPresente) {
       foglioXsl = null;
-      erroreStandard = "";
+      standardPer = null;
+      untrack(() => tentativoFoglio++);
     }
   });
 

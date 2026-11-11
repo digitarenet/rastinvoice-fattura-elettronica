@@ -244,14 +244,25 @@
     background: none;
     color: inherit;
     text-align: left;
-    padding: 0.55rem 0.75rem;
+    padding: 0.55rem 0.75rem 0.55rem 0.9rem;
+    border: 0 !important;
+  }
+  li {
     border-bottom: 1px solid var(--ri-bordo);
+  }
+  li button:focus:not(:focus-visible) {
+    box-shadow: none !important;
+    outline: none !important;
+  }
+  li button.selezionato:focus:not(:focus-visible) {
+    box-shadow: inset 3px 0 0 var(--ri-primario) !important;
   }
   li button:hover {
     background: var(--ri-sfondo);
   }
   li button.selezionato {
     background: var(--ri-selezione);
+    box-shadow: inset 3px 0 0 var(--ri-primario);
   }
   .testo {
     flex: 1;

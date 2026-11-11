@@ -750,17 +750,27 @@
     border: 0;
     background: none;
     color: var(--ri-testo);
-    padding: 0.45rem 1rem;
+    padding: 0.45rem 1rem 0.45rem 1.25rem;
     font-size: 0.95rem;
     text-align: left;
-    border-left: 4px solid transparent;
+    /* Nessun bordo: l'indicatore della voce attiva è un'ombra interna, così
+       le regole di focus di Bootstrap Italia non colorano bordi trasparenti. */
+    border: 0 !important;
+  }
+  /* Dopo un clic del mouse nessun anello di focus; con la tastiera resta. */
+  .laterale ul button:focus:not(:focus-visible) {
+    box-shadow: none !important;
+    outline: none !important;
+  }
+  .laterale ul button.attivo:focus:not(:focus-visible) {
+    box-shadow: inset 4px 0 0 var(--ri-primario) !important;
   }
   .laterale ul button:hover {
     background: var(--ri-sfondo);
   }
   .laterale ul button.attivo {
     background: var(--ri-selezione);
-    border-left-color: var(--ri-primario);
+    box-shadow: inset 4px 0 0 var(--ri-primario);
     color: var(--ri-primario);
     font-weight: 600;
   }
@@ -872,16 +882,25 @@
     background: none;
     color: inherit;
     text-align: left;
-    padding: 0.6rem 0.75rem;
+    padding: 0.6rem 0.75rem 0.6rem 0.9rem;
+    border: 0 !important;
+  }
+  .voci > li {
     border-bottom: 1px solid var(--ri-bordo);
-    border-left: 3px solid transparent;
+  }
+  .voce:focus:not(:focus-visible) {
+    box-shadow: none !important;
+    outline: none !important;
+  }
+  .voce.selezionata:focus:not(:focus-visible) {
+    box-shadow: inset 3px 0 0 var(--ri-primario) !important;
   }
   .voce:hover {
     background: var(--ri-sfondo);
   }
   .voce.selezionata {
     background: var(--ri-selezione);
-    border-left-color: var(--ri-primario);
+    box-shadow: inset 3px 0 0 var(--ri-primario);
   }
   .voce.non-letta .soggetto {
     font-weight: 700;
