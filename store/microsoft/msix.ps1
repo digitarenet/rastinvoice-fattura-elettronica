@@ -6,7 +6,7 @@
 # momento della pubblicazione.
 #
 # Uso (da Windows, con il Windows SDK installato):
-#   pwsh scripts/msix.ps1 -NomePacchetto "<Package/Identity/Name>" `
+#   pwsh store/microsoft/msix.ps1 -NomePacchetto "<Package/Identity/Name>" `
 #        -Editore "<Package/Identity/Publisher>" -EditoreVisualizzato "<nome>"
 #
 # I tre valori si leggono in Partner Center, nella pagina "Identità del
@@ -22,7 +22,7 @@ param(
 )
 
 $ErrorActionPreference = "Stop"
-$radice = Resolve-Path (Join-Path $PSScriptRoot "..")
+$radice = Resolve-Path (Join-Path $PSScriptRoot "../..")
 Set-Location $radice
 
 # Versione dal file di configurazione di Tauri; il Microsoft Store vuole

@@ -18,7 +18,7 @@ const SORGENTI: &[&str] = &[
     "../vite.config.ts",
     "../tsconfig.json",
     "../svelte.config.js",
-    "../../../CHANGELOG.md",
+    "../../../docs/CHANGELOG.md",
 ];
 
 fn main() {

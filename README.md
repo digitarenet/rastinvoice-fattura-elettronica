@@ -113,7 +113,7 @@ Tutte le versioni e le note di rilascio sono nelle [release di GitHub](https://g
   Internet oltre al download del foglio di stile.
 
 **Distribuzione**
-- **Windows:** Microsoft Store, gratuito. Il pacchetto MSIX (`scripts/msix.ps1`) viene firmato dallo Store,
+- **Windows:** Microsoft Store, gratuito. Il pacchetto MSIX (`store/microsoft/msix.ps1`) viene firmato dallo Store,
   quindi Windows non mostra avvisi di SmartScreen.
 - **macOS:** Mac App Store, 2,99 €.
 - **Linux:** `.deb` per Debian e Ubuntu, `.rpm` per Fedora e openSUSE e AppImage nelle
@@ -159,7 +159,7 @@ Le immagini usano un archivio dimostrativo con dati di fantasia.
 | ![Notifiche del Sistema di Interscambio collegate alle fatture](docs/immagini/notifiche.png) | ![Elenco dei documenti e vista Moderna](docs/immagini/documenti.png) |
 | **Notifiche SdI** collegate alle fatture | **Documenti** e vista Moderna |
 
-Versione attuale: **1.0.5** (vedi il [registro delle modifiche](CHANGELOG.md)).
+Versione attuale: **1.0.6** (vedi il [registro delle modifiche](docs/CHANGELOG.md)).
 
 ## Domande frequenti
 
@@ -316,7 +316,7 @@ cargo run -p rustinvoice-xslt --example trasforma -- foglio_di_stile.xsl fattura
 
 ## Versioni
 
-Le modifiche di ogni versione sono descritte nel [registro delle modifiche](CHANGELOG.md), consultabile
+Le modifiche di ogni versione sono descritte nel [registro delle modifiche](docs/CHANGELOG.md), consultabile
 anche dalla voce **Credits** dell'applicazione.
 
 ## Riferimenti normativi
@@ -374,11 +374,11 @@ Linee guida AgID (Legge Stanca):
 - interfaccia ingrandibile fino al 200% con disposizione adattiva.
 
 Lo strumento axe-core non rileva alcuna violazione su tutte le schermate. Restano da fare le prove con i
-lettori di schermo NVDA e VoiceOver. Stato, verifiche e limiti sono descritti in [ACCESSIBILITA.md](ACCESSIBILITA.md).
+lettori di schermo NVDA e VoiceOver. Stato, verifiche e limiti sono descritti in [ACCESSIBILITA.md](docs/ACCESSIBILITA.md).
 
 ## Segnalazioni di sicurezza
 
-Vedere [SECURITY.md](SECURITY.md).
+Vedere [SECURITY.md](.github/SECURITY.md).
 
 ## Licenza
 

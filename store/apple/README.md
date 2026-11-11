@@ -60,7 +60,7 @@ Questi passi si possono automatizzare nel workflow Rilascio quando ci sono i cer
 - Categoria **Economia** (Business), secondaria **Produttività**.
 - Prezzo: fascia da 2,99 €, disponibile in tutti i paesi o solo in Italia.
 - Schermate 2880×1800 o 1280×800: quelle in `docs/immagini/` vanno ridimensionate a 2880×1800.
-- Informativa privacy: URL di `PRIVACY.md`; nella sezione "Privacy dell'app" indicare **nessun dato raccolto**.
+- Informativa privacy: URL di `docs/PRIVACY.md` (oppure https://www.rastinvoice.it/privacy.html); nella sezione "Privacy dell'app" indicare **nessun dato raccolto**.
 - La revisione di Apple richiede di solito da 1 a 3 giorni.
 
 ## Stato

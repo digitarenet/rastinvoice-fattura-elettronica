@@ -83,7 +83,7 @@ jobs:
       - name: Pacchetto MSIX
         shell: pwsh
         run: >
-          ./scripts/msix.ps1
+          ./store/microsoft/msix.ps1
           -NomePacchetto "${{ vars.MSIX_NOME_PACCHETTO }}"
           -Editore "${{ vars.MSIX_EDITORE }}"
           -EditoreVisualizzato "${{ vars.MSIX_EDITORE_VISUALIZZATO }}"

@@ -4,7 +4,7 @@
 
 Fatti principali:
 
-- Versione: 1.0.5 (novembre 2026)
+- Versione: 1.0.6 (novembre 2026)
 - Prezzo: gratuito su Windows (Microsoft Store) e Linux (Flathub, Snap Store, .deb, .rpm, AppImage); 2,99 € su Mac App Store
 - Licenza: EUPL-1.2, codice sorgente su GitHub
 - Formati: XML, XML.P7M (DER, BER, base64, firme annidate), ZIP, EML (PEC), lotti di fatture
@@ -28,5 +28,5 @@ Fatti principali:
 ## Altre risorse
 
 - [Codice sorgente e documentazione](https://github.com/digitarenet/rastinvoice-fattura-elettronica)
-- [Registro delle modifiche](https://github.com/digitarenet/rastinvoice-fattura-elettronica/blob/main/CHANGELOG.md)
+- [Registro delle modifiche](https://github.com/digitarenet/rastinvoice-fattura-elettronica/blob/main/docs/CHANGELOG.md)
 - Contatti: rastinvoice@digitare.net

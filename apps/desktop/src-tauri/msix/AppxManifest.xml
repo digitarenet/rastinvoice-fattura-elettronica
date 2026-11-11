@@ -4,7 +4,7 @@
   Autore: Andrea Re @ 2026 - info@digitare.net
 
   Modello del manifesto MSIX per il Microsoft Store. I segnaposto tra doppie
-  graffe vengono sostituiti da scripts/msix.ps1 con i valori assegnati da
+  graffe vengono sostituiti da store/microsoft/msix.ps1 con i valori assegnati da
   Partner Center (nome del pacchetto ed editore) e con la versione corrente.
 -->
 <Package

@@ -15,7 +15,7 @@ Materiale comune:
 - [`testi.md`](testi.md): nome, descrizioni, funzionalità, parole chiave, didascalie e dati comuni.
 - [`immagini/`](immagini/): logo 300×300 e 1080×1080, poster 720×1080.
 - `../docs/immagini/`: schermate a 2720×1720.
-- `../PRIVACY.md`: informativa privacy, da indicare come URL in ogni store.
+- `../docs/PRIVACY.md`: informativa privacy, da indicare come URL in ogni store.
 
 Distribuzione: Windows solo dal Microsoft Store (gratuito, nessun avviso di SmartScreen), macOS solo dal Mac
 App Store (2,99 €), Linux da GitHub, Flathub e Snap Store. Il pulsante per le donazioni non compare nella

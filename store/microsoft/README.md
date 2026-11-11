@@ -37,7 +37,7 @@ In alternativa, su un computer Windows con il Windows SDK:
 
 ```powershell
 npx tauri build            # da apps/desktop
-pwsh scripts/msix.ps1 -NomePacchetto "..." -Editore "CN=..." -EditoreVisualizzato "..."
+pwsh store/microsoft/msix.ps1 -NomePacchetto "..." -Editore "CN=..." -EditoreVisualizzato "..."
 ```
 
 ## 5. Invio (Partner Center > Invii > Avvia l'invio)
@@ -45,7 +45,7 @@ pwsh scripts/msix.ps1 -NomePacchetto "..." -Editore "CN=..." -EditoreVisualizzat
 | Sezione | Cosa inserire |
 | --- | --- |
 | Prezzi e disponibilità | Gratuito; mercati: tutti, oppure solo Italia; visibilità pubblica |
-| Proprietà | Categoria **Business** (sottocategoria contabilità e finanza, se presente) o **Produttività**; informativa privacy: URL di `PRIVACY.md`; sito; contatto: info@digitare.net |
+| Proprietà | Categoria **Business** (sottocategoria contabilità e finanza, se presente) o **Produttività**; informativa privacy: URL di `docs/PRIVACY.md` (oppure https://www.rastinvoice.it/privacy.html); sito; contatto: info@digitare.net |
 | Proprietà > dichiarazioni | L'app non raccoglie dati personali; accede a Internet solo su richiesta dell'utente |
 | Classificazioni per età | Questionario IARC: nessuna violenza, nessun contenuto sensibile, nessuna interazione tra utenti, nessun acquisto, nessuna condivisione della posizione. Risultato atteso: 3+ |
 | Pacchetti | caricare il file `.msix`; famiglia di dispositivi: Windows 10/11 Desktop |

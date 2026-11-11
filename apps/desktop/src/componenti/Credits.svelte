@@ -9,7 +9,7 @@
   import { api } from "../lib/api";
   import { blocchiMarkdown } from "../lib/markdown";
   import { SOSTENITORI, URL_DONAZIONE, donazioniAmmesse } from "../lib/sostegno";
-  import changelog from "../../../../CHANGELOG.md?raw";
+  import changelog from "../../../../docs/CHANGELOG.md?raw";
 
   let { versione, onErrore }: { versione: string; onErrore: (m: string) => void } = $props();
 
