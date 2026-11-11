@@ -62,7 +62,7 @@ REQUISITI
 Windows 10 o 11 a 64 bit. Su Windows 10 serve il componente Microsoft Edge WebView2, già presente se il
 sistema è aggiornato. Windows 8 e 7 non sono supportati.
 
-Licenza EUPL-1.2. Codice sorgente: https://github.com/digitarenet/rust-in-voice
+Licenza EUPL-1.2. Codice sorgente: https://github.com/digitarenet/rastinvoice
 
 ## Funzionalità principali (una per riga, fino a 200 caratteri ciascuna)
 
@@ -107,8 +107,8 @@ l'archivio di fatture emesse e ricevute con ricerca, rubrica e statistiche.
 | Prezzo | gratuito su Windows e Linux; 2,99 € sul Mac App Store |
 | Contatto per l'assistenza | info@digitare.net |
 | Sito | da indicare quando è pronto il dominio rastinvoice.it |
-| Informativa privacy | https://github.com/digitarenet/rust-in-voice/blob/main/PRIVACY.md (o la pagina sul sito) |
-| Codice sorgente | https://github.com/digitarenet/rust-in-voice |
+| Informativa privacy | https://github.com/digitarenet/rastinvoice/blob/main/PRIVACY.md (o la pagina sul sito) |
+| Codice sorgente | https://github.com/digitarenet/rastinvoice |
 | Lingua | italiano |
 | Requisiti di sistema | Windows 10 o 11 (64 bit) con WebView2; macOS 10.13 o successivo; Linux a 64 bit con WebKitGTK 4.1 |
 | Età consigliata | per tutti (nessun contenuto sensibile, nessuna interazione tra utenti, nessun acquisto) |

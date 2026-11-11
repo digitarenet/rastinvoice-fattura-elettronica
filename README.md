@@ -1,6 +1,6 @@
 # RastInvoice
 
-> Fino alla versione 0.9.0 il programma si chiamava RustinVoice; il repository mantiene il nome `rust-in-voice`.
+> Fino alla versione 0.9.0 il programma si chiamava RustinVoice; il repository si chiamava `rust-in-voice`.
 > Copyright (c) 2026 Andrea Re - info@digitare.net - [digitare.net](https://www.digitare.net)
 
 Visualizzatore di fatture elettroniche italiane (formato **FatturaPA**), portable e multipiattaforma: Windows, Linux e macOS, senza installazione.
@@ -76,7 +76,7 @@ Apre fatture emesse e ricevute in tutti i formati in cui arrivano di solito: `.x
   quindi Windows non mostra avvisi di SmartScreen.
 - **macOS:** Mac App Store, 2,99 €.
 - **Linux:** `.deb` per Debian e Ubuntu, `.rpm` per Fedora e openSUSE e AppImage nelle
-  [release di GitHub](https://github.com/digitarenet/rust-in-voice/releases), oltre a Flathub e Snap Store.
+  [release di GitHub](https://github.com/digitarenet/rastinvoice/releases), oltre a Flathub e Snap Store.
 - Chi preferisce può compilare il programma dai sorgenti su qualsiasi sistema (vedi Compilazione).
 - Materiale per gli store nella cartella [`store/`](store/README.md); i pacchetti si producono con il workflow
   Rilascio, avviato a mano.
@@ -102,7 +102,7 @@ già presente in Windows 10 aggiornato. Se RastInvoice non si avvia, scaricare e
 Bootstrapper" dalla [pagina ufficiale di WebView2](https://developer.microsoft.com/microsoft-edge/webview2/),
 poi riavviare il programma. Basta farlo una volta.
 
-**Assistenza.** Per problemi o richieste: [segnalazioni su GitHub](https://github.com/digitarenet/rust-in-voice/issues)
+**Assistenza.** Per problemi o richieste: [segnalazioni su GitHub](https://github.com/digitarenet/rastinvoice/issues)
 oppure info@digitare.net, indicando versione di RastInvoice e di Windows.
 
 ## Immagini

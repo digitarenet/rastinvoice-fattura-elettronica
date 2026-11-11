@@ -30,9 +30,9 @@
     </ul>
   </description>
   <launchable type="desktop-id">net.digitare.rastinvoice.desktop</launchable>
-  <url type="homepage">https://github.com/digitarenet/rust-in-voice</url>
-  <url type="bugtracker">https://github.com/digitarenet/rust-in-voice/issues</url>
-  <url type="vcs-browser">https://github.com/digitarenet/rust-in-voice</url>
+  <url type="homepage">https://github.com/digitarenet/rastinvoice</url>
+  <url type="bugtracker">https://github.com/digitarenet/rastinvoice/issues</url>
+  <url type="vcs-browser">https://github.com/digitarenet/rastinvoice</url>
   <categories>
     <category>Office</category>
     <category>Finance</category>
@@ -47,19 +47,19 @@
   <screenshots>
     <screenshot type="default">
       <caption>Fatture emesse e ricevute in un unico elenco, con la vista moderna della fattura</caption>
-      <image>https://raw.githubusercontent.com/digitarenet/rust-in-voice/main/docs/immagini/documenti.png</image>
+      <image>https://raw.githubusercontent.com/digitarenet/rastinvoice/main/docs/immagini/documenti.png</image>
     </screenshot>
     <screenshot>
       <caption>La stessa fattura con il foglio di stile ufficiale AssoSoftware</caption>
-      <image>https://raw.githubusercontent.com/digitarenet/rust-in-voice/main/docs/immagini/assosoftware.png</image>
+      <image>https://raw.githubusercontent.com/digitarenet/rastinvoice/main/docs/immagini/assosoftware.png</image>
     </screenshot>
     <screenshot>
       <caption>Rubrica di clienti e fornitori con documenti e totali per anno</caption>
-      <image>https://raw.githubusercontent.com/digitarenet/rust-in-voice/main/docs/immagini/rubrica.png</image>
+      <image>https://raw.githubusercontent.com/digitarenet/rastinvoice/main/docs/immagini/rubrica.png</image>
     </screenshot>
     <screenshot>
       <caption>Statistiche su fatturato, acquisti e IVA, con grafico mensile</caption>
-      <image>https://raw.githubusercontent.com/digitarenet/rust-in-voice/main/docs/immagini/statistiche.png</image>
+      <image>https://raw.githubusercontent.com/digitarenet/rastinvoice/main/docs/immagini/statistiche.png</image>
     </screenshot>
   </screenshots>
   <content_rating type="oars-1.1" />

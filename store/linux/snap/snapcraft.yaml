@@ -14,8 +14,8 @@ description: |
   PEC. Verifica firma e calcoli, tiene l'archivio di fatture emesse e ricevute
   con ricerca, rubrica e statistiche. Funziona senza connessione a Internet.
 license: EUPL-1.2
-website: https://github.com/digitarenet/rust-in-voice
-source-code: https://github.com/digitarenet/rust-in-voice
+website: https://github.com/digitarenet/rastinvoice
+source-code: https://github.com/digitarenet/rastinvoice
 contact: info@digitare.net
 grade: stable
 confinement: strict

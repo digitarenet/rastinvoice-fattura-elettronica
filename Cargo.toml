@@ -14,11 +14,11 @@ members = [
 ]
 
 [workspace.package]
-version = "0.13.1"
+version = "0.13.2"
 edition = "2021"
 authors = ["Andrea Re <info@digitare.net>"]
 rust-version = "1.88"
-repository = "https://github.com/digitarenet/rust-in-voice"
+repository = "https://github.com/digitarenet/rastinvoice"
 license = "EUPL-1.2"
 
 [workspace.dependencies]
