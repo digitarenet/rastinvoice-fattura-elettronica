@@ -6,18 +6,81 @@ Visualizzatore di fatture elettroniche italiane (formato **FatturaPA**), portabl
 
 Apre fatture emesse e ricevute in tutti i formati in cui arrivano di solito: `.xml`, `.xml.p7m` firmati (anche in base64 o con più firme), lotti con più documenti, fatture semplificate. Riconosce ricevute e notifiche del Sistema di Interscambio senza confonderle con le fatture.
 
-In breve:
-- **funziona senza installazione e senza connessione**: nessun dato lascia il computer e i file originali non
-  vengono mai modificati;
-- **due viste della fattura**: "Moderna" e foglio di stile ufficiale AssoSoftware, applicato da un motore XSLT
-  nativo;
-- **ricerca, rubrica, statistiche e IVA**: ricerca a testo libero, rubrica clienti e fornitori, statistiche con
-  IVA per anno, mese e controparte;
-- **allegati e notifiche**: visualizzatore integrato degli allegati e stato delle notifiche SdI per ogni fattura;
-- **interfaccia accessibile**: segue il design system di Designers Italia ed è progettata per le WCAG 2.1 AA
-  (vedi [Accessibilità](#accessibilità)).
+![Elenco dei documenti e vista Moderna di una fattura](docs/immagini/documenti.png)
 
-Versione attuale: **0.8.1** (vedi il [registro delle modifiche](CHANGELOG.md)).
+## Funzionalità
+
+**Apertura dei documenti**
+- Fatture ordinarie (FPR12), verso la Pubblica Amministrazione (FPA12) e semplificate (FSM10), secondo le
+  specifiche FatturaPA 1.9.1.
+- File `.xml` in UTF-8, UTF-16, ISO-8859-1 e Windows-1252.
+- File firmati `.p7m` in formato DER, BER o base64, anche con più firme annidate.
+- Lotti con più documenti nello stesso file.
+- Archivi `.zip` ed email PEC `.eml` letti al loro interno, senza estrarli.
+- Cartelle intere con tutte le sottocartelle, anche su disco di rete o NAS, più file singoli e trascina e rilascia
+  di file e cartelle.
+- Indice locale per avvii rapidi anche con decine di migliaia di documenti.
+
+**Consultazione**
+- Separazione automatica fra **ricevute** ed **emesse** in base alla propria partita IVA, che l'applicazione
+  propone da sola.
+- Sezioni per tutti i documenti, ricevute, emesse, da leggere, contrassegnate, con anomalie e per anno.
+- Ricerca a testo libero (numero, soggetto, partita IVA, descrizione, importo), filtri per date e per contatto,
+  cinque ordinamenti.
+- Elenco virtuale fluido anche con migliaia di righe, con stato letto e da leggere, contrassegni e scadenze.
+
+**Viste della fattura**
+- Vista **Moderna**, compatta e leggibile, con ingrandimento.
+- Vista con il **foglio di stile ufficiale AssoSoftware**, scaricabile dalle impostazioni o importabile da file.
+  La applica un motore XSLT nativo, che non dipende dal motore web di sistema.
+- Vista **XML**, formattata o originale.
+- **Controlli formali e di calcolo** con i codici di errore del Sistema di Interscambio: totali, IVA, partite IVA,
+  codici fiscali, IBAN.
+- **Verifica crittografica della firma**: integrità e firmatario.
+
+**Allegati**
+- Visualizzatore integrato per PDF, immagini, Word (`.docx`), Excel e ODS, CSV, testo, HTML e archivi zip,
+  anche annidati.
+- Apertura con il programma predefinito, in una cartella protetta e con l'avviso di sicurezza di Windows.
+- Salvataggio su disco.
+
+**Notifiche SdI**
+- Ricevute e notifiche del Sistema di Interscambio (RC, NS, MC, NE, DT, AT, EC, SE) riconosciute e collegate
+  alla fattura a cui si riferiscono.
+- Stato di ogni fattura nell'anteprima, con la cronologia delle notifiche e la spiegazione di ogni sigla.
+
+**Clienti, fornitori e statistiche**
+- **Rubrica** clienti e fornitori con documenti, totali e IVA per anno.
+- **Statistiche** per anno o per tutto il periodo: fatturato, acquisti, IVA a debito e a credito, scissione dei
+  pagamenti, saldo IVA indicativo, grafico mensile o annuale, classifica di clienti e fornitori.
+
+**Stampa ed esportazione**
+- Stampa della fattura.
+- Salvataggio in HTML e salvataggio dell'XML estratto dalla busta firmata.
+- Esportazione dell'elenco in CSV, con protezione contro le formule nei fogli di calcolo.
+
+**Riservatezza, portabilità e accessibilità**
+- Funziona **senza installazione e senza connessione**: nessun dato lascia il computer e i file originali non
+  vengono mai modificati.
+- **Modalità portable**: i dati vengono salvati accanto al programma, per esempio su una chiavetta USB.
+- Interfaccia secondo il **design system di Designers Italia**, progettata per le **WCAG 2.1 AA**, con ingrandimento
+  fino al 200% (vedi [Accessibilità](#accessibilità)).
+- Riga di comando per uso in script e integrazioni (vedi [Riga di comando](#riga-di-comando)).
+
+## Immagini
+
+Le immagini usano un archivio dimostrativo con dati di fantasia.
+
+| | |
+| --- | --- |
+| ![Statistiche con grafico mensile, IVA e classifiche](docs/immagini/statistiche.png) | ![Rubrica clienti e fornitori con riepilogo per anno](docs/immagini/rubrica.png) |
+| **Statistiche**: fatturato, IVA e classifiche | **Clienti e fornitori**: riepilogo per anno e documenti |
+| ![Fattura con il foglio di stile AssoSoftware](docs/immagini/assosoftware.png) | ![Allegato PDF nel visualizzatore integrato](docs/immagini/allegato.png) |
+| **Foglio di stile AssoSoftware** con motore XSLT nativo | **Allegati** nel visualizzatore integrato |
+| ![Notifiche del Sistema di Interscambio collegate alle fatture](docs/immagini/notifiche.png) | ![Elenco dei documenti e vista Moderna](docs/immagini/documenti.png) |
+| **Notifiche SdI** collegate alle fatture | **Documenti** e vista Moderna |
+
+Versione attuale: **0.8.2** (vedi il [registro delle modifiche](CHANGELOG.md)).
 
 ## Stato del progetto
 
@@ -59,7 +122,7 @@ Sono previste in seguito un'edizione web (SaaS) e una mobile.
 crates/
   rustinvoice-core/     nucleo: modello dati, lettura, buste firmate (nessuna dipendenza grafica)
   rustinvoice-render/   vista "Moderna" in HTML a partire dal modello dati
-  rustinvoice-cli/      riga di comando
+  rustinvoice-cli/      riga di comando (`rustinvoice`)
   rustinvoice-xslt/     motore XSLT 1.0 / XPath 1.0 per i fogli di stile
 apps/
   desktop/              applicazione desktop (Tauri 2 + Svelte 5 + Bootstrap Italia)
@@ -109,17 +172,38 @@ XSLT 1.0 scritto apposta per RustinVoice (`crates/rustinvoice-xslt`), che non di
 motore web di sistema; quest'ultimo resta solo come riserva. Il motore copre istruzioni e funzioni usate
 dai fogli di stile per la FatturaPA, con limiti di ricorsione e di dimensione del risultato.
 
-## Uso da riga di comando
+## Riga di comando
+
+Il programma `rustinvoice` (`rustinvoice.exe` su Windows) si ottiene con `cargo build --release -p rustinvoice-cli`
+e si trova in `target/release`. Legge gli stessi formati dell'applicazione desktop: `.xml`, `.p7m`, lotti, fatture
+semplificate e notifiche SdI.
+
+| Comando | Cosa fa |
+| --- | --- |
+| `rustinvoice info <FILE>` | Riepilogo leggibile: formato, busta firmata, cedente e cessionario, per ogni documento tipo, numero, data, righe, totale, prima scadenza e allegati. Per le notifiche SdI: tipo, file a cui si riferisce, identificativo SdI ed errori. |
+| `rustinvoice json <FILE>` | Intero modello dati in JSON, utile per integrazioni e altri programmi. |
+| `rustinvoice scansiona <CARTELLA>` | Legge la cartella e tutte le sottocartelle, anche dentro archivi `.zip` ed email `.eml`, e stampa un elenco CSV separato da `;`. Colonne: `file`, `tipo`, `cedente`, `piva_cedente`, `cessionario`, `piva_cessionario`, `tipo_documento`, `numero`, `data`, `totale`. |
+| `rustinvoice help [COMANDO]` | Guida generale o di un comando. |
+| `rustinvoice --version` | Versione del programma. |
+
+Opzioni comuni: `-h`, `--help` (guida) e `-V`, `--version` (versione). In caso di errore il messaggio va sullo
+standard error e il codice di uscita è `1`; altrimenti è `0`.
 
 ```sh
 # riepilogo leggibile
 rustinvoice info IT01234567890_0A1B2.xml.p7m
 
-# intero contenuto in JSON (utile per integrazioni)
-rustinvoice json IT01234567890_0A1B2.xml
+# intero contenuto in JSON, per esempio filtrato con jq
+rustinvoice json IT01234567890_0A1B2.xml | jq '.contenuto'
 
 # elenco CSV di tutti i documenti di una cartella e delle sottocartelle
 rustinvoice scansiona ./Fatture > elenco.csv
+```
+
+Il motore XSLT ha anche un programma di esempio, che applica un foglio di stile a un file XML e stampa l'HTML:
+
+```sh
+cargo run -p rustinvoice-xslt --example trasforma -- foglio_di_stile.xsl fattura.xml > fattura.html
 ```
 
 ## Versioni
