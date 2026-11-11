@@ -1,7 +1,50 @@
-/target
+# Copyright (c) 2026 Andrea Re - info@digitare.net
+# File e cartelle da non versionare.
+
+# --- Rust ---------------------------------------------------------------
+/target/
+**/target/
 **/*.rs.bk
-.idea/
-.vscode/
-*.swp
+*.pdb
+
+# --- Tauri --------------------------------------------------------------
+# Schemi generati automaticamente a ogni build.
+apps/desktop/src-tauri/gen/schemas/
+
+# --- Frontend (Node / Vite) ---------------------------------------------
+node_modules/
+apps/desktop/dist/
+.vite/
+*.tsbuildinfo
+npm-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# --- JetBrains (RustRover, Rider, ...) ----------------------------------
+# Si esclude tutta la cartella .idea tranne ciò che è utile condividere:
+# stile del codice e configurazioni di avvio. workspace.xml, tasks.xml,
+# shelf, dizionari personali e dati di utilizzo sono specifici della
+# singola macchina e non vanno su git.
+.idea/*
+!.idea/codeStyles/
+!.idea/runConfigurations/
+*.iml
+out/
+
+# --- Visual Studio Code -------------------------------------------------
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+
+# --- Sistema operativo --------------------------------------------------
 .DS_Store
 Thumbs.db
+desktop.ini
+*.swp
+*~
+
+# --- Dati locali dell'applicazione --------------------------------------
+# Cartella dati della modalità portable e file di prova personali.
+/dati/
+*.local.json
+.env
