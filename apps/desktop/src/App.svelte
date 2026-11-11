@@ -8,7 +8,7 @@
 <script lang="ts">
   import { onMount } from "svelte";
   import { getCurrentWebview } from "@tauri-apps/api/webview";
-  import { open, save } from "@tauri-apps/plugin-dialog";
+  import { open } from "@tauri-apps/plugin-dialog";
   import { api, type Avvio, type Esito, type Impostazioni as Imp, type StatoFoglio, type Voce } from "./lib/api";
   import {
     controparte,
@@ -241,14 +241,9 @@
   }
 
   async function esportaCsv() {
-    const percorso = await save({
-      defaultPath: "fatture.csv",
-      filters: [{ name: "CSV", extensions: ["csv"] }],
-    });
-    if (!percorso) return;
     try {
-      await api.scriviTesto(percorso, csv(visibili, propri));
-      mostra(`Esportati ${visibili.length} documenti.`);
+      if (await api.salvaTesto("fatture.csv", "csv", csv(visibili, propri)))
+        mostra(`Esportati ${visibili.length} documenti.`);
     } catch (e) {
       mostra(String(e), "errore");
     }

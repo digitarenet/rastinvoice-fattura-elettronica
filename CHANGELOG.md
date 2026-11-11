@@ -4,6 +4,19 @@ Tutte le modifiche rilevanti di RustinVoice. Il numero di versione segue lo sche
 MAGGIORE.MINORE.CORREZIONE: la versione minore cresce con le nuove funzioni, quella di
 correzione con le sole correzioni.
 
+## 0.3.2 - 2026-11-11
+
+### Sicurezza
+- Le finestre di salvataggio (CSV, HTML, XML, allegati) sono aperte dalla parte nativa:
+  l'interfaccia non può più indicare da sola dove scrivere un file.
+- La finestra dell'applicazione non può essere portata su pagine esterne, nemmeno da
+  collegamenti contenuti in una fattura.
+- Gli allegati aperti vengono scritti in una cartella privata dell'utente, nuova a ogni
+  apertura; su Windows sono marcati come provenienti da Internet, così Office li apre in
+  visualizzazione protetta.
+- L'esportazione CSV neutralizza i testi che Excel eseguirebbe come formule.
+- Permessi dell'interfaccia ridotti al solo dialogo di apertura file.
+
 ## 0.3.1 - 2026-11-11
 
 ### Migliorato

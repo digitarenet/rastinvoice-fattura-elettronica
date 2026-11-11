@@ -165,7 +165,14 @@ export function indovinaPropri(voci: Voce[]): { chiave: string; nome: string } |
 
 /** Elenco CSV (separatore `;`, compatibile con Excel in italiano). */
 export function csv(voci: Voce[], propri: Set<string>): string {
-  const campo = (s: string) => (/[;"\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s);
+  // I testi che iniziano con = + - @ (o tabulazione) verrebbero eseguiti da
+  // Excel come formule: si fanno precedere da un apostrofo. Gli importi
+  // negativi restano numeri.
+  const campo = (x: string) => {
+    let s = x;
+    if (/^[=+\-@\t\r]/.test(s) && !/^-\d+(,\d+)?$/.test(s)) s = "'" + s;
+    return /[;"\n\r]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
+  };
   const righe = [
     ["Data", "Numero", "Tipo", "Direzione", "Cedente", "ID cedente", "Cessionario", "ID cessionario", "Totale", "Divisa", "Scadenza", "File"].join(";"),
   ];

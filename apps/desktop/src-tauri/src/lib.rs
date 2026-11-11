@@ -142,20 +142,83 @@ fn allegato(file: &str, corpo: usize, indice: usize) -> Result<(String, Vec<u8>)
     Ok((nome, a.dati.clone()))
 }
 
+/// Salva un allegato dove sceglie l'utente. La finestra di salvataggio è
+/// aperta dalla parte nativa: il percorso di destinazione non arriva mai
+/// dall'interfaccia, quindi nessun contenuto web può scrivere dove vuole.
 #[tauri::command]
-fn salva_allegato(
+async fn salva_allegato(
+    app: tauri::AppHandle,
     file: String,
     corpo: usize,
     indice: usize,
-    destinazione: String,
-) -> Result<(), String> {
-    let (_, dati) = allegato(&file, corpo, indice)?;
-    std::fs::write(destinazione, dati).map_err(|e| e.to_string())
+) -> Result<bool, String> {
+    let (nome, dati) = allegato(&file, corpo, indice)?;
+    let Some(destinazione) = chiedi_destinazione(&app, &nome, None) else {
+        return Ok(false);
+    };
+    std::fs::write(destinazione, dati).map_err(|e| e.to_string())?;
+    Ok(true)
 }
 
+/// Tipi di file di testo che l'interfaccia può far salvare.
+const TIPI_TESTO: &[(&str, &str, &str)] = &[
+    ("csv", "CSV", "csv"),
+    ("html", "Pagina HTML", "html"),
+    ("xml", "File XML", "xml"),
+];
+
+/// Salva un testo (esportazione CSV, pagina HTML, XML estratto) dove sceglie
+/// l'utente, con la finestra di salvataggio aperta dalla parte nativa.
 #[tauri::command]
-fn nome_allegato(file: String, corpo: usize, indice: usize) -> Result<String, String> {
-    allegato(&file, corpo, indice).map(|(n, _)| n)
+async fn salva_testo(
+    app: tauri::AppHandle,
+    nome: String,
+    tipo: String,
+    testo: String,
+) -> Result<bool, String> {
+    let Some(&(_, descrizione, estensione)) = TIPI_TESTO.iter().find(|(t, _, _)| *t == tipo) else {
+        return Err("tipo di file non previsto".into());
+    };
+    let nome = nome_sicuro(&nome, estensione);
+    let Some(destinazione) = chiedi_destinazione(&app, &nome, Some((descrizione, estensione)))
+    else {
+        return Ok(false);
+    };
+    std::fs::write(destinazione, testo).map_err(|e| e.to_string())?;
+    Ok(true)
+}
+
+/// Nome proposto nella finestra di salvataggio: solo il nome del file, senza
+/// cartelle, con l'estensione attesa.
+fn nome_sicuro(nome: &str, estensione: &str) -> String {
+    let base = Path::new(nome)
+        .file_name()
+        .map(|n| n.to_string_lossy().to_string())
+        .unwrap_or_default();
+    let base = if base.is_empty() {
+        "documento".to_owned()
+    } else {
+        base
+    };
+    if base.to_lowercase().ends_with(&format!(".{estensione}")) {
+        base
+    } else {
+        format!("{base}.{estensione}")
+    }
+}
+
+/// Mostra la finestra di salvataggio e restituisce il percorso scelto.
+fn chiedi_destinazione(
+    app: &tauri::AppHandle,
+    nome: &str,
+    filtro: Option<(&str, &str)>,
+) -> Option<PathBuf> {
+    use tauri_plugin_dialog::DialogExt;
+    let mut finestra = app.dialog().file().set_file_name(nome);
+    if let Some((descrizione, estensione)) = filtro {
+        finestra = finestra.add_filter(descrizione, &[estensione]);
+    }
+    finestra.blocking_save_file()?.into_path().ok()
 }
 
 /// Scrive l'allegato in una cartella temporanea e ne restituisce il percorso,
@@ -169,7 +232,12 @@ const ALLEGATI_APRIBILI: &[&str] = &[
 ];
 
 #[tauri::command]
-fn apri_allegato(file: String, corpo: usize, indice: usize) -> Result<(), String> {
+fn apri_allegato(
+    app: tauri::AppHandle,
+    file: String,
+    corpo: usize,
+    indice: usize,
+) -> Result<(), String> {
     let (nome, dati) = allegato(&file, corpo, indice)?;
     let estensione = Path::new(&nome)
         .extension()
@@ -180,11 +248,54 @@ fn apri_allegato(file: String, corpo: usize, indice: usize) -> Result<(), String
             "Per sicurezza i file .{estensione} non si aprono direttamente: usa \"Salva\" e controllalo prima di aprirlo."
         ));
     }
-    let dir = std::env::temp_dir().join("rustinvoice-allegati");
-    std::fs::create_dir_all(&dir).map_err(|e| e.to_string())?;
+    // Cartella dell'utente (non quella temporanea condivisa) e nuova a ogni
+    // apertura: nessun altro utente del computer può preparare in anticipo
+    // file o collegamenti con lo stesso nome.
+    let radice = app
+        .path()
+        .app_cache_dir()
+        .map_err(|e| e.to_string())?
+        .join("allegati");
+    std::fs::create_dir_all(&radice).map_err(|e| e.to_string())?;
+    let dir = cartella_nuova(&radice)?;
     let p = dir.join(nome);
-    std::fs::write(&p, dati).map_err(|e| e.to_string())?;
+    std::fs::OpenOptions::new()
+        .write(true)
+        .create_new(true)
+        .open(&p)
+        .and_then(|mut f| std::io::Write::write_all(&mut f, &dati))
+        .map_err(|e| e.to_string())?;
+    segna_come_scaricato(&p);
     tauri_plugin_opener::open_path(&p, None::<&str>).map_err(|e| e.to_string())
+}
+
+/// Crea una sottocartella con nome mai usato prima.
+fn cartella_nuova(radice: &Path) -> Result<PathBuf, String> {
+    let base = std::time::SystemTime::now()
+        .duration_since(std::time::UNIX_EPOCH)
+        .map(|d| d.as_nanos())
+        .unwrap_or_default();
+    for n in 0..100u32 {
+        let dir = radice.join(format!("{base:x}{n:02}"));
+        if std::fs::create_dir(&dir).is_ok() {
+            return Ok(dir);
+        }
+    }
+    Err("impossibile preparare la cartella per l'allegato".into())
+}
+
+/// Su Windows marca il file come proveniente da Internet: Office lo apre in
+/// visualizzazione protetta e il sistema avvisa prima di eseguire contenuti
+/// attivi, come per gli allegati delle email.
+fn segna_come_scaricato(p: &Path) {
+    #[cfg(windows)]
+    {
+        let mut flusso = p.as_os_str().to_owned();
+        flusso.push(":Zone.Identifier");
+        let _ = std::fs::write(flusso, "[ZoneTransfer]\r\nZoneId=3\r\n");
+    }
+    #[cfg(not(windows))]
+    let _ = p;
 }
 
 /// Apre in Esplora risorse una delle cartelle configurate o la cartella dati.
@@ -284,10 +395,21 @@ fn foglio_stile_leggi(stato: tauri::State<'_, Stato>) -> Option<String> {
     foglio_stile::leggi(&stato.dir_dati)
 }
 
-/// Scrive un file di testo (esportazioni CSV, HTML).
-#[tauri::command]
-fn scrivi_testo(percorso: String, testo: String) -> Result<(), String> {
-    std::fs::write(percorso, testo).map_err(|e| e.to_string())
+/// La finestra può mostrare solo l'interfaccia dell'applicazione e le
+/// anteprime generate al suo interno: qualsiasi altra pagina (per esempio un
+/// collegamento contenuto in una fattura) viene bloccata.
+fn navigazione_consentita(url: &tauri::Url) -> bool {
+    match url.scheme() {
+        "tauri" | "about" | "data" | "blob" => true,
+        "http" | "https" => {
+            url.host_str() == Some("tauri.localhost")
+                // Server di sviluppo (npm run app:dev), solo senza interfaccia inclusa.
+                || (!cfg!(feature = "interfaccia-inclusa")
+                    && url.host_str() == Some("localhost")
+                    && url.port() == Some(1420))
+        }
+        _ => false,
+    }
 }
 
 /// Avvia l'applicazione.
@@ -295,6 +417,11 @@ pub fn avvia() {
     tauri::Builder::default()
         .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_opener::init())
+        .plugin(
+            tauri::plugin::Builder::<tauri::Wry, ()>::new("navigazione")
+                .on_navigation(|_, url| navigazione_consentita(url))
+                .build(),
+        )
         .setup(|app| {
             let standard = app
                 .path()
@@ -317,7 +444,6 @@ pub fn avvia() {
             scansiona,
             dettaglio,
             salva_allegato,
-            nome_allegato,
             apri_allegato,
             apri_cartella,
             mostra_nella_cartella,
@@ -328,7 +454,7 @@ pub fn avvia() {
             foglio_stile_aggiorna,
             foglio_stile_importa,
             foglio_stile_leggi,
-            scrivi_testo
+            salva_testo
         ])
         .run(tauri::generate_context!())
         .expect("errore durante l'avvio dell'applicazione");

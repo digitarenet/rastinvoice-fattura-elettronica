@@ -3522,7 +3522,7 @@ dependencies = [
 
 [[package]]
 name = "rustinvoice-cli"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "clap",
  "rustinvoice-core",
@@ -3532,7 +3532,7 @@ dependencies = [
 
 [[package]]
 name = "rustinvoice-core"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "base64 0.22.1",
  "chrono",
@@ -3552,7 +3552,7 @@ dependencies = [
 
 [[package]]
 name = "rustinvoice-desktop"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "chrono",
  "rayon",
@@ -3572,7 +3572,7 @@ dependencies = [
 
 [[package]]
 name = "rustinvoice-render"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "chrono",
  "rust_decimal",

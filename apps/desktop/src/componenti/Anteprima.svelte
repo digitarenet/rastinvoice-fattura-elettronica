@@ -7,7 +7,6 @@
 -->
 <script lang="ts">
   import { untrack } from "svelte";
-  import { save } from "@tauri-apps/plugin-dialog";
   import { api, type Dettaglio, type Voce } from "../lib/api";
   import * as xslt from "../lib/xslt";
   import { formatta, type Riga } from "../lib/xmlformato";
@@ -200,21 +199,13 @@
     const html = scheda === "standard" ? htmlStandard : dettaglio?.html;
     if (!html) return;
     const base = voce.nome_file.replace(/\.(xml|p7m)$/gi, "").replace(/\.xml$/i, "");
-    const percorso = await save({
-      defaultPath: `${base}.html`,
-      filters: [{ name: "Pagina HTML", extensions: ["html"] }],
-    });
-    if (percorso) await api.scriviTesto(percorso, html).catch((e) => onErrore(String(e)));
+    await api.salvaTesto(`${base}.html`, "html", html).catch((e) => onErrore(String(e)));
   }
 
   async function salvaXml() {
     if (!dettaglio) return;
     const base = voce.nome_file.replace(/\.p7m$/i, "");
-    const percorso = await save({
-      defaultPath: base.toLowerCase().endsWith(".xml") ? base : `${base}.xml`,
-      filters: [{ name: "File XML", extensions: ["xml"] }],
-    });
-    if (percorso) await api.scriviTesto(percorso, dettaglio.xml).catch((e) => onErrore(String(e)));
+    await api.salvaTesto(base, "xml", dettaglio.xml).catch((e) => onErrore(String(e)));
   }
 
   async function apriAllegato(i: number) {
@@ -227,9 +218,7 @@
 
   async function salvaAllegato(i: number) {
     try {
-      const nome = await api.nomeAllegato(voce.file, voce.corpo, i);
-      const percorso = await save({ defaultPath: nome });
-      if (percorso) await api.salvaAllegato(voce.file, voce.corpo, i, percorso);
+      await api.salvaAllegato(voce.file, voce.corpo, i);
     } catch (e) {
       onErrore(String(e));
     }

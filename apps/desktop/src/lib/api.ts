@@ -134,10 +134,9 @@ export const api = {
   scansiona: (percorsi: string[]) => invoke<Esito>("scansiona", { percorsi }),
   dettaglio: (file: string, corpo: number) =>
     invoke<Dettaglio>("dettaglio", { file, corpo }),
-  nomeAllegato: (file: string, corpo: number, indice: number) =>
-    invoke<string>("nome_allegato", { file, corpo, indice }),
-  salvaAllegato: (file: string, corpo: number, indice: number, destinazione: string) =>
-    invoke<void>("salva_allegato", { file, corpo, indice, destinazione }),
+  /** Chiede dove salvare e salva; restituisce false se l'utente annulla. */
+  salvaAllegato: (file: string, corpo: number, indice: number) =>
+    invoke<boolean>("salva_allegato", { file, corpo, indice }),
   apriAllegato: (file: string, corpo: number, indice: number) =>
     invoke<void>("apri_allegato", { file, corpo, indice }),
   apriCartella: (percorso: string) => invoke<void>("apri_cartella", { percorso }),
@@ -151,6 +150,7 @@ export const api = {
   foglioImporta: (sorgente: string) =>
     invoke<StatoFoglio>("foglio_stile_importa", { sorgente }),
   foglioLeggi: () => invoke<string | null>("foglio_stile_leggi"),
-  scriviTesto: (percorso: string, testo: string) =>
-    invoke<void>("scrivi_testo", { percorso, testo }),
+  /** Chiede dove salvare e salva; restituisce false se l'utente annulla. */
+  salvaTesto: (nome: string, tipo: "csv" | "html" | "xml", testo: string) =>
+    invoke<boolean>("salva_testo", { nome, tipo, testo }),
 };
