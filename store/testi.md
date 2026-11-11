@@ -11,21 +11,23 @@ RastInvoice
 
 ## Sottotitolo (fino a 30 caratteri)
 
-Lettore di fatture elettroniche
+Visualizzatore fatture XML P7M
 
 ## Riassunto (fino a 80 caratteri)
 
-Legge, verifica e archivia le fatture elettroniche italiane, senza installazione
+Visualizzatore fattura elettronica XML e P7M: apri, cerca, stampa e salva in PDF
 
 ## Descrizione breve (fino a 270 caratteri)
 
-RastInvoice apre le fatture elettroniche italiane in formato FatturaPA: XML, P7M firmati, archivi ZIP ed
-email PEC. Le mostra in modo chiaro, verifica firma e calcoli, e tiene in ordine l'archivio di fatture
-emesse e ricevute. Gratuito e open source.
+Visualizzatore gratuito di fatture elettroniche: apre la fattura elettronica FatturaPA in XML, P7M firmato,
+ZIP o PEC, la mostra in modo chiaro, la stampa o la salva in PDF. Archivio di fatture emesse e ricevute con
+ricerca. Open source.
 
 ## Descrizione completa
 
-RastInvoice è un lettore gratuito e open source di fatture elettroniche italiane, emesse e ricevute.
+RastInvoice è un visualizzatore gratuito e open source di fatture elettroniche italiane, emesse e ricevute:
+apre la fattura elettronica in formato XML o P7M (FatturaPA, fattura PA e fattura tra privati) e la mostra in
+modo leggibile, pronta da stampare o salvare in PDF.
 Funziona senza connessione a Internet: le fatture restano sul tuo computer e i file originali non vengono
 mai modificati.
 
@@ -62,7 +64,7 @@ REQUISITI
 Windows 10 o 11 a 64 bit. Su Windows 10 serve il componente Microsoft Edge WebView2, già presente se il
 sistema è aggiornato. Windows 8 e 7 non sono supportati.
 
-Licenza EUPL-1.2. Codice sorgente: https://github.com/digitarenet/rastinvoice
+Licenza EUPL-1.2. Codice sorgente: https://github.com/digitarenet/rastinvoice-fattura-elettronica
 
 ## Funzionalità principali (una per riga, fino a 200 caratteri ciascuna)
 
@@ -77,9 +79,30 @@ Licenza EUPL-1.2. Codice sorgente: https://github.com/digitarenet/rastinvoice
 - Funziona offline: nessun dato lascia il computer
 - Accessibile: tastiera, contrasti e ingrandimento fino al 200%
 
-## Parole chiave (fino a 7, ciascuna fino a 30 caratteri)
+## Parole chiave
 
-fattura elettronica · fatturapa · p7m · xml · visualizzatore fatture · sdi · pec
+Microsoft Store (fino a 7, ciascuna fino a 30 caratteri):
+
+fattura elettronica · visualizzatore fatture · fatturapa · fattura pa · p7m · fattura xml · lettore fatture
+
+Mac App Store (fino a 100 caratteri in tutto, separate da virgola senza spazi; il nome e il sottotitolo sono
+già indicizzati, quindi non vanno ripetuti):
+
+fattura,elettronica,fatturapa,pa,p7m,xml,pdf,lettore,visualizza,sdi,pec,fornitori,cassetto,fiscale
+
+Linux (AppStream e file `.desktop`): fattura, fattura elettronica, fatturapa, fattura pa, visualizzatore,
+p7m, xml, sdi, pec, invoice.
+
+## GitHub (da impostare nella pagina del repository, voce About)
+
+Descrizione:
+
+Visualizzatore di fatture elettroniche XML e P7M (FatturaPA): apri, cerca, stampa e converti in PDF la fattura elettronica. Gratuito, open source, offline, Windows, macOS e Linux.
+
+Topic:
+
+fattura-elettronica · fatture-elettroniche · fatturapa · fattura-pa · visualizzatore · p7m · xml-viewer · sdi ·
+pec · invoice-viewer · e-invoicing · italia · rust · tauri
 
 ## Novità di questa versione (fino a 1500 caratteri)
 
@@ -107,8 +130,8 @@ l'archivio di fatture emesse e ricevute con ricerca, rubrica e statistiche.
 | Prezzo | gratuito su Windows e Linux; 2,99 € sul Mac App Store |
 | Contatto per l'assistenza | info@digitare.net |
 | Sito | da indicare quando è pronto il dominio rastinvoice.it |
-| Informativa privacy | https://github.com/digitarenet/rastinvoice/blob/main/PRIVACY.md (o la pagina sul sito) |
-| Codice sorgente | https://github.com/digitarenet/rastinvoice |
+| Informativa privacy | https://github.com/digitarenet/rastinvoice-fattura-elettronica/blob/main/PRIVACY.md (o la pagina sul sito) |
+| Codice sorgente | https://github.com/digitarenet/rastinvoice-fattura-elettronica |
 | Lingua | italiano |
 | Requisiti di sistema | Windows 10 o 11 (64 bit) con WebView2; macOS 10.13 o successivo; Linux a 64 bit con WebKitGTK 4.1 |
 | Età consigliata | per tutti (nessun contenuto sensibile, nessuna interazione tra utenti, nessun acquisto) |

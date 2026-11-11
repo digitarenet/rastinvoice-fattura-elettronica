@@ -10,14 +10,14 @@
   <metadata_license>CC0-1.0</metadata_license>
   <project_license>EUPL-1.2</project_license>
   <name>RastInvoice</name>
-  <summary>Lettore di fatture elettroniche italiane</summary>
+  <summary>Visualizzatore di fatture elettroniche XML e P7M</summary>
   <developer id="net.digitare">
     <name>Andrea Re (digitare.net)</name>
   </developer>
   <description>
     <p>
-      RastInvoice è un lettore gratuito e open source di fatture elettroniche italiane in formato
-      FatturaPA, emesse e ricevute. Funziona senza connessione a Internet: le fatture restano sul
+      RastInvoice è un visualizzatore gratuito e open source di fatture elettroniche italiane in formato
+      FatturaPA (fattura PA e fattura tra privati), emesse e ricevute, da stampare o salvare in PDF. Funziona senza connessione a Internet: le fatture restano sul
       computer e i file originali non vengono mai modificati.
     </p>
     <ul>
@@ -30,16 +30,22 @@
     </ul>
   </description>
   <launchable type="desktop-id">net.digitare.rastinvoice.desktop</launchable>
-  <url type="homepage">https://github.com/digitarenet/rastinvoice</url>
-  <url type="bugtracker">https://github.com/digitarenet/rastinvoice/issues</url>
-  <url type="vcs-browser">https://github.com/digitarenet/rastinvoice</url>
+  <url type="homepage">https://github.com/digitarenet/rastinvoice-fattura-elettronica</url>
+  <url type="bugtracker">https://github.com/digitarenet/rastinvoice-fattura-elettronica/issues</url>
+  <url type="vcs-browser">https://github.com/digitarenet/rastinvoice-fattura-elettronica</url>
   <categories>
     <category>Office</category>
     <category>Finance</category>
   </categories>
   <keywords>
+    <keyword>fattura</keyword>
     <keyword>fattura elettronica</keyword>
+    <keyword>fatture elettroniche</keyword>
     <keyword>fatturapa</keyword>
+    <keyword>fattura pa</keyword>
+    <keyword>visualizzatore</keyword>
+    <keyword>xml</keyword>
+    <keyword>pec</keyword>
     <keyword>p7m</keyword>
     <keyword>sdi</keyword>
     <keyword>invoice</keyword>
@@ -47,19 +53,19 @@
   <screenshots>
     <screenshot type="default">
       <caption>Fatture emesse e ricevute in un unico elenco, con la vista moderna della fattura</caption>
-      <image>https://raw.githubusercontent.com/digitarenet/rastinvoice/main/docs/immagini/documenti.png</image>
+      <image>https://raw.githubusercontent.com/digitarenet/rastinvoice-fattura-elettronica/main/docs/immagini/documenti.png</image>
     </screenshot>
     <screenshot>
       <caption>La stessa fattura con il foglio di stile ufficiale AssoSoftware</caption>
-      <image>https://raw.githubusercontent.com/digitarenet/rastinvoice/main/docs/immagini/assosoftware.png</image>
+      <image>https://raw.githubusercontent.com/digitarenet/rastinvoice-fattura-elettronica/main/docs/immagini/assosoftware.png</image>
     </screenshot>
     <screenshot>
       <caption>Rubrica di clienti e fornitori con documenti e totali per anno</caption>
-      <image>https://raw.githubusercontent.com/digitarenet/rastinvoice/main/docs/immagini/rubrica.png</image>
+      <image>https://raw.githubusercontent.com/digitarenet/rastinvoice-fattura-elettronica/main/docs/immagini/rubrica.png</image>
     </screenshot>
     <screenshot>
       <caption>Statistiche su fatturato, acquisti e IVA, con grafico mensile</caption>
-      <image>https://raw.githubusercontent.com/digitarenet/rastinvoice/main/docs/immagini/statistiche.png</image>
+      <image>https://raw.githubusercontent.com/digitarenet/rastinvoice-fattura-elettronica/main/docs/immagini/statistiche.png</image>
     </screenshot>
   </screenshots>
   <content_rating type="oars-1.1" />

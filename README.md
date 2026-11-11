@@ -1,9 +1,18 @@
-# RastInvoice
+# RastInvoice: visualizzatore di fatture elettroniche XML e P7M (FatturaPA)
 
-> Fino alla versione 0.9.0 il programma si chiamava RustinVoice; il repository si chiamava `rust-in-voice`.
+**Visualizzatore gratuito e open source per la fattura elettronica italiana.** Apre, legge, stampa e converte in
+PDF le fatture elettroniche in formato **FatturaPA** (fattura PA e fattura tra privati B2B): file `.xml`,
+`.xml.p7m` firmati, archivi `.zip` ed email PEC. Funziona su **Windows, macOS e Linux**, senza installazione e
+senza connessione a Internet.
+
+Oltre a mostrare una singola fattura, tiene in ordine l'archivio delle fatture **ricevute ed emesse**: ricerca a
+testo libero, filtri per data e per contatto, rubrica di clienti e fornitori e statistiche su fatturato e IVA.
+
 > Copyright (c) 2026 Andrea Re - info@digitare.net - [digitare.net](https://www.digitare.net)
+> Fino alla versione 0.9.0 il programma si chiamava RustinVoice; il repository si è chiamato prima `rust-in-voice`
+> e poi `rastinvoice`. I vecchi indirizzi vengono reindirizzati automaticamente.
 
-Visualizzatore di fatture elettroniche italiane (formato **FatturaPA**), portable e multipiattaforma: Windows, Linux e macOS, senza installazione.
+**Scarica:** Microsoft Store (Windows) · Mac App Store · [release di GitHub](https://github.com/digitarenet/rastinvoice-fattura-elettronica/releases) (Linux `.deb`, `.rpm`, AppImage) · Flathub · Snap Store
 
 Apre fatture emesse e ricevute in tutti i formati in cui arrivano di solito: `.xml`, `.xml.p7m` firmati (anche in base64 o con più firme), lotti con più documenti, fatture semplificate. Riconosce ricevute e notifiche del Sistema di Interscambio senza confonderle con le fatture.
 
@@ -77,7 +86,7 @@ Apre fatture emesse e ricevute in tutti i formati in cui arrivano di solito: `.x
   quindi Windows non mostra avvisi di SmartScreen.
 - **macOS:** Mac App Store, 2,99 €.
 - **Linux:** `.deb` per Debian e Ubuntu, `.rpm` per Fedora e openSUSE e AppImage nelle
-  [release di GitHub](https://github.com/digitarenet/rastinvoice/releases), oltre a Flathub e Snap Store.
+  [release di GitHub](https://github.com/digitarenet/rastinvoice-fattura-elettronica/releases), oltre a Flathub e Snap Store.
 - Chi preferisce può compilare il programma dai sorgenti su qualsiasi sistema (vedi Compilazione).
 - Materiale per gli store nella cartella [`store/`](store/README.md); i pacchetti si producono con il workflow
   Rilascio, avviato a mano.
@@ -103,7 +112,7 @@ già presente in Windows 10 aggiornato. Se RastInvoice non si avvia, scaricare e
 Bootstrapper" dalla [pagina ufficiale di WebView2](https://developer.microsoft.com/microsoft-edge/webview2/),
 poi riavviare il programma. Basta farlo una volta.
 
-**Assistenza.** Per problemi o richieste: [segnalazioni su GitHub](https://github.com/digitarenet/rastinvoice/issues)
+**Assistenza.** Per problemi o richieste: [segnalazioni su GitHub](https://github.com/digitarenet/rastinvoice-fattura-elettronica/issues)
 oppure info@digitare.net, indicando versione di RastInvoice e di Windows.
 
 ## Immagini
@@ -119,12 +128,38 @@ Le immagini usano un archivio dimostrativo con dati di fantasia.
 | ![Notifiche del Sistema di Interscambio collegate alle fatture](docs/immagini/notifiche.png) | ![Elenco dei documenti e vista Moderna](docs/immagini/documenti.png) |
 | **Notifiche SdI** collegate alle fatture | **Documenti** e vista Moderna |
 
-Versione attuale: **0.8.2** (vedi il [registro delle modifiche](CHANGELOG.md)).
+Versione attuale: **1.0.1** (vedi il [registro delle modifiche](CHANGELOG.md)).
+
+## Domande frequenti
+
+**Come si apre una fattura elettronica XML?**
+Si apre il file `.xml` con RastInvoice (doppio clic, trascina e rilascia o menu Apri): la fattura viene mostrata
+in una vista leggibile al posto del codice XML. Si può aprire anche un'intera cartella di fatture.
+
+**Come si apre un file `.xml.p7m`?**
+Il file `.p7m` è la fattura elettronica con firma digitale. RastInvoice lo apre direttamente, senza programmi di
+firma come Dike o ArubaSign, ne estrae l'XML e verifica integrità della firma e firmatario.
+
+**Come si converte una fattura elettronica in PDF?**
+Dall'anteprima della fattura si sceglie PDF: il file viene creato direttamente dal programma, in formato A4 con
+testo selezionabile. Si può anche stampare o salvare in HTML.
+
+**Serve una connessione a Internet o un account?**
+No. Le fatture restano sul computer e non vengono inviate a nessun server. Internet serve solo, se lo si chiede,
+per scaricare il foglio di stile ufficiale o controllare le nuove versioni.
+
+**Si possono vedere le fatture scaricate dal cassetto fiscale o ricevute via PEC?**
+Sì: si possono aprire i file scaricati dal portale Fatture e Corrispettivi dell'Agenzia delle Entrate, gli
+archivi `.zip` e le email PEC `.eml`, senza estrarli.
+
+**Funziona anche con le fatture verso la Pubblica Amministrazione?**
+Sì: fattura PA (FPA12), fattura tra privati (FPR12) e fattura semplificata (FSM10), secondo le specifiche
+FatturaPA 1.9.1.
 
 ## Stato del progetto
 
-Fase 2 in corso: applicazione desktop con interfaccia grafica, costruita sul nucleo di lettura della fase 1.
-Sono previste in seguito un'edizione web (SaaS) e una mobile.
+La versione 1.0 è la prima versione stabile dell'applicazione desktop. Sono previste in seguito un'edizione
+web (SaaS) e una mobile.
 
 | Funzione | Stato |
 | --- | --- |
@@ -141,7 +176,7 @@ Sono previste in seguito un'edizione web (SaaS) e una mobile.
 | Email PEC `.eml` e archivi `.zip` | fatto |
 | Outlook `.msg` | da fare |
 | Indice locale per avvii rapidi, cartelle di rete e NAS | fatto |
-| Applicazione desktop (Windows, Linux, macOS) | prima versione |
+| Applicazione desktop (Windows, Linux, macOS) | fatto |
 | Vista "Moderna" e foglio di stile ufficiale AssoSoftware (scaricabile) | fatto |
 | Ricerca a testo libero, filtri per sezione, anno, date, contatto | fatto |
 | Rubrica clienti e fornitori | fatto |

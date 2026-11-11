@@ -5,17 +5,17 @@
 # snap/snapcraft.yaml nella radice del repository prima di eseguire snapcraft.
 name: rastinvoice
 base: core22
-version: '1.0.0'
+version: '1.0.1'
 title: RastInvoice
-summary: Lettore di fatture elettroniche italiane
+summary: Visualizzatore di fatture elettroniche XML e P7M
 description: |
-  RastInvoice è un lettore gratuito e open source di fatture elettroniche
+  RastInvoice è un visualizzatore gratuito e open source di fatture elettroniche
   italiane in formato FatturaPA: file XML, P7M firmati, archivi ZIP ed email
   PEC. Verifica firma e calcoli, tiene l'archivio di fatture emesse e ricevute
   con ricerca, rubrica e statistiche. Funziona senza connessione a Internet.
 license: EUPL-1.2
-website: https://github.com/digitarenet/rastinvoice
-source-code: https://github.com/digitarenet/rastinvoice
+website: https://github.com/digitarenet/rastinvoice-fattura-elettronica
+source-code: https://github.com/digitarenet/rastinvoice-fattura-elettronica
 contact: info@digitare.net
 grade: stable
 confinement: strict

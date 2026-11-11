@@ -10,9 +10,9 @@ use serde::Serialize;
 use std::io::Read;
 
 /// Indirizzo dell'ultima release pubblicata (le bozze non compaiono).
-const URL_ULTIMA: &str = "https://api.github.com/repos/digitarenet/rastinvoice/releases/latest";
+const URL_ULTIMA: &str = "https://api.github.com/repos/digitarenet/rastinvoice-fattura-elettronica/releases/latest";
 /// Pagina delle release da aprire per scaricare la nuova versione.
-pub const URL_RELEASE: &str = "https://github.com/digitarenet/rastinvoice/releases/latest";
+pub const URL_RELEASE: &str = "https://github.com/digitarenet/rastinvoice-fattura-elettronica/releases/latest";
 /// Dimensione massima della risposta letta.
 const MAX_BYTE: u64 = 1024 * 1024;
 

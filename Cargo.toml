@@ -14,11 +14,11 @@ members = [
 ]
 
 [workspace.package]
-version = "1.0.0"
+version = "1.0.1"
 edition = "2021"
 authors = ["Andrea Re <info@digitare.net>"]
 rust-version = "1.88"
-repository = "https://github.com/digitarenet/rastinvoice"
+repository = "https://github.com/digitarenet/rastinvoice-fattura-elettronica"
 license = "EUPL-1.2"
 
 [workspace.dependencies]
