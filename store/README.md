@@ -74,6 +74,9 @@ store/linux/pubblica.sh --pubblica   # carica e rende pubblica la release
 - Se `aggiornamenti` è compilato, `build.sh` firma i pacchetti e crea `latest.json` per gli aggiornamenti
   automatici; altrimenti crea pacchetti senza aggiornamenti.
 - `store/linux/build.sh --locale` compila direttamente sul PC, senza container (solo per prove).
+- Flatpak e Snap hanno script a parte, con i loro prerequisiti: `store/linux/flatpak.sh` e
+  `store/linux/snap.sh` (dettagli in [`linux/`](linux/README.md)). Questi pacchetti vanno sui rispettivi
+  store, non su GitHub.
 - `pubblica.sh` richiede GitHub CLI con accesso (`sudo apt install gh`, poi `gh auth login`). Prende le note
   della versione da `docs/CHANGELOG.md` e avvisa se il commit locale non è quello su `origin/main`.
 

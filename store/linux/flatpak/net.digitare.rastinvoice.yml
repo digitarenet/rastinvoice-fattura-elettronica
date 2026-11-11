@@ -3,8 +3,7 @@
 #
 # Manifesto Flatpak per Flathub. Compila dai sorgenti senza accesso alla rete:
 # le dipendenze Rust e npm sono elencate in cargo-sources.json e
-# node-sources.json, generati con gli strumenti di flatpak-builder-tools
-# (vedi README.md).
+# node-sources.json, generati da store/linux/flatpak.sh (vedi README.md).
 id: net.digitare.rastinvoice
 runtime: org.gnome.Platform
 runtime-version: '48'

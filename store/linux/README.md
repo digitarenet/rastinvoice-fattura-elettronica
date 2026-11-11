@@ -30,19 +30,20 @@ Nessuna iscrizione richiesta. Basta pubblicare la release.
 
 È lo store predefinito della maggior parte delle distribuzioni, compresa la "Software" di Fedora e Mint.
 
-1. Pubblicare la release `v1.0.0` su GitHub (il manifesto compila dal tag).
-2. Generare gli elenchi delle dipendenze, dalla radice del repository, con
-   [flatpak-builder-tools](https://github.com/flatpak/flatpak-builder-tools):
-   ```bash
-   python3 flatpak-cargo-generator.py Cargo.lock -o store/linux/flatpak/cargo-sources.json
-   flatpak-node-generator npm apps/desktop/package-lock.json -o store/linux/flatpak/node-sources.json
-   ```
-3. Provare la compilazione in locale:
-   ```bash
-   flatpak install flathub org.gnome.Sdk//48 org.freedesktop.Sdk.Extension.rust-stable//24.08 org.freedesktop.Sdk.Extension.node24//24.08
-   flatpak-builder --user --install --force-clean build store/linux/flatpak/net.digitare.rastinvoice.yml
-   flatpak run net.digitare.rastinvoice
-   ```
+Requisiti sul PC Linux, una volta sola:
+
+```bash
+sudo apt install flatpak flatpak-builder python3-venv git
+flatpak remote-add --user --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
+```
+
+1. Provare in locale: `store/linux/flatpak.sh` genera gli elenchi delle dipendenze, compila dai sorgenti
+   senza rete (come Flathub), installa l'app per l'utente (`flatpak run net.digitare.rastinvoice`) e crea
+   `target/flatpak/RastInvoice_<versione>.flatpak`. La prima volta scarica i runtime GNOME (circa 1 GB).
+2. Pubblicare la release `v<versione>` su GitHub: il manifesto per Flathub compila dal tag.
+3. `store/linux/flatpak.sh --flathub` prepara in `target/flatpak/flathub/` il manifesto con tag e commit
+   aggiornati e i due file json delle dipendenze. Avvisa se manca il tag o la voce della versione in
+   `net.digitare.rastinvoice.metainfo.xml`.
 4. Fare il fork di https://github.com/flathub/flathub, creare un branch dal branch `new-pr`, aggiungere
    il manifesto e i due file json, aprire una pull request verso `new-pr` intitolata
    "Add net.digitare.rastinvoice".
@@ -58,11 +59,13 @@ e la rete (foglio di stile e aggiornamenti, solo su richiesta): sono da motivare
 ## 3. Snap Store
 
 1. Creare un account su https://snapcraft.io (account Ubuntu One, gratuito).
-2. Su Ubuntu: `sudo snap install snapcraft --classic` e `snapcraft login`.
+2. Sul PC Linux installare snapd, snapcraft e LXD (comandi in testa a `store/linux/snap.sh`; su Mint e LMDE
+   va prima tolto il blocco `/etc/apt/preferences.d/nosnap.pref`), poi `snapcraft login`.
 3. Registrare il nome: `snapcraft register rastinvoice`.
-4. Copiare `store/linux/snap/snapcraft.yaml` in `snap/snapcraft.yaml` nella radice e lanciare `snapcraft`.
-5. Provare: `sudo snap install --dangerous rastinvoice_1.0.0_amd64.snap`.
-6. Pubblicare: `snapcraft upload --release=stable rastinvoice_1.0.0_amd64.snap`.
+4. `store/linux/snap.sh` compila in una macchina virtuale Ubuntu 22.04 e crea
+   `target/snap/rastinvoice_<versione>_amd64.snap`. Usa solo i file già salvati in un commit.
+5. Provare: `sudo snap install --dangerous target/snap/rastinvoice_<versione>_amd64.snap`.
+6. Pubblicare: `store/linux/snap.sh --carica` (compila e carica sul canale stable).
 7. Nella pagina del pacchetto su snapcraft.io completare la scheda: icona, schermate, categoria
    **Productivity** e informativa privacy.
 
@@ -73,6 +76,5 @@ solo se qualcuno lo chiede: la comunità Arch spesso lo crea da sé.
 
 ## Stato
 
-Il manifesto Flatpak e il file snapcraft non sono ancora stati compilati: vanno provati una volta su un
-computer Linux prima dell'invio. Lo script per `.deb`, `.rpm` e AppImage
-(`build.sh`) non è ancora stato eseguito.
+Gli script `build.sh`, `flatpak.sh` e `snap.sh` non sono ancora stati eseguiti: vanno provati una volta sul
+PC Linux prima del primo invio.
