@@ -1,22 +1,14 @@
 # Registro delle modifiche
 
-Tutte le modifiche rilevanti di RastInvoice (fino alla 0.9.0 chiamato RustinVoice). Il numero di versione segue lo schema
-MAGGIORE.MINORE.CORREZIONE: la versione minore cresce con le nuove funzioni, quella di
-correzione con le sole correzioni.
+Novità, miglioramenti e correzioni di RastInvoice (fino alla 0.9.0 chiamato RustinVoice). Il numero di
+versione segue lo schema MAGGIORE.MINORE.CORREZIONE: la versione minore cresce con le nuove funzioni, quella
+di correzione con le sole correzioni. Le versioni senza novità nel programma non sono elencate.
 
 ## 0.11.0 - 2026-11-11
 
 ### Aggiunto
-- Pacchetti Linux `.deb` (Debian, Ubuntu e derivate) e `.rpm` (Fedora, openSUSE), allegati alla release.
-- Cartella `store/` con il materiale per la pubblicazione: testi comuni, logo e poster, procedura per
-  Microsoft Store, scheda AppStream, file `.desktop`, manifesto Flathub, `snapcraft.yaml` per lo Snap Store
-  e guida per Apple.
-- Informativa privacy (`PRIVACY.md`) da indicare negli store.
-- Firma e notarizzazione per macOS nel workflow Rilascio, attive solo quando sono presenti i segreti Apple.
-
-### Modificato
-- Schermate del README rifatte con il nuovo nome.
-- Si lavora su un solo branch (`main`) e la CI parte solo a comando, per non consumare minuti.
+- Pacchetti di installazione per Linux: `.deb` per Debian, Ubuntu e derivate, `.rpm` per Fedora e openSUSE.
+- Informativa sulla privacy: il programma non raccoglie dati e si collega a Internet solo su richiesta.
 
 ## 0.10.3 - 2026-11-11
 
@@ -31,31 +23,15 @@ correzione con le sole correzioni.
 ## 0.10.2 - 2026-11-11
 
 ### Corretto
-- La casella "Ricorda la scelta" nella finestra dei file trascinati mostrava due quadrati: ora usa lo stile
-  di Bootstrap Italia come le altre caselle.
+- La casella "Ricorda la scelta" nella finestra dei file trascinati mostrava due quadrati.
 - La barra dei pulsanti dell'anteprima va a capo quando lo spazio non basta, invece di nascondere gli ultimi
   pulsanti.
-- Analisi statica conforme alla nuova versione di Clippy (lettura dei certificati con `as_chunks`).
-
-### Aggiunto
-- Informativa sulla privacy (`PRIVACY.md`), richiesta dagli store.
-- Schermate aggiornate con il nuovo nome in `docs/immagini`.
-
-## 0.10.1 - 2026-11-11
-
-### Modificato
-- Verifica e rilascio su GitHub si avviano solo a mano (scheda Actions), non più a ogni push o pull request,
-  per non consumare minuti.
-- Azioni aggiornate alle versioni per Node.js 24 (`actions/checkout@v5`, `actions/setup-node@v5`) e
-  Node.js 24 per la compilazione dell'interfaccia.
-- Il controllo delle vulnerabilità usa `cargo-audit` già compilato: alcuni minuti in meno per ogni verifica.
 
 ## 0.10.0 - 2026-11-11
 
 ### Modificato
-- Nuovo nome del prodotto: **RastInvoice**. Cambiano il nome mostrato nell'applicazione, nella finestra, nei
-  pacchetti e nei documenti. La cartella dei dati resta la stessa, quindi impostazioni e archivio vengono
-  mantenuti.
+- Nuovo nome del prodotto: **RastInvoice**. La cartella dei dati resta la stessa, quindi impostazioni e
+  archivio vengono mantenuti.
 - Il comando della riga di comando si chiama ora `rastinvoice` (prima `rustinvoice`): gli script che lo usano
   vanno aggiornati.
 
@@ -66,43 +42,19 @@ correzione con le sole correzioni.
 ## 0.9.0 - 2026-11-11
 
 ### Aggiunto
-- Licenza open source **EUPL-1.2** (licenza pubblica dell'Unione europea), nel file `LICENSE`, nei metadati
-  dei pacchetti, nel README e nei Credits.
-- Scheda `publiccode.yml` per il catalogo del software open source di Developers Italia.
+- Licenza open source **EUPL-1.2** (licenza pubblica dell'Unione europea), indicata anche nei Credits.
 - Pulsante **Salva in PDF** nell'anteprima: apre la finestra di stampa del sistema con il nome del file già
   proposto e ricorda di scegliere la stampante PDF.
-- Controllo facoltativo delle nuove versioni (Impostazioni > Aggiornamenti), disattivato in modo predefinito;
-  legge solo il numero dell'ultima versione pubblicata su GitHub.
-- Rilascio automatico (`.github/workflows/rilascio.yml`): a ogni tag `v*` produce installer e versione
-  portatile per Windows, app universale per macOS, AppImage per Linux e li allega a una release in bozza.
-- Pacchetto MSIX per il Microsoft Store (`scripts/msix.ps1` e `apps/desktop/src-tauri/msix/`), non firmato
-  perché lo firma lo Store; i dati di Partner Center si passano come variabili del repository.
-- Controllo delle vulnerabilità note nelle dipendenze Rust e JavaScript nella verifica automatica, con gli
-  avvisi non applicabili motivati in `.cargo/audit.toml`.
+- Controllo facoltativo delle nuove versioni (Impostazioni > Aggiornamenti), disattivato in modo predefinito.
+- Versione portatile per Windows in un file `.zip`, da usare anche su chiavetta USB.
 
-### Modificato
-- Libreria `zip` aggiornata alla versione 9, che corregge quattro vulnerabilità note nell'estrazione degli
-  archivi (RustinVoice non usava le funzioni interessate, ma l'aggiornamento elimina il rischio).
-- Versione minima di Rust portata a 1.88, richiesta dalla nuova libreria `zip`.
-
-## 0.8.2 - 2026-11-11
-
-### Modificato
-- README con l'elenco completo delle funzionalità, una galleria di immagini aggiornate (archivio dimostrativo
-  con dati di fantasia, in `docs/immagini`) e la guida completa della riga di comando: comandi, colonne del
-  CSV, opzioni e codici di uscita.
-
-## 0.8.1 - 2026-11-11
-
-### Modificato
-- README aggiornato con le novità principali, la versione attuale e lo stato delle nuove funzioni
-  (notifiche SdI, design system, accessibilità).
+### Sicurezza
+- Lettura degli archivi ZIP aggiornata a una versione che elimina quattro vulnerabilità note.
 
 ## 0.8.0 - 2026-11-11
 
 ### Aggiunto
-- Accessibilità secondo le WCAG 2.1 livello AA (EN 301 549, Linee guida AgID), descritta in
-  `ACCESSIBILITA.md`:
+- Accessibilità secondo le WCAG 2.1 livello AA (EN 301 549, Linee guida AgID):
   - collegamento "Vai al contenuto principale";
   - nomi accessibili per tutti i pulsanti con sola icona;
   - schede navigabili con le frecce;
@@ -115,7 +67,7 @@ correzione con le sole correzioni.
   quando lo spazio è poco.
 - Pulsante **Segna come da leggere** nell'anteprima, utilizzabile anche da tastiera (prima solo con il
   doppio clic).
-- Sezione Accessibilità in README e Credits.
+- Sezione Accessibilità nei Credits.
 
 ### Modificato
 - Contrasti dei testi secondari e dei colori di stato portati ad almeno 4,5:1 anche sulle righe
@@ -127,21 +79,15 @@ correzione con le sole correzioni.
 
 ## 0.7.0 - 2026-11-11
 
-### Aggiunto
-- Motore XSLT 1.0 / XPath 1.0 nativo (`rustinvoice-xslt`) per la vista AssoSoftware: non
-  dipende più dal supporto XSLT della webview, che i motori basati su Chromium stanno
-  rimuovendo. Il motore della webview resta come riserva.
-- Programma di esempio `trasforma` e prove automatiche del motore, con risultati confrontati
-  con un motore XSLT di riferimento su tutte le fatture di prova.
+### Migliorato
+- La vista AssoSoftware usa un motore di trasformazione interno e non dipende più dal browser integrato nel
+  sistema, che in futuro potrebbe non supportarla più.
 
 ## 0.6.1 - 2026-11-11
 
 ### Modificato
-- Verificata l'aderenza al design system di Designers Italia (componenti Bootstrap Italia,
-  tipografia, palette, contrasti dei testi WCAG 2.1 AA, lingua, tastiera); README e
-  Credits lo descrivono con precisione.
-- Il visualizzatore degli allegati porta il fuoco nella finestra all'apertura e lo
-  restituisce alla chiusura.
+- Interfaccia allineata al design system di Designers Italia (componenti, tipografia, colori, contrasti).
+- Il visualizzatore degli allegati porta il fuoco nella finestra all'apertura e lo restituisce alla chiusura.
 
 ## 0.6.0 - 2026-11-11
 
@@ -182,7 +128,7 @@ correzione con le sole correzioni.
 
 ### Aggiunto
 - **Visualizzatore degli allegati** integrato: si apre facendo clic sul nome dell'allegato.
-  - PDF (con PDF.js, senza accesso alla rete né esecuzione di script del documento).
+  - PDF, senza accesso alla rete né esecuzione di script del documento.
   - Immagini PNG, JPEG, GIF, WebP, BMP e SVG.
   - Documenti Word .docx, convertiti in pagina.
   - Fogli di calcolo Excel (.xlsx, .xls, .xlsb) e OpenDocument (.ods), con un foglio per scheda.
@@ -199,25 +145,21 @@ correzione con le sole correzioni.
 ## 0.3.2 - 2026-11-11
 
 ### Sicurezza
-- Le finestre di salvataggio (CSV, HTML, XML, allegati) sono aperte dalla parte nativa:
-  l'interfaccia non può più indicare da sola dove scrivere un file.
+- Le finestre di salvataggio (CSV, HTML, XML, allegati) sono gestite direttamente dal programma, che decide
+  dove scrivere i file.
 - La finestra dell'applicazione non può essere portata su pagine esterne, nemmeno da
   collegamenti contenuti in una fattura.
 - Gli allegati aperti vengono scritti in una cartella privata dell'utente, nuova a ogni
   apertura; su Windows sono marcati come provenienti da Internet, così Office li apre in
   visualizzazione protetta.
 - L'esportazione CSV neutralizza i testi che Excel eseguirebbe come formule.
-- Permessi dell'interfaccia ridotti al solo dialogo di apertura file.
 
 ## 0.3.1 - 2026-11-11
 
 ### Migliorato
-- Avvio con l'indice circa 2,8 volte più rapido (10.000 file: da 175 a 63 millisecondi):
-  i dati già letti non vengono più copiati e l'indice si riscrive solo se cambia qualcosa.
-- Le cartelle vengono esplorate in parallelo, riusando i dati di dimensione e data forniti
-  dalla lettura della cartella: molto più veloce su dischi di rete e NAS.
-- L'elenco dei documenti disegna solo le righe visibili: scorrimento e ricerca restano
-  fluidi anche con decine di migliaia di fatture.
+- Avvio con l'indice circa 2,8 volte più rapido (10.000 file: da 175 a 63 millisecondi).
+- Le cartelle vengono esplorate in parallelo: molto più veloce su dischi di rete e NAS.
+- Scorrimento e ricerca restano fluidi anche con decine di migliaia di fatture.
 
 ## 0.3.0 - 2026-11-11
 
@@ -235,14 +177,9 @@ correzione con le sole correzioni.
 - Scheda XML con formattazione leggibile (solo a video, il file non viene modificato).
 - Zoom delle viste Moderna e AssoSoftware (anche con Ctrl +, Ctrl -, Ctrl 0).
 - Voce di menu **Credits** con informazioni, librerie utilizzate e questo registro.
-- Verifica automatica del codice a ogni modifica pubblicata (formattazione, analisi, test).
 
 ### Modificato
 - La scheda del foglio di stile ufficiale si chiama ora "AssoSoftware".
-- L'interfaccia è inclusa nell'eseguibile in modo predefinito: `cargo run` e il pulsante
-  Run dell'IDE funzionano senza server di sviluppo (`npm run app:dev` per lo sviluppo).
-- L'interfaccia viene ricompilata automaticamente quando i sorgenti cambiano, così
-  l'eseguibile avviato dall'IDE mostra sempre le ultime modifiche.
 - Gli allegati si aprono solo se di tipo sicuro (documenti, immagini, testo); gli altri
   si possono salvare.
 
@@ -254,20 +191,19 @@ correzione con le sole correzioni.
 ## 0.2.0 - 2026-11-11
 
 ### Aggiunto
-- Applicazione desktop (Tauri 2, Svelte 5, Bootstrap Italia): elenco con ricerca a testo
-  libero, sezioni ricevute, emesse, da leggere, contrassegnate e con anomalie, filtri per
-  anno, date e contatto.
+- Applicazione desktop: elenco con ricerca a testo libero, sezioni ricevute, emesse, da leggere,
+  contrassegnate e con anomalie, filtri per anno, date e contatto.
 - Anteprima nella vista Moderna e con il foglio di stile ufficiale AssoSoftware,
   scaricabile dal sito dell'associazione.
 - Rubrica di clienti e fornitori con totali e documenti per contatto.
 - Trascina e rilascia, modalità portable, stampa, salvataggio HTML e XML, allegati,
-  esportazione CSV, tema chiaro e scuro.
-- Configurazioni di avvio condivise per RustRover.
+  esportazione CSV.
 
 ## 0.1.0 - 2026-11-11
 
 ### Aggiunto
-- Nucleo di lettura FatturaPA (specifiche 1.9.1): formati FPA12, FPR12 e FSM10, lotti,
-  codifiche dei vecchi file, buste firmate .p7m (DER, BER, base64, annidate).
+- Lettura delle fatture FatturaPA (specifiche 1.9.1): fatture ordinarie, verso la Pubblica
+  Amministrazione e semplificate, lotti, vecchi file con codifiche diverse, buste firmate .p7m
+  (anche in base64 o con più firme).
 - Riconoscimento delle ricevute e notifiche del Sistema di Interscambio.
 - Riga di comando con i comandi `info`, `json` e `scansiona`.
