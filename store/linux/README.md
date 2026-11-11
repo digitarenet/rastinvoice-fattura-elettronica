@@ -2,14 +2,13 @@
 
 # Pubblicazione su Linux
 
-Quattro canali, in ordine di utilità e semplicità. I testi della scheda sono in [`../testi.md`](../testi.md);
+Tre canali, in ordine di utilità e semplicità. I testi della scheda sono in [`../testi.md`](../testi.md);
 la scheda AppStream, usata da tutti gli store grafici, è [`net.digitare.rastinvoice.metainfo.xml`](net.digitare.rastinvoice.metainfo.xml).
 
 | Canale | Pacchetto | Costo | Chi lo usa |
 | --- | --- | --- | --- |
 | Pagina delle release GitHub | `.deb`, `.rpm`, `.AppImage` | gratuito | tutti, scaricando il file |
 | Flathub | Flatpak | gratuito | Fedora, Linux Mint, Pop!_OS, elementary, Steam Deck e quasi tutte le distribuzioni |
-| Snap Store | Snap | gratuito | Ubuntu (Centro software) |
 | AUR (facoltativo) | PKGBUILD | gratuito | Arch e Manjaro |
 
 ## 1. Pacchetti .deb, .rpm e AppImage
@@ -56,25 +55,12 @@ Note: l'identificativo `net.digitare.rastinvoice` richiede di poter dimostrare i
 digitare.net. I permessi chiesti sono la cartella home e i dischi esterni (fatture e archivi di rete)
 e la rete (foglio di stile e aggiornamenti, solo su richiesta): sono da motivare nella pull request.
 
-## 3. Snap Store
-
-1. Creare un account su https://snapcraft.io (account Ubuntu One, gratuito).
-2. Sul PC Linux installare snapd, snapcraft e LXD (comandi in testa a `store/linux/snap.sh`; su Mint e LMDE
-   va prima tolto il blocco `/etc/apt/preferences.d/nosnap.pref`), poi `snapcraft login`.
-3. Registrare il nome: `snapcraft register rastinvoice`.
-4. `store/linux/snap.sh` compila in una macchina virtuale Ubuntu 22.04 e crea
-   `target/snap/rastinvoice_<versione>_amd64.snap`. Usa solo i file già salvati in un commit.
-5. Provare: `sudo snap install --dangerous target/snap/rastinvoice_<versione>_amd64.snap`.
-6. Pubblicare: `store/linux/snap.sh --carica` (compila e carica sul canale stable).
-7. Nella pagina del pacchetto su snapcraft.io completare la scheda: icona, schermate, categoria
-   **Productivity** e informativa privacy.
-
-## 4. AUR (facoltativo)
+## 3. AUR (facoltativo)
 
 Per Arch si può pubblicare un pacchetto `rastinvoice-bin` che riusa il `.deb` della release. Conviene farlo
 solo se qualcuno lo chiede: la comunità Arch spesso lo crea da sé.
 
 ## Stato
 
-Gli script `build.sh`, `flatpak.sh` e `snap.sh` non sono ancora stati eseguiti: vanno provati una volta sul
+Gli script `build.sh` e `flatpak.sh` non sono ancora stati eseguiti: vanno provati una volta sul
 PC Linux prima del primo invio.

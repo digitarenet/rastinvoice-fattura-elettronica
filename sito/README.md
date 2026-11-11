@@ -86,11 +86,10 @@ Alcuni collegamenti sono provvisori finché le schede negli store non sono pubbl
 | Microsoft Store | `https://apps.microsoft.com/search?query=RastInvoice` | `https://apps.microsoft.com/detail/<ID prodotto>` |
 | Mac App Store | `https://apps.apple.com/it/` | `https://apps.apple.com/it/app/rastinvoice/id<numero>` |
 | Flathub | `https://flathub.org/apps/net.digitare.rastinvoice` | già definitivo |
-| Snap Store | `https://snapcraft.io/rastinvoice` | già definitivo |
 | Pacchetti Linux | release di GitHub | già definitivo, funziona quando il repository è pubblico |
 
 Per i pulsanti degli store il sito usa icone e testi propri. Se si preferiscono i badge ufficiali
-(Microsoft, Apple, Flathub, Snap), vanno scaricati dalle pagine dei rispettivi programmi per sviluppatori e
+(Microsoft, Apple, Flathub), vanno scaricati dalle pagine dei rispettivi programmi per sviluppatori e
 salvati in `img/`, senza collegarli dai server esterni, così il sito continua a non inviare dati ad altri.
 
 ## Aggiornamenti

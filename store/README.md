@@ -7,7 +7,6 @@
 | Microsoft Store | [`microsoft/`](microsoft/README.md) | MSIX | gratuito | iscrizione individuale, identità del pacchetto |
 | GitHub (solo Linux) | [`linux/`](linux/README.md) | deb, rpm, AppImage | gratuito | `store/linux/build.sh` e `pubblica.sh` |
 | Flathub | [`linux/`](linux/README.md) | Flatpak | gratuito | prova su Linux, pull request a Flathub |
-| Snap Store | [`linux/`](linux/README.md) | Snap | gratuito | account Ubuntu One, registrazione del nome |
 | Mac App Store | [`apple/`](apple/README.md) | pkg | 99 USD/anno di iscrizione; app a 2,99 € | iscrizione, certificati, revisione Apple |
 
 Materiale comune:
@@ -18,10 +17,10 @@ Materiale comune:
 - `../docs/PRIVACY.md`: informativa privacy, da indicare come URL in ogni store.
 
 Distribuzione: Windows solo dal Microsoft Store (gratuito, nessun avviso di SmartScreen), macOS solo dal Mac
-App Store (2,99 €), Linux da GitHub, Flathub e Snap Store. Il pulsante per le donazioni non compare nella
+App Store (2,99 €), Linux da GitHub e Flathub. Il pulsante per le donazioni non compare nella
 versione per macOS, perché Apple non ammette donazioni esterne.
 
-Ordine consigliato: Microsoft Store e release Linux su GitHub, poi Flathub e Snap Store, infine Mac App
+Ordine consigliato: Microsoft Store e release Linux su GitHub, poi Flathub, infine Mac App
 Store.
 
 ## Compilare in locale
@@ -74,9 +73,8 @@ store/linux/pubblica.sh --pubblica   # carica e rende pubblica la release
 - Se `aggiornamenti` è compilato, `build.sh` firma i pacchetti e crea `latest.json` per gli aggiornamenti
   automatici; altrimenti crea pacchetti senza aggiornamenti.
 - `store/linux/build.sh --locale` compila direttamente sul PC, senza container (solo per prove).
-- Flatpak e Snap hanno script a parte, con i loro prerequisiti: `store/linux/flatpak.sh` e
-  `store/linux/snap.sh` (dettagli in [`linux/`](linux/README.md)). Questi pacchetti vanno sui rispettivi
-  store, non su GitHub.
+- Il Flatpak ha uno script a parte, con i suoi prerequisiti: `store/linux/flatpak.sh` (dettagli in
+  [`linux/`](linux/README.md)). Va su Flathub, non su GitHub.
 - `pubblica.sh` richiede GitHub CLI con accesso (`sudo apt install gh`, poi `gh auth login`). Prende le note
   della versione da `docs/CHANGELOG.md` e avvisa se il commit locale non è quello su `origin/main`.
 

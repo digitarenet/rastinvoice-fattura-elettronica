@@ -6,7 +6,7 @@ Ultimo aggiornamento: 11 novembre 2026.
 
 RastInvoice è un programma che funziona interamente sul computer dell'utente. Questa informativa spiega
 quali dati tratta e quando si collega a Internet. Vale per tutte le versioni del programma, comprese quelle
-distribuite tramite Microsoft Store, Flathub, Snap Store e Apple.
+distribuite tramite Microsoft Store, Flathub e Apple.
 
 ## Titolare
 

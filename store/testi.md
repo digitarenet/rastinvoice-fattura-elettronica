@@ -2,7 +2,7 @@
 
 # Testi comuni per gli store
 
-Testi da copiare nelle schede di Microsoft Store, Flathub, Snap Store e Apple. Ogni store ha limiti di
+Testi da copiare nelle schede di Microsoft Store, Flathub e Apple. Ogni store ha limiti di
 lunghezza diversi: per ciascun testo è indicato il numero di caratteri.
 
 ## Nome

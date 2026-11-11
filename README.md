@@ -28,8 +28,6 @@ Apre fatture emesse e ricevute in tutti i formati in cui arrivano di solito: `.x
 </p>
 <p align="center">
   <a href="https://flathub.org/apps/net.digitare.rastinvoice"><img src="https://flathub.org/api/badge?locale=it" alt="Scarica da Flathub" height="56"></a>
-  &nbsp;
-  <a href="https://snapcraft.io/rastinvoice"><img src="https://snapcraft.io/static/images/badges/it/snap-store-black.svg" alt="Scarica dallo Snap Store" height="56"></a>
 </p>
 <p align="center">
   <a href="https://github.com/digitarenet/rastinvoice-fattura-elettronica/releases/latest"><img src="https://img.shields.io/badge/Debian%20e%20Ubuntu-.deb-A81D33?style=for-the-badge&logo=debian&logoColor=white" alt="Pacchetto .deb per Debian e Ubuntu"></a>
@@ -41,7 +39,7 @@ Apre fatture emesse e ricevute in tutti i formati in cui arrivano di solito: `.x
 | --- | --- | --- |
 | Windows 10 e 11 | [Microsoft Store](https://apps.microsoft.com/search?query=RastInvoice) | gratuito |
 | macOS (Intel e Apple Silicon) | [Mac App Store](https://apps.apple.com/it/) | 2,99 € |
-| Linux, tutte le distribuzioni | [Flathub](https://flathub.org/apps/net.digitare.rastinvoice) · [Snap Store](https://snapcraft.io/rastinvoice) · [AppImage](https://github.com/digitarenet/rastinvoice-fattura-elettronica/releases/latest) | gratuito |
+| Linux, tutte le distribuzioni | [Flathub](https://flathub.org/apps/net.digitare.rastinvoice) · [AppImage](https://github.com/digitarenet/rastinvoice-fattura-elettronica/releases/latest) | gratuito |
 | Debian, Ubuntu, Linux Mint | [pacchetto `.deb`](https://github.com/digitarenet/rastinvoice-fattura-elettronica/releases/latest) | gratuito |
 | Fedora, openSUSE, RHEL | [pacchetto `.rpm`](https://github.com/digitarenet/rastinvoice-fattura-elettronica/releases/latest) | gratuito |
 | Qualsiasi sistema | [codice sorgente](#compilazione) | gratuito |
@@ -117,7 +115,7 @@ Tutte le versioni e le note di rilascio sono nelle [release di GitHub](https://g
   quindi Windows non mostra avvisi di SmartScreen.
 - **macOS:** Mac App Store, 2,99 €.
 - **Linux:** `.deb` per Debian e Ubuntu, `.rpm` per Fedora e openSUSE e AppImage nelle
-  [release di GitHub](https://github.com/digitarenet/rastinvoice-fattura-elettronica/releases), oltre a Flathub e Snap Store.
+  [release di GitHub](https://github.com/digitarenet/rastinvoice-fattura-elettronica/releases), oltre a Flathub.
 - Chi preferisce può compilare il programma dai sorgenti su qualsiasi sistema (vedi Compilazione).
 - Materiale per gli store nella cartella [`store/`](store/README.md); i pacchetti si compilano in locale con gli
   script descritti lì.

@@ -49,6 +49,3 @@ desktop.ini
 *.local.json
 .env
 sito/rastinvoice-config.php
-
-# Copia temporanea creata da store/linux/snap.sh.
-/snap/
