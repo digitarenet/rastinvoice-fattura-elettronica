@@ -129,7 +129,7 @@
       info = await api.avvio();
       imp = info.impostazioni;
       foglio = await api.foglioStato();
-      if (imp.aggiornamenti) {
+      if (imp.aggiornamenti && !info.da_store) {
         // Controllo facoltativo, in silenzio se non c'è rete.
         api.controllaAggiornamenti()
           .then((e) => e.disponibile && mostra(`È disponibile la versione ${e.ultima}: scaricala da Impostazioni.`))
@@ -858,7 +858,7 @@
     </div>
   {/if}
 
-  {#if info && info.primo_avvio && !sceltaDatiFatta}
+  {#if info && info.primo_avvio && !info.da_store && !sceltaDatiFatta}
     <div class="velo" role="dialog" aria-modal="true" aria-labelledby="titolo-dati" use:modale>
       <div class="finestra ri-pannello">
         <h2 id="titolo-dati" class="h5">Dove vuoi salvare i dati di RastInvoice?</h2>

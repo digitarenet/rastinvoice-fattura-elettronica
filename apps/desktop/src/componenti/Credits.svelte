@@ -8,6 +8,7 @@
 <script lang="ts">
   import { api } from "../lib/api";
   import { blocchiMarkdown } from "../lib/markdown";
+  import { SOSTENITORI, URL_DONAZIONE, donazioniAmmesse } from "../lib/sostegno";
   import changelog from "../../../../CHANGELOG.md?raw";
 
   let { versione, onErrore }: { versione: string; onErrore: (m: string) => void } = $props();
@@ -38,6 +39,23 @@
     { nome: 'Roboto Mono', autori: 'Christian Robertson', licenza: 'Apache-2.0' },
   ];
 
+  // Modulo di contatto: prepara un'email nel programma di posta, non invia nulla.
+  let nome = $state("");
+  let citami = $state(false);
+  let messaggio = $state("");
+
+  function scrivi() {
+    const righe = [
+      messaggio.trim(),
+      "",
+      `Nome: ${nome.trim() || "(non indicato)"}`,
+      `Citazione tra i sostenitori: ${citami ? "sì, con questo nome" : "no"}`,
+      `Versione di RastInvoice: ${versione}`,
+    ];
+    const oggetto = citami ? "Sostegno a RastInvoice" : "Messaggio da RastInvoice";
+    api.scriviEmail(oggetto, righe.join("\n")).catch((e) => onErrore(String(e)));
+  }
+
   // Il titolo e l'introduzione del registro sono già nella pagina.
   const registro = blocchiMarkdown(changelog.slice(Math.max(0, changelog.indexOf("\n## "))));
 </script>
@@ -54,6 +72,41 @@
     <p class="piccolo mt-3 mb-0">Copyright © 2026 Andrea Re · info@digitare.net</p>
     <p class="piccolo mt-1 mb-0">Software libero con licenza pubblica dell'Unione europea EUPL-1.2.</p>
   </div>
+
+  <h2 class="h5 mt-4">Sostieni RastInvoice</h2>
+  <p>RastInvoice è gratuito e lo resterà. Se ti è utile puoi aiutare a farlo crescere
+    {#if donazioniAmmesse && URL_DONAZIONE}con una piccola donazione o{/if} scrivendo cosa miglioreresti.
+    Chi sostiene il progetto può chiedere di essere citato qui sotto.</p>
+  {#if donazioniAmmesse && URL_DONAZIONE}
+    <button class="btn btn-primary btn-sm mb-3" onclick={() => api.apriDonazione(URL_DONAZIONE).catch((e) => onErrore(String(e)))}>
+      Fai una donazione con PayPal
+    </button>
+  {/if}
+
+  <form class="contatto" onsubmit={(e) => { e.preventDefault(); scrivi(); }}>
+    <div class="campo">
+      <label for="contatto-nome">Nome o azienda</label>
+      <input id="contatto-nome" class="form-control form-control-sm" bind:value={nome} maxlength="80" autocomplete="name" />
+    </div>
+    <div class="campo">
+      <label for="contatto-messaggio">Messaggio</label>
+      <textarea id="contatto-messaggio" class="form-control form-control-sm" rows="3" bind:value={messaggio} maxlength="2000"></textarea>
+    </div>
+    <div class="form-check">
+      <input id="contatto-citami" type="checkbox" bind:checked={citami} />
+      <label for="contatto-citami">Ho sostenuto il progetto e voglio essere citato tra i sostenitori</label>
+    </div>
+    <button type="submit" class="btn btn-outline-primary btn-sm">Scrivi l'email</button>
+    <p class="piccolo mt-2 mb-0">Il pulsante apre il tuo programma di posta con il messaggio già compilato per
+      rastinvoice@digitare.net: puoi rileggerlo prima di inviarlo. RastInvoice non spedisce nulla da solo.</p>
+  </form>
+
+  {#if SOSTENITORI.length > 0}
+    <h3 class="h6 mt-3">Grazie a</h3>
+    <ul class="sostenitori">
+      {#each SOSTENITORI as n (n)}<li>{n}</li>{/each}
+    </ul>
+  {/if}
 
   <h2 class="h5 mt-4">Librerie utilizzate</h2>
   <p>Si ringraziano gli autori delle librerie open source su cui si basa il programma.</p>
@@ -91,6 +144,27 @@
 </section>
 
 <style>
+  .contatto {
+    max-width: 560px;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    align-items: flex-start;
+  }
+  .contatto .campo {
+    width: 100%;
+  }
+  .contatto label {
+    font-size: 0.9rem;
+    font-weight: 600;
+  }
+  .contatto .form-check label {
+    font-weight: 400;
+  }
+  .sostenitori {
+    columns: 2;
+    padding-left: 1.2rem;
+  }
   .credits {
     width: 100%;
     padding: 1.5rem 2rem 3rem;

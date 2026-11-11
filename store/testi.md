@@ -60,7 +60,7 @@ uso completo da tastiera, contrasti adeguati e ingrandimento fino al 200%.
 
 REQUISITI
 Windows 10 o 11 a 64 bit. Su Windows 10 serve il componente Microsoft Edge WebView2, già presente se il
-sistema è aggiornato; l'installer lo aggiunge da solo se manca. Windows 8 e 7 non sono supportati.
+sistema è aggiornato. Windows 8 e 7 non sono supportati.
 
 Licenza EUPL-1.2. Codice sorgente: https://github.com/digitarenet/rust-in-voice
 
@@ -104,7 +104,7 @@ l'archivio di fatture emesse e ricevute con ricerca, rubrica e statistiche.
 | Sviluppatore | Andrea Re (digitare.net) |
 | Copyright | © 2026 Andrea Re |
 | Licenza | EUPL-1.2 |
-| Prezzo | gratuito |
+| Prezzo | gratuito su Windows e Linux; 2,99 € sul Mac App Store |
 | Contatto per l'assistenza | info@digitare.net |
 | Sito | da indicare quando è pronto il dominio rastinvoice.it |
 | Informativa privacy | https://github.com/digitarenet/rust-in-voice/blob/main/PRIVACY.md (o la pagina sul sito) |

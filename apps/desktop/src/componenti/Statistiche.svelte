@@ -2,13 +2,22 @@
   Copyright (c) 2026 Andrea Re - info@digitare.net
   Autore: Andrea Re @ 2026 - info@digitare.net
 
-  Statistiche globali: fatturato, acquisti, IVA a debito e a credito,
+  Statistiche globali: vendite, acquisti e differenza, IVA a debito e a credito
+  (o soglia dei ricavi per il regime forfettario), ultimi 12 mesi,
   andamento per mese o per anno e classifica di clienti e fornitori.
 -->
 <script lang="ts">
   import { untrack } from "svelte";
   import type { Voce } from "../lib/api";
-  import { breve, calcola, euro, type PerControparte } from "../lib/statistiche";
+  import {
+    SOGLIA_FORFETTARIO,
+    SOGLIA_USCITA_IMMEDIATA,
+    breve,
+    calcola,
+    euro,
+    type PerControparte,
+  } from "../lib/statistiche";
+  import { data } from "../lib/formato";
   import Icona from "./Icona.svelte";
 
   let {
@@ -32,6 +41,8 @@
   );
   const s = $derived(calcola(voci, propri, anno));
   const saldoIva = $derived(s.emesse.imposta - s.emesse.scissione - s.ricevute.imposta);
+  // Nel forfettario l'IVA sugli acquisti non si detrae: è un costo come il resto della fattura.
+  const differenza = $derived(s.emesse.imponibile - (s.forfettario ? s.ricevute.totale : s.ricevute.imponibile));
 
   let tuttiClienti = $state(false);
   let tuttiFornitori = $state(false);
@@ -90,35 +101,94 @@
       </div>
     </div>
   {:else}
+    <h2 class="h6 titolo-gruppo">Vendite e acquisti</h2>
     <div class="riquadri">
       <div class="riquadro">
-        <span class="etichetta"><span class="punto emesse"></span>Fatturato (imponibile)</span>
+        <span class="etichetta"><span class="punto emesse"></span>Vendite (senza IVA)</span>
         <strong class="valore">€ {euro(s.emesse.imponibile)}</strong>
-        <span class="dettaglio">{s.emesse.documenti} documenti emessi · totale € {euro(s.emesse.totale)}</span>
-      </div>
-      <div class="riquadro">
-        <span class="etichetta">IVA a debito</span>
-        <strong class="valore">€ {euro(s.emesse.imposta)}</strong>
         <span class="dettaglio">
-          {#if s.emesse.scissione}di cui € {euro(s.emesse.scissione)} in scissione dei pagamenti{:else}sulle fatture emesse{/if}
+          {#if s.forfettario}{s.emesse.documenti} fatture emesse · totale € {euro(s.emesse.totale)}{:else}con IVA € {euro(s.emesse.totale)} · {s.emesse.documenti} documenti emessi{/if}
         </span>
       </div>
       <div class="riquadro">
-        <span class="etichetta"><span class="punto ricevute"></span>Acquisti (imponibile)</span>
+        <span class="etichetta"><span class="punto ricevute"></span>Acquisti (senza IVA)</span>
         <strong class="valore">€ {euro(s.ricevute.imponibile)}</strong>
-        <span class="dettaglio">{s.ricevute.documenti} documenti ricevuti · totale € {euro(s.ricevute.totale)}</span>
+        <span class="dettaglio">con IVA € {euro(s.ricevute.totale)} · {s.ricevute.documenti} documenti ricevuti</span>
       </div>
       <div class="riquadro">
-        <span class="etichetta">IVA a credito</span>
-        <strong class="valore">€ {euro(s.ricevute.imposta)}</strong>
-        <span class="dettaglio">sulle fatture ricevute</span>
+        <span class="etichetta">Differenza</span>
+        <strong class="valore">€ {euro(differenza)}</strong>
+        <span class="dettaglio">
+          {#if s.forfettario}
+            vendite − acquisti con IVA, perché nel forfettario l'IVA sugli acquisti è un costo
+          {:else}
+            vendite − acquisti, senza IVA · con IVA € {euro(s.emesse.totale - s.ricevute.totale)}
+          {/if}
+        </span>
       </div>
       <div class="riquadro">
-        <span class="etichetta">Saldo IVA indicativo</span>
-        <strong class="valore">€ {euro(saldoIva)}</strong>
-        <span class="dettaglio">{saldoIva >= 0 ? "a debito" : "a credito"} (debito − scissione − credito)</span>
+        <span class="etichetta">Ultimi 12 mesi</span>
+        <strong class="valore">€ {euro(s.ultimi12)}</strong>
+        <span class="dettaglio">
+          vendite senza IVA dal {data(s.inizio12)} a oggi · media mensile € {euro(s.ultimi12 / 12)}
+        </span>
       </div>
     </div>
+
+    {#if s.forfettario}
+      <h2 class="h6 titolo-gruppo">Regime forfettario</h2>
+      <p class="text-secondary-ri nota-gruppo">
+        Riconosciuto dalle tue fatture emesse (regime fiscale RF19): le vendite sono senza IVA, quindi i riquadri
+        dell'IVA a debito e del saldo non sono mostrati.
+      </p>
+      <div class="riquadri">
+        {#if anno !== null}
+          <div class="riquadro largo">
+            <span class="etichetta">Soglia dei ricavi {anno}</span>
+            <strong class="valore">{Math.round((s.emesse.imponibile / SOGLIA_FORFETTARIO) * 100)}% di € {euro(SOGLIA_FORFETTARIO)}</strong>
+            <div class="soglia" role="img" aria-label="{Math.round((s.emesse.imponibile / SOGLIA_FORFETTARIO) * 100)}% della soglia">
+              <span class:oltre={s.emesse.imponibile > SOGLIA_FORFETTARIO}
+                style="width: {Math.min(100, (s.emesse.imponibile / SOGLIA_FORFETTARIO) * 100)}%"></span>
+            </div>
+            <span class="dettaglio">
+              {#if s.emesse.imponibile > SOGLIA_USCITA_IMMEDIATA}
+                Oltre € {euro(SOGLIA_USCITA_IMMEDIATA)}: si esce dal regime già da quest'anno. Verifica con il tuo commercialista.
+              {:else if s.emesse.imponibile > SOGLIA_FORFETTARIO}
+                Oltre la soglia: dal prossimo anno si passa al regime ordinario. Verifica con il tuo commercialista.
+              {:else}
+                Restano € {euro(SOGLIA_FORFETTARIO - s.emesse.imponibile)} prima della soglia (calcolo per data fattura, non per incasso).
+              {/if}
+            </span>
+          </div>
+        {/if}
+        <div class="riquadro">
+          <span class="etichetta">IVA pagata sugli acquisti</span>
+          <strong class="valore">€ {euro(s.ricevute.imposta)}</strong>
+          <span class="dettaglio">non detraibile nel regime forfettario</span>
+        </div>
+      </div>
+    {:else}
+      <h2 class="h6 titolo-gruppo">IVA</h2>
+      <div class="riquadri">
+        <div class="riquadro">
+          <span class="etichetta">IVA a debito</span>
+          <strong class="valore">€ {euro(s.emesse.imposta)}</strong>
+          <span class="dettaglio">
+            {#if s.emesse.scissione}di cui € {euro(s.emesse.scissione)} in scissione dei pagamenti{:else}sulle fatture emesse{/if}
+          </span>
+        </div>
+        <div class="riquadro">
+          <span class="etichetta">IVA a credito</span>
+          <strong class="valore">€ {euro(s.ricevute.imposta)}</strong>
+          <span class="dettaglio">sulle fatture ricevute</span>
+        </div>
+        <div class="riquadro">
+          <span class="etichetta">Saldo IVA indicativo</span>
+          <strong class="valore">€ {euro(saldoIva)}</strong>
+          <span class="dettaglio">{saldoIva >= 0 ? "a debito" : "a credito"} (debito − scissione − credito)</span>
+        </div>
+      </div>
+    {/if}
 
     <div class="pannello">
       <div class="titolo-pannello">
@@ -276,6 +346,36 @@
   .callout-ri :global(.icon) {
     fill: var(--ri-primario);
     flex: none;
+  }
+  .titolo-gruppo {
+    margin: 0 0 0.5rem;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    color: #455a64;
+  }
+  .nota-gruppo {
+    font-size: 0.85rem;
+    margin: -0.25rem 0 0.5rem;
+  }
+  .riquadro.largo {
+    grid-column: span 2;
+  }
+  .soglia {
+    height: 8px;
+    border-radius: 4px;
+    background: #e3e8ec;
+    margin: 0.35rem 0;
+    overflow: hidden;
+  }
+  .soglia span {
+    display: block;
+    height: 100%;
+    border-radius: 4px;
+    background: #0066cc;
+  }
+  .soglia span.oltre {
+    background: #a66300;
   }
   .riquadri {
     display: grid;

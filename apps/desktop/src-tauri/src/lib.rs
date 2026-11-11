@@ -38,6 +38,42 @@ struct Avvio {
     cartella_standard: String,
     cartella_portable: String,
     portable_possibile: bool,
+    /// Canale da cui è stato installato il programma (vedi [`distribuzione`]).
+    distribuzione: &'static str,
+    /// Vero se installato da uno store: aggiornamenti e cartella dati li gestisce lo store.
+    da_store: bool,
+}
+
+/// Riconosce il canale di distribuzione: `microsoft-store`, `mac-app-store`,
+/// `flathub`, `snap` oppure `diretta` (pacchetti scaricati o compilati in proprio).
+fn distribuzione() -> &'static str {
+    if std::env::var_os("FLATPAK_ID").is_some() {
+        return "flathub";
+    }
+    if std::env::var_os("SNAP").is_some() {
+        return "snap";
+    }
+    let Ok(exe) = std::env::current_exe() else {
+        return "diretta";
+    };
+    if cfg!(windows)
+        && exe
+            .to_string_lossy()
+            .to_lowercase()
+            .contains("\\windowsapps\\")
+    {
+        return "microsoft-store";
+    }
+    // Le app del Mac App Store contengono la ricevuta in Contents/_MASReceipt.
+    if cfg!(target_os = "macos")
+        && exe
+            .parent()
+            .and_then(|p| p.parent())
+            .is_some_and(|c| c.join("_MASReceipt").exists())
+    {
+        return "mac-app-store";
+    }
+    "diretta"
 }
 
 #[tauri::command]
@@ -53,6 +89,8 @@ fn avvio(stato: tauri::State<'_, Stato>) -> Avvio {
             .map(|p| p.to_string_lossy().to_string())
             .unwrap_or_default(),
         portable_possibile: impostazioni::portable_possibile(),
+        distribuzione: distribuzione(),
+        da_store: distribuzione() != "diretta",
     }
 }
 
@@ -415,6 +453,54 @@ fn apri_sito() -> Result<(), String> {
     .map_err(|e| e.to_string())
 }
 
+/// Apre la pagina delle donazioni. Sono ammessi solo indirizzi PayPal.me
+/// o del profilo PayPal Business, così l'interfaccia non può aprire pagine qualsiasi.
+#[tauri::command]
+fn apri_donazione(url: String) -> Result<(), String> {
+    let ammesso = [
+        "https://www.paypal.me/",
+        "https://paypal.me/",
+        "https://www.paypal.biz/",
+    ]
+    .iter()
+    .any(|p| url.starts_with(p) && url.len() > p.len() && url.len() < 120);
+    if !ammesso {
+        return Err("indirizzo per le donazioni non valido".into());
+    }
+    tauri_plugin_opener::open_url(url, None::<&str>).map_err(|e| e.to_string())
+}
+
+/// Indirizzo a cui scrivono sostenitori e utenti (fisso: l'interfaccia sceglie solo oggetto e testo).
+const EMAIL_CONTATTO: &str = "rastinvoice@digitare.net";
+
+/// Codifica un testo per un indirizzo `mailto:` (RFC 6068): tutto tranne i caratteri non riservati.
+fn codifica_mailto(testo: &str) -> String {
+    let mut esito = String::with_capacity(testo.len() * 3);
+    for b in testo.replace("\r\n", "\n").replace('\n', "\r\n").bytes() {
+        if b.is_ascii_alphanumeric() || b"-._~".contains(&b) {
+            esito.push(b as char);
+        } else {
+            esito.push_str(&format!("%{b:02X}"));
+        }
+    }
+    esito
+}
+
+/// Apre il programma di posta predefinito con un messaggio già compilato.
+/// Il programma non invia nulla: l'utente rivede e spedisce l'email.
+#[tauri::command]
+fn scrivi_email(oggetto: String, testo: String) -> Result<(), String> {
+    // Limiti prudenti: alcuni programmi di posta rifiutano indirizzi troppo lunghi.
+    let oggetto: String = oggetto.chars().take(200).collect();
+    let testo: String = testo.chars().take(4000).collect();
+    let url = format!(
+        "mailto:{EMAIL_CONTATTO}?subject={}&body={}",
+        codifica_mailto(&oggetto),
+        codifica_mailto(&testo)
+    );
+    tauri_plugin_opener::open_url(url, None::<&str>).map_err(|e| e.to_string())
+}
+
 /// Controlla se è stata pubblicata una versione più recente.
 #[tauri::command]
 async fn controlla_aggiornamenti() -> Result<aggiornamenti::Esito, String> {
@@ -587,7 +673,9 @@ pub fn avvia() {
             byte_allegato,
             cambia_cartella_dati,
             controlla_aggiornamenti,
-            apri_download
+            apri_download,
+            scrivi_email,
+            apri_donazione
         ])
         .run(tauri::generate_context!())
         .expect("errore durante l'avvio dell'applicazione");
@@ -595,8 +683,15 @@ pub fn avvia() {
 
 #[cfg(test)]
 mod test {
-    use super::nome_con_numero;
+    use super::{codifica_mailto, nome_con_numero};
     use std::path::Path;
+
+    #[test]
+    fn mailto_codificato() {
+        assert_eq!(codifica_mailto("Ciao & grazie"), "Ciao%20%26%20grazie");
+        assert_eq!(codifica_mailto("a\nb"), "a%0D%0Ab");
+        assert_eq!(codifica_mailto("è"), "%C3%A8");
+    }
 
     #[test]
     fn numero_prima_delle_estensioni() {

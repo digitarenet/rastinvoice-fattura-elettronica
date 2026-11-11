@@ -4,6 +4,23 @@ Novità, miglioramenti e correzioni di RastInvoice (fino alla 0.9.0 chiamato Rus
 versione segue lo schema MAGGIORE.MINORE.CORREZIONE: la versione minore cresce con le nuove funzioni, quella
 di correzione con le sole correzioni. Le versioni senza novità nel programma non sono elencate.
 
+## 0.13.0 - 2026-11-11
+
+### Aggiunto
+- Statistiche più complete:
+  - vendite e acquisti con e senza IVA e la loro differenza;
+  - vendite degli ultimi 12 mesi, con la media mensile.
+- Regime forfettario riconosciuto dalle fatture emesse. In questo caso le statistiche mostrano quanto manca
+  alla soglia di 85.000 € di ricavi e l'IVA pagata sugli acquisti, che non è detraibile. La differenza tra
+  vendite e acquisti tiene conto di quell'IVA come costo. Il saldo IVA non viene mostrato.
+- Sezione **Sostieni RastInvoice** nei Credits, con il pulsante per una donazione con PayPal (non nella versione
+  per macOS), un modulo che prepara un'email nel programma di posta e
+  l'elenco dei sostenitori che vogliono essere citati.
+
+### Modificato
+- Nelle versioni scaricate da uno store gli aggiornamenti li gestisce lo store: il controllo delle nuove
+  versioni e la scelta della cartella dati accanto al programma non vengono mostrati.
+
 ## 0.12.0 - 2026-11-11
 
 ### Aggiunto

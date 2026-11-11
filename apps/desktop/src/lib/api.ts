@@ -29,6 +29,8 @@ export interface Voce {
   imponibile: string;
   imposta: string;
   scissione: boolean;
+  /** Regime fiscale del cedente (RF19 = forfettario). */
+  regime: string;
   divisa: string;
   prima_scadenza: string;
   firmato: boolean;
@@ -91,6 +93,10 @@ export interface Avvio {
   cartella_standard: string;
   cartella_portable: string;
   portable_possibile: boolean;
+  /** microsoft-store, mac-app-store, flathub, snap oppure diretta. */
+  distribuzione: string;
+  /** Installato da uno store: aggiornamenti e cartella dati li gestisce lo store. */
+  da_store: boolean;
 }
 
 export interface Allegato {
@@ -185,6 +191,8 @@ export const api = {
   apriSito: () => invoke<void>("apri_sito"),
   controllaAggiornamenti: () => invoke<EsitoAggiornamenti>("controlla_aggiornamenti"),
   apriDownload: () => invoke<void>("apri_download"),
+  scriviEmail: (oggetto: string, testo: string) => invoke<void>("scrivi_email", { oggetto, testo }),
+  apriDonazione: (url: string) => invoke<void>("apri_donazione", { url }),
   copiaInArchivio: (percorsi: string[]) =>
     invoke<string[]>("copia_in_archivio", { percorsi }),
   cartellaArchivio: () => invoke<string>("cartella_archivio"),

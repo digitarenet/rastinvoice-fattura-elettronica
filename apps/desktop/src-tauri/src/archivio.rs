@@ -48,6 +48,9 @@ pub struct Voce {
     /// IVA in scissione dei pagamenti: non incassata dal cedente.
     #[serde(default)]
     pub scissione: bool,
+    /// Regime fiscale del cedente (`RF01` ordinario, `RF19` forfettario...).
+    #[serde(default)]
+    pub regime: String,
     pub divisa: String,
     pub prima_scadenza: String,
     pub firmato: bool,
@@ -363,6 +366,11 @@ fn leggi_documento(
                         imponibile: c.imponibile_e_imposta().0.to_string(),
                         imposta: c.imponibile_e_imposta().1.to_string(),
                         scissione: c.scissione_pagamenti(),
+                        regime: h
+                            .cedente_prestatore
+                            .regime_fiscale
+                            .clone()
+                            .unwrap_or_default(),
                         divisa: d.divisa.clone().unwrap_or_else(|| "EUR".into()),
                         prima_scadenza: c
                             .prima_scadenza()

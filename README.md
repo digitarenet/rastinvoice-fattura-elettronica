@@ -72,12 +72,20 @@ Apre fatture emesse e ricevute in tutti i formati in cui arrivano di solito: `.x
   Internet oltre al download del foglio di stile.
 
 **Distribuzione**
-- Pacchetti per Windows (installer e versione portatile `.zip`), macOS (app universale Intel e Apple) e Linux
-  (`.deb` per Debian e Ubuntu, `.rpm` per Fedora e openSUSE, AppImage), prodotti dal workflow Rilascio
-  avviato a mano.
-- Materiale per Microsoft Store, Flathub, Snap Store e Apple nella cartella [`store/`](store/README.md).
-- Pacchetto MSIX per il Microsoft Store, firmato dallo Store al momento della pubblicazione
-  (`scripts/msix.ps1`).
+- **Windows:** Microsoft Store, gratuito. Il pacchetto MSIX (`scripts/msix.ps1`) viene firmato dallo Store,
+  quindi Windows non mostra avvisi di SmartScreen.
+- **macOS:** Mac App Store, 2,99 €.
+- **Linux:** `.deb` per Debian e Ubuntu, `.rpm` per Fedora e openSUSE e AppImage nelle
+  [release di GitHub](https://github.com/digitarenet/rust-in-voice/releases), oltre a Flathub e Snap Store.
+- Chi preferisce può compilare il programma dai sorgenti su qualsiasi sistema (vedi Compilazione).
+- Materiale per gli store nella cartella [`store/`](store/README.md); i pacchetti si producono con il workflow
+  Rilascio, avviato a mano.
+
+## Sostieni il progetto
+
+RastInvoice è gratuito. Se ti è utile puoi sostenerne lo sviluppo con una donazione su
+[PayPal](https://www.paypal.biz/digitarenet). Chi lo desidera viene citato tra i sostenitori nei Credits del
+programma: basta scriverlo a rastinvoice@digitare.net.
 
 ## Requisiti e supporto
 
@@ -89,14 +97,10 @@ Apre fatture emesse e ricevute in tutti i formati in cui arrivano di solito: `.x
 | macOS | 10.13 High Sierra o successivo, Intel o Apple Silicon |
 | Linux | distribuzioni recenti a 64 bit con WebKitGTK 4.1 (Ubuntu 22.04, Debian 12, Fedora 38 o successive) |
 
-**WebView2 su Windows 10.** WebView2 è il componente di Microsoft che disegna l'interfaccia del programma.
-- L'**installer** controlla se manca e, in quel caso, lo scarica e lo installa da solo (serve la connessione
-  a Internet durante l'installazione).
-- La **versione portatile** non installa nulla: se il programma non si avvia, scaricare e installare
-  "Evergreen Bootstrapper" o "Evergreen Standalone Installer" dalla
-  [pagina ufficiale di WebView2](https://developer.microsoft.com/microsoft-edge/webview2/), poi riavviare
-  RastInvoice. Basta farlo una volta.
-- Con la versione da **Microsoft Store** WebView2 viene fornito da Windows.
+**WebView2 su Windows 10.** WebView2 è il componente di Microsoft che disegna l'interfaccia del programma ed è
+già presente in Windows 10 aggiornato. Se RastInvoice non si avvia, scaricare e installare "Evergreen
+Bootstrapper" dalla [pagina ufficiale di WebView2](https://developer.microsoft.com/microsoft-edge/webview2/),
+poi riavviare il programma. Basta farlo una volta.
 
 **Assistenza.** Per problemi o richieste: [segnalazioni su GitHub](https://github.com/digitarenet/rust-in-voice/issues)
 oppure info@digitare.net, indicando versione di RastInvoice e di Windows.

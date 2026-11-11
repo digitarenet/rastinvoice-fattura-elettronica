@@ -1,58 +1,68 @@
 <!-- Copyright (c) 2026 Andrea Re - info@digitare.net - Autore: Andrea Re @ 2026 - info@digitare.net -->
 
-# Pubblicazione per macOS
+# Pubblicazione sul Mac App Store
 
-Ci sono due strade. Consiglio di partire dalla prima e valutare la seconda solo dopo.
+Su macOS RastInvoice si distribuisce solo dal Mac App Store, al prezzo di **2,99 €**. Su GitHub non si
+pubblica il dmg. Chi vuole può comunque compilare il programma dai sorgenti.
 
-| | dmg firmato e notarizzato | Mac App Store |
-| --- | --- | --- |
-| Costo | Apple Developer Program, 99 USD/anno | lo stesso |
-| Distribuzione | download dal sito o da GitHub | dentro l'App Store |
-| Limiti | nessuno | sandbox obbligatoria: l'archivio può leggere solo le cartelle scelte dall'utente, e serve memorizzarne i permessi |
-| Lavoro | configurare 6 segreti su GitHub | modifiche all'app, profilo di provisioning, revisione Apple |
+## Conti
 
-Senza iscrizione il dmg funziona lo stesso, ma al primo avvio macOS lo blocca: l'utente deve fare clic
-destro > Apri, oppure andare in Impostazioni di Sistema > Privacy e sicurezza > Apri comunque.
+| Voce | Importo |
+| --- | --- |
+| Apple Developer Program | 99 USD l'anno |
+| Prezzo di vendita | 2,99 € IVA inclusa |
+| Commissione Apple (Small Business Program, ricavi sotto 1 milione l'anno) | 15% |
+| Ricavo per copia | circa 2,08 € (2,99 € meno IVA 22% e commissione) |
+| Copie per coprire l'iscrizione | circa 45-50 l'anno |
+
+Per il Mac App Store Apple fa da rivenditore: incassa e versa l'IVA ai clienti e paga lo sviluppatore ogni mese.
+Gli incassi sono da dichiarare: conviene sentire il commercialista.
 
 ## 1. Iscrizione
 
 1. Andare su https://developer.apple.com/programs/enroll/ con un Apple ID con autenticazione a due fattori.
-2. Scegliere **Individuale** (come persona fisica, a nome Andrea Re: la ditta individuale non ha un
-   numero D-U-N-S da società). Costo 99 USD l'anno.
+2. Scegliere **Individuale**, a nome Andrea Re. La ditta individuale non ha il numero D-U-N-S che Apple chiede
+   alle società.
+3. In App Store Connect, alla voce **Accordi, imposte e banche**, firmare l'accordo per le **app a pagamento**
+   e inserire conto bancario e dati fiscali. Senza questo passo l'app non può essere venduta.
+4. Iscriversi all'**App Store Small Business Program**: commissione al 15% invece del 30%.
 
-## 2. dmg firmato e notarizzato
+## 2. Modifiche all'app (da fare prima del primo invio)
 
-1. Su un Mac, in Xcode > Settings > Accounts, creare il certificato **Developer ID Application**.
-2. Esportarlo da Accesso Portachiavi come file `.p12` con una password, poi convertirlo:
-   `base64 -i certificato.p12 | pbcopy`.
-3. Su https://appleid.apple.com creare una **password specifica per app**.
-4. In GitHub, Settings > Secrets and variables > Actions > **Secrets**, creare:
+Le app del Mac App Store girano nella sandbox di Apple. Per RastInvoice significa:
 
-| Segreto | Valore |
-| --- | --- |
-| `APPLE_CERTIFICATE` | il testo base64 del file .p12 |
-| `APPLE_CERTIFICATE_PASSWORD` | la password del .p12 |
-| `APPLE_SIGNING_IDENTITY` | per esempio `Developer ID Application: Andrea Re (TEAMID)` |
-| `APPLE_ID` | l'Apple ID |
-| `APPLE_PASSWORD` | la password specifica per app |
-| `APPLE_TEAM_ID` | il Team ID, visibile in developer.apple.com > Account |
+- un file di entitlements con `com.apple.security.app-sandbox`,
+  `com.apple.security.files.user-selected.read-write`, `com.apple.security.network.client` e
+  `com.apple.security.files.bookmarks.app-scope`;
+- salvare per ogni cartella d'archivio un **segnalibro di sicurezza** (security-scoped bookmark) e
+  riattivarlo a ogni avvio: oggi l'app ricorda solo il percorso, e dopo il riavvio la sandbox negherebbe
+  l'accesso;
+- nessun pulsante per le donazioni: Apple non le ammette. L'app lo nasconde già su macOS.
 
-5. Avviare Actions > Rilascio > Run workflow. Il passo "Firma Apple" attiva firma e notarizzazione
-   solo se i segreti sono presenti; senza segreti il dmg resta non firmato come oggi.
+L'app riconosce già di essere installata dal Mac App Store: nasconde il controllo degli aggiornamenti e la
+scelta della cartella dati accanto al programma.
 
-## 3. Mac App Store (in un secondo momento)
+## 3. Certificati e pacchetto
 
-Richiede, oltre all'iscrizione:
+1. In Xcode > Settings > Accounts creare i certificati **Apple Distribution** e
+   **Mac Installer Distribution**.
+2. In developer.apple.com creare l'identificativo dell'app (`net.digitare.rustinvoice`) e un profilo di
+   provisioning **Mac App Store**.
+3. Compilare l'app universale (`npx tauri build --target universal-apple-darwin --bundles app`), firmarla con
+   il certificato di distribuzione e gli entitlements, creare il pacchetto con `productbuild` e caricarlo
+   con l'app **Transporter**.
 
-- certificati **Apple Distribution** e **Mac Installer Distribution** e un profilo di provisioning;
-- un file di entitlements con `com.apple.security.app-sandbox`, `files.user-selected.read-write`,
-  `network.client` e i segnalibri di sicurezza per ricordare le cartelle d'archivio tra un avvio e l'altro
-  (oggi l'app ricorda solo il percorso: va modificata);
-- la creazione dell'app in App Store Connect con i testi di [`../testi.md`](../testi.md), le schermate
-  (1280×800 o 2880×1800) e l'informativa privacy;
-- il caricamento con Transporter e la revisione di Apple, che di solito richiede da 1 a 3 giorni.
+Questi passi si possono automatizzare nel workflow Rilascio quando ci sono i certificati.
+
+## 4. Scheda in App Store Connect
+
+- Nome, sottotitolo, descrizione e parole chiave da [`../testi.md`](../testi.md).
+- Categoria **Economia** (Business), secondaria **Produttività**.
+- Prezzo: fascia da 2,99 €, disponibile in tutti i paesi o solo in Italia.
+- Schermate 2880×1800 o 1280×800: quelle in `docs/immagini/` vanno ridimensionate a 2880×1800.
+- Informativa privacy: URL di `PRIVACY.md`; nella sezione "Privacy dell'app" indicare **nessun dato raccolto**.
+- La revisione di Apple richiede di solito da 1 a 3 giorni.
 
 ## Stato
 
-Il workflow crea già un dmg universale (Intel e Apple Silicon), mai provato su un Mac reale. La firma
-è predisposta ma non provata, perché servono i segreti.
+Le modifiche per la sandbox (punto 2) non sono ancora state fatte e non c'è ancora un Mac su cui provarle.

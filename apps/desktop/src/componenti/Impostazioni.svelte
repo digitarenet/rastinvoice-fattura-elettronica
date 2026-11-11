@@ -200,6 +200,10 @@
 
   <section>
     <h2 class="h5">Aggiornamenti</h2>
+    {#if info.da_store}
+      <p class="mb-0">Gli aggiornamenti vengono installati automaticamente dallo store da cui hai scaricato
+        RastInvoice.</p>
+    {:else}
     <div class="form-check">
       <input id="aggiornamenti" type="checkbox" checked={imp.aggiornamenti}
         onchange={(e) => onSalva({ ...imp, aggiornamenti: (e.currentTarget as HTMLInputElement).checked })} />
@@ -219,11 +223,14 @@
     {#if messaggioAggiornamenti}
       <div class="alert alert-info mt-3 py-2" role="status">{messaggioAggiornamenti}</div>
     {/if}
+    {/if}
   </section>
 
   <section>
     <h2 class="h5">Dati dell'applicazione</h2>
-    <SceltaDati {info} onFatto={() => {}} />
+    {#if !info.da_store}
+      <SceltaDati {info} onFatto={() => {}} />
+    {/if}
     <p class="selezionabile mt-3 mb-0"><small>In uso: <code>{info.cartella_dati}</code></small>
       <button class="btn btn-link btn-xs" aria-label="Apri la cartella dei dati" onclick={() => api.apriCartella(info.cartella_dati)}>Apri</button></p>
   </section>

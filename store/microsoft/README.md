@@ -28,8 +28,10 @@ repository GitHub (Settings > Secrets and variables > Actions > Variables), non 
 
 ## 4. Creazione del pacchetto
 
-Dalla scheda **Actions** di GitHub avviare **Rilascio > Run workflow**. Nella release in bozza compare il file
-`RastInvoice_<versione>.0_x64.msix`. Il pacchetto non è firmato: lo firma Microsoft Store.
+Dalla scheda **Actions** di GitHub avviare **Rilascio > Run workflow**. Al termine, nella pagina dell'esecuzione,
+sotto **Artifacts** si scarica `msix` con il file `RastInvoice_<versione>.0_x64.msix` (resta disponibile 14
+giorni). Il pacchetto non è firmato: lo firma Microsoft Store. La versione per Windows si distribuisce solo
+dallo Store: su GitHub non si pubblicano exe o zip, che senza firma farebbero comparire l'avviso di SmartScreen.
 
 In alternativa, su un computer Windows con il Windows SDK:
 

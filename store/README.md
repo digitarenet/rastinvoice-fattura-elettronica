@@ -5,11 +5,10 @@
 | Store | Cartella | Pacchetto | Costo | Cosa serve da Andrea |
 | --- | --- | --- | --- | --- |
 | Microsoft Store | [`microsoft/`](microsoft/README.md) | MSIX | gratuito | iscrizione individuale, 3 variabili GitHub |
-| GitHub (download diretto) | - | exe, zip portatile, dmg, deb, rpm, AppImage | gratuito | avviare il workflow Rilascio e pubblicare la bozza |
+| GitHub (solo Linux) | [`linux/`](linux/README.md) | deb, rpm, AppImage | gratuito | avviare il workflow Rilascio e pubblicare la bozza |
 | Flathub | [`linux/`](linux/README.md) | Flatpak | gratuito | prova su Linux, pull request a Flathub |
 | Snap Store | [`linux/`](linux/README.md) | Snap | gratuito | account Ubuntu One, registrazione del nome |
-| Apple (dmg firmato) | [`apple/`](apple/README.md) | dmg | 99 USD/anno | iscrizione, 6 segreti GitHub |
-| Mac App Store | [`apple/`](apple/README.md) | pkg | incluso sopra | modifiche per la sandbox (in seguito) |
+| Mac App Store | [`apple/`](apple/README.md) | pkg | 99 USD/anno di iscrizione; app a 2,99 € | iscrizione, certificati, revisione Apple |
 
 Materiale comune:
 
@@ -18,5 +17,9 @@ Materiale comune:
 - `../docs/immagini/`: schermate a 2720×1720.
 - `../PRIVACY.md`: informativa privacy, da indicare come URL in ogni store.
 
-Ordine consigliato: release su GitHub, poi Microsoft Store e Flathub, poi Snap Store; Apple quando
-si decide di pagare l'iscrizione.
+Distribuzione: Windows solo dal Microsoft Store (gratuito, nessun avviso di SmartScreen), macOS solo dal Mac
+App Store (2,99 €), Linux da GitHub, Flathub e Snap Store. Il pulsante per le donazioni non compare nella
+versione per macOS, perché Apple non ammette donazioni esterne.
+
+Ordine consigliato: Microsoft Store e release Linux su GitHub, poi Flathub e Snap Store, infine Mac App
+Store.

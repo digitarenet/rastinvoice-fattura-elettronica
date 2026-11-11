@@ -30,7 +30,18 @@ export interface Statistiche {
   clienti: PerControparte[];
   fornitori: PerControparte[];
   anni: number[];
+  /** Vero se la maggior parte delle fatture emesse è in regime forfettario (RF19). */
+  forfettario: boolean;
+  /** Imponibile delle fatture emesse negli ultimi 12 mesi, a prescindere dal periodo scelto. */
+  ultimi12: number;
+  /** Data da cui partono gli ultimi 12 mesi (ISO). */
+  inizio12: string;
 }
+
+/** Soglia dei ricavi per restare nel regime forfettario (legge 190/2014, dal 2023). */
+export const SOGLIA_FORFETTARIO = 85_000;
+/** Oltre questa soglia si esce dal regime forfettario già nell'anno in corso. */
+export const SOGLIA_USCITA_IMMEDIATA = 100_000;
 
 const MESI = ["gen", "feb", "mar", "apr", "mag", "giu", "lug", "ago", "set", "ott", "nov", "dic"];
 
@@ -53,6 +64,23 @@ export function calcola(voci: Voce[], propri: Set<string>, anno: number | null):
   const ricevute = vuote();
   const clienti = new Map<string, PerControparte>();
   const fornitori = new Map<string, PerControparte>();
+  // Ultimi 12 mesi rispetto a oggi e riconoscimento del regime forfettario.
+  const oggi = new Date();
+  const inizio = new Date(oggi.getFullYear() - 1, oggi.getMonth(), oggi.getDate() + 1);
+  const inizio12 = `${inizio.getFullYear()}-${String(inizio.getMonth() + 1).padStart(2, "0")}-${String(inizio.getDate()).padStart(2, "0")}`;
+  let ultimi12 = 0;
+  let conRegime = 0;
+  let forfettarie = 0;
+  for (const v of voci) {
+    if (direzione(v, propri) !== "emessa") continue;
+    if (v.regime) {
+      conRegime += 1;
+      if (v.regime === "RF19") forfettarie += 1;
+    }
+    if (v.data >= inizio12) ultimi12 += (v.nota_credito ? -1 : 1) * Math.abs(Number(v.imponibile) || 0);
+  }
+  const forfettario = conRegime > 0 && forfettarie * 2 > conRegime;
+
   const anni = [...new Set(voci.map((v) => v.anno).filter((a) => a > 0))].sort((a, b) => a - b);
   const periodi =
     anno === null
@@ -82,7 +110,17 @@ export function calcola(voci: Voce[], propri: Set<string>, anno: number | null):
     }
   }
   const ordina = (m: Map<string, PerControparte>) => [...m.values()].sort((a, b) => b.imponibile - a.imponibile);
-  return { emesse, ricevute, periodi, clienti: ordina(clienti), fornitori: ordina(fornitori), anni };
+  return {
+    emesse,
+    ricevute,
+    periodi,
+    clienti: ordina(clienti),
+    fornitori: ordina(fornitori),
+    anni,
+    forfettario,
+    ultimi12,
+    inizio12,
+  };
 }
 
 /** Importo in euro senza simbolo, con due decimali. */
