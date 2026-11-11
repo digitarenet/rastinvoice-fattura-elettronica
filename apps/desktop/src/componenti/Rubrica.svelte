@@ -80,14 +80,15 @@
 </script>
 
 <div class="rubrica">
-  <aside class="elenco ri-pannello">
+  <h1 class="visually-hidden">Clienti e fornitori</h1>
+  <aside class="elenco ri-pannello" aria-label="Elenco dei contatti">
     <div class="filtri">
       <div class="gruppo" role="group" aria-label="Ruolo">
-        <button class:attivo={ruolo === "tutti"} onclick={() => (ruolo = "tutti")}>Tutti</button>
-        <button class:attivo={ruolo === "cliente"} onclick={() => (ruolo = "cliente")}>Clienti</button>
-        <button class:attivo={ruolo === "fornitore"} onclick={() => (ruolo = "fornitore")}>Fornitori</button>
+        <button class:attivo={ruolo === "tutti"} aria-pressed={ruolo === "tutti"} onclick={() => (ruolo = "tutti")}>Tutti</button>
+        <button class:attivo={ruolo === "cliente"} aria-pressed={ruolo === "cliente"} onclick={() => (ruolo = "cliente")}>Clienti</button>
+        <button class:attivo={ruolo === "fornitore"} aria-pressed={ruolo === "fornitore"} onclick={() => (ruolo = "fornitore")}>Fornitori</button>
       </div>
-      <input class="form-control form-control-sm" type="search" placeholder="Cerca per nome, P.IVA, comune" bind:value={ricerca} />
+      <input class="form-control form-control-sm" type="search" placeholder="Cerca per nome, P.IVA, comune" aria-label="Cerca tra clienti e fornitori" bind:value={ricerca} />
       <div class="date">
         <label>Dal <input class="form-control form-control-sm" type="date" bind:value={dal} /></label>
         <label>Al <input class="form-control form-control-sm" type="date" bind:value={al} /></label>
@@ -101,11 +102,11 @@
         </select>
       </div>
     </div>
-    <ul class="ri-scroll">
+    <ul class="ri-scroll" aria-label="Clienti e fornitori">
       {#each contatti as c (c.chiave)}
         <li>
-          <button class:selezionato={c.chiave === selezionato} onclick={() => (selezionato = c.chiave)}>
-            <span class="avatar-ri" class:fornitore={!c.ruoli.has("cliente")}>{iniziali(c.nome)}</span>
+          <button class:selezionato={c.chiave === selezionato} aria-current={c.chiave === selezionato ? "true" : undefined} onclick={() => (selezionato = c.chiave)}>
+            <span class="avatar-ri" class:fornitore={!c.ruoli.has("cliente")} aria-hidden="true">{iniziali(c.nome)}</span>
             <span class="testo">
               <strong>{c.nome || c.chiave}</strong>
               <small class="text-secondary-ri">
@@ -124,7 +125,7 @@
   <section class="scheda ri-scroll">
     {#if corrente}
       <header>
-        <span class="avatar-ri grande" class:fornitore={!corrente.ruoli.has("cliente")}>{iniziali(corrente.nome)}</span>
+        <span class="avatar-ri grande" class:fornitore={!corrente.ruoli.has("cliente")} aria-hidden="true">{iniziali(corrente.nome)}</span>
         <div>
           <h2 class="h4 mb-1 selezionabile">{corrente.nome}</h2>
           <div class="text-secondary-ri selezionabile">
@@ -276,6 +277,9 @@
   li button.selezionato:focus:not(:focus-visible) {
     box-shadow: inset 3px 0 0 var(--ri-primario) !important;
   }
+  .elenco li > button:focus:not([data-focus-mouse="true"]) {
+    box-shadow: inset 0 0 0 3px var(--ri-primario) !important;
+  }
   li button:hover {
     background: var(--ri-sfondo);
   }
@@ -379,5 +383,11 @@
   }
   .vuoto :global(.icon) {
     fill: var(--ri-testo-2);
+  }
+  @media (max-width: 900px) {
+    .rubrica {
+      grid-template-columns: 1fr;
+      grid-template-rows: minmax(10rem, 40%) 1fr;
+    }
   }
 </style>

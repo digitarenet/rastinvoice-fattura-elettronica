@@ -123,16 +123,17 @@
     <div class="pannello">
       <div class="titolo-pannello">
         <h2 class="h6 mb-0">Imponibile {anno === null ? "per anno" : `per mese nel ${anno}`}</h2>
-        <div class="legenda">
+        <div class="legenda" aria-hidden={tabellaGrafico}>
           <span><span class="punto emesse"></span>Emesse</span>
           <span><span class="punto ricevute"></span>Ricevute</span>
-          <button class="btn btn-link btn-xs p-0" onclick={() => (tabellaGrafico = !tabellaGrafico)}>
+          <button class="btn btn-link btn-xs p-0" aria-pressed={tabellaGrafico} onclick={() => (tabellaGrafico = !tabellaGrafico)}>
             {tabellaGrafico ? "Mostra grafico" : "Mostra tabella"}
           </button>
         </div>
       </div>
       {#if tabellaGrafico}
         <table class="table table-sm tabella-dati">
+          <caption class="visually-hidden">Imponibile delle fatture emesse e ricevute per periodo</caption>
           <thead><tr><th>Periodo</th><th class="num">Emesse</th><th class="num">Ricevute</th></tr></thead>
           <tbody>
             {#each s.periodi as p (p.etichetta)}
@@ -142,7 +143,7 @@
         </table>
       {:else}
         <div class="grafico" bind:clientWidth={larghezza}>
-          <svg width={larghezza} height={ALTEZZA} role="img" aria-label="Imponibile delle fatture emesse e ricevute per periodo">
+          <svg width={larghezza} height={ALTEZZA} role="img" aria-label="Grafico a barre dell'imponibile di emesse e ricevute per periodo: i valori sono nella tabella, pulsante Mostra tabella">
             {#each tacche as t (t)}
               <line class="griglia" x1={MARGINE_SX} x2={larghezza} y1={scala(t)} y2={scala(t)} />
               <text class="asse" x={MARGINE_SX - 8} y={scala(t) + 4} text-anchor="end">{breve(t)}</text>
@@ -194,7 +195,7 @@
                   <tr>
                     <td>
                       <button class="btn btn-link btn-xs p-0 text-start" title="Mostra i documenti" onclick={() => onMostraContatto(c.chiave)}>{c.nome}</button>
-                      <div class="quota"><span class="{blocco.classe}" style="width: {percentuale(c, blocco.elenco)}%"></span></div>
+                      <div class="quota" aria-hidden="true"><span class="{blocco.classe}" style="width: {percentuale(c, blocco.elenco)}%"></span></div>
                     </td>
                     <td class="num">{c.documenti}</td>
                     <td class="num">{euro(c.imponibile)}</td>
@@ -223,10 +224,6 @@
     padding: 1.5rem 2rem 3rem;
     --serie-emesse: #0066cc;
     --serie-ricevute: #c26a00;
-  }
-  :global(:root[data-tema="scuro"]) .statistiche {
-    --serie-emesse: #3d8ef0;
-    --serie-ricevute: #c77a1c;
   }
   .intestazione {
     display: flex;

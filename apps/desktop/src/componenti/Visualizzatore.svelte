@@ -7,6 +7,7 @@
   contenuti nel file.
 -->
 <script lang="ts">
+  import { modale } from "../lib/modale";
   import { onDestroy, onMount, tick, untrack } from "svelte";
   import { api, type AnteprimaAllegato } from "../lib/api";
   import { formatta } from "../lib/xmlformato";
@@ -160,7 +161,7 @@
 <svelte:window onkeydown={tasti} />
 
 <div class="sfondo" role="presentation" onclick={(e) => e.target === e.currentTarget && onChiudi()}>
-  <div class="finestra ri-pannello" role="dialog" aria-modal="true" aria-label="Allegato {titolo}" tabindex="-1" bind:this={finestraEl}>
+  <div class="finestra ri-pannello" role="dialog" aria-modal="true" aria-label="Allegato {titolo}" tabindex="-1" bind:this={finestraEl} use:modale>
     <header class="barra">
       <div class="titolo">
         <Icona nome="it-clip" dimensione="sm" />
@@ -182,18 +183,18 @@
       <div class="azioni">
         {#if zoomabile}
           <div class="zoom" role="group" aria-label="Zoom">
-            <button class="btn btn-xs btn-link" title="Riduci" onclick={() => cambiaZoom(1 / 1.25)}>−</button>
-            <button class="btn btn-xs btn-link percentuale" title="Adatta" onclick={() => cambiaZoom(0)}>{Math.round(zoom * 100)}%</button>
-            <button class="btn btn-xs btn-link" title="Ingrandisci" onclick={() => cambiaZoom(1.25)}>+</button>
+            <button class="btn btn-xs btn-link" title="Riduci" aria-label="Riduci" onclick={() => cambiaZoom(1 / 1.25)}>−</button>
+            <button class="btn btn-xs btn-link percentuale" title="Adatta" aria-label="{Math.round(zoom * 100)}%, adatta alla finestra" onclick={() => cambiaZoom(0)}>{Math.round(zoom * 100)}%</button>
+            <button class="btn btn-xs btn-link" title="Ingrandisci" aria-label="Ingrandisci" onclick={() => cambiaZoom(1.25)}>+</button>
           </div>
         {/if}
-        <button class="btn btn-xs btn-link" title="Apri con il programma predefinito" onclick={apriEsterno}>
+        <button class="btn btn-xs btn-link" title="Apri con il programma predefinito" aria-label="Apri con il programma predefinito" onclick={apriEsterno}>
           <Icona nome="it-external-link" />
         </button>
-        <button class="btn btn-xs btn-link" title="Salva l'allegato" onclick={salva}>
+        <button class="btn btn-xs btn-link" title="Salva l'allegato" aria-label="Salva l'allegato" onclick={salva}>
           <Icona nome="it-download" />
         </button>
-        <button class="btn btn-xs btn-link" title="Chiudi (Esc)" onclick={onChiudi}>
+        <button class="btn btn-xs btn-link" title="Chiudi (Esc)" aria-label="Chiudi" onclick={onChiudi}>
           <Icona nome="it-close-big" />
         </button>
       </div>
@@ -421,7 +422,7 @@
   }
   .x-commento,
   .x-pi {
-    color: #7a8794;
+    color: var(--ri-testo-2);
   }
   .avviso {
     margin: 0;

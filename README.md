@@ -146,10 +146,22 @@ Si ringraziano gli autori delle librerie open source su cui si basa il progetto.
 
 L'interfaccia è realizzata con [Bootstrap Italia](https://italia.github.io/bootstrap-italia/), il kit ufficiale
 del [design system di Designers Italia](https://designers.italia.it/design-system/), e ne segue le linee guida:
-tipografia Titillium Web, palette e icone ufficiali, componenti (pulsanti, campi, selettori, schede), lingua
-italiana dichiarata, navigazione da tastiera con fuoco visibile e contrasti dei testi verificati secondo le
-WCAG 2.1 livello AA. Gli elementi propri di un'applicazione desktop (elenco documenti, anteprima, tema scuro,
-grafici) sono costruiti con gli stessi colori, caratteri e spaziature.
+tipografia Titillium Web, palette e icone ufficiali, componenti (pulsanti, campi, selettori, schede, avvisi).
+Gli elementi propri di un'applicazione desktop (elenco documenti, anteprima, grafici) sono costruiti con gli
+stessi colori, caratteri e spaziature.
+
+## Accessibilità
+
+RustinVoice è progettato per i requisiti **WCAG 2.1 livello AA**, richiamati dalla norma EN 301 549 e dalle
+Linee guida AgID (Legge Stanca):
+- uso completo da tastiera, con fuoco sempre visibile e collegamento "Vai al contenuto principale";
+- contrasti verificati;
+- nomi accessibili e messaggi di stato annunciati;
+- finestre modali che trattengono il fuoco;
+- interfaccia ingrandibile fino al 200% con disposizione adattiva.
+
+Lo strumento axe-core non rileva alcuna violazione su tutte le schermate. Restano da fare le prove con i
+lettori di schermo NVDA e VoiceOver. Stato, verifiche e limiti sono descritti in [ACCESSIBILITA.md](ACCESSIBILITA.md).
 
 L'elenco completo delle dipendenze, incluse quelle indirette, si ottiene con `cargo tree` e `npm ls`.
 

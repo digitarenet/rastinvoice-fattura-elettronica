@@ -72,7 +72,7 @@ export interface Impostazioni {
   benvenuto_visto: boolean;
   file_trascinati: "chiedi" | "copia" | "lascia";
   vista: "moderna" | "standard";
-  tema: "chiaro" | "scuro" | "sistema";
+  zoom: number;
 }
 
 export interface Avvio {

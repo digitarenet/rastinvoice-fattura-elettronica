@@ -34,8 +34,8 @@ pub struct Impostazioni {
     pub file_trascinati: String,
     /// Vista predefinita: `"moderna"` o `"standard"`.
     pub vista: String,
-    /// Tema: `"chiaro"`, `"scuro"` o `"sistema"`.
-    pub tema: String,
+    /// Ingrandimento dell'interfaccia (1 = 100%), per l'accessibilità.
+    pub zoom: f64,
 }
 
 impl Impostazioni {
@@ -144,8 +144,8 @@ pub fn carica(dir: &Path) -> Impostazioni {
     if i.vista.is_empty() {
         i.vista = "moderna".into();
     }
-    if i.tema.is_empty() {
-        i.tema = "sistema".into();
+    if !(1.0..=2.0).contains(&i.zoom) {
+        i.zoom = 1.0;
     }
     i
 }

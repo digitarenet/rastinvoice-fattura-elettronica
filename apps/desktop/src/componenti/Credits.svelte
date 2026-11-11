@@ -68,6 +68,13 @@
     dell'associazione. L'interfaccia è realizzata con Bootstrap Italia, il kit ufficiale del design system di
     Designers Italia, e ne segue le linee guida.</p>
 
+  <h2 class="h5 mt-4">Accessibilità</h2>
+  <p>RustinVoice è progettato per i requisiti WCAG 2.1 livello AA, richiamati dalla norma EN 301 549 e dalle Linee
+    guida AgID. Si usa interamente da tastiera, con il fuoco sempre visibile. I contrasti sono verificati, i messaggi
+    di stato vengono annunciati e l'interfaccia si ingrandisce fino al 200% dalle Impostazioni. Il controllo
+    automatico con axe-core non rileva violazioni; le prove con i lettori di schermo sono in corso. Per segnalare un
+    problema: info@digitare.net.</p>
+
   <h2 class="h5 mt-4">Registro delle modifiche</h2>
   <div class="registro">
     {#each registro as b, i (i)}

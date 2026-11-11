@@ -21,6 +21,7 @@
   } from "./lib/archivio";
   import { data, dataOra, importo, iniziali } from "./lib/formato";
   import { SIGLE_NOTE, chiaveFattura, indiceFatture, indiceNotifiche, infoSigla, notificheDi } from "./lib/sdi";
+  import { modale } from "./lib/modale";
   import Icona from "./componenti/Icona.svelte";
   import Anteprima from "./componenti/Anteprima.svelte";
   import Rubrica from "./componenti/Rubrica.svelte";
@@ -50,6 +51,14 @@
   let al = $state("");
   let ordinamento = $state<Ordinamento>("data_desc");
   let filtriAperti = $state(false);
+  // Menu a scomparsa per finestre strette o interfaccia ingrandita.
+  let menuAperto = $state(false);
+  $effect(() => {
+    void vista;
+    void sezione;
+    void anno;
+    menuAperto = false;
+  });
 
   let selezionata = $state<Voce | null>(null);
   let trascinamento = $state(false);
@@ -106,11 +115,12 @@
   });
   const vuoto = $derived(imp !== null && imp.cartelle.length === 0 && imp.file_singoli.length === 0);
 
-  // Tema chiaro/scuro.
+  // Ingrandimento dell'interfaccia scelto nelle impostazioni.
   $effect(() => {
-    const tema = imp?.tema ?? "sistema";
-    const scuro = tema === "scuro" || (tema === "sistema" && matchMedia("(prefers-color-scheme: dark)").matches);
-    document.documentElement.dataset.tema = scuro ? "scuro" : "chiaro";
+    const z = imp?.zoom ?? 1;
+    getCurrentWebview()
+      .setZoom(z)
+      .catch(() => {});
   });
 
   onMount(() => {
@@ -300,6 +310,10 @@
       const j = Math.max(0, Math.min(visibili.length - 1, i + (e.key === "ArrowDown" ? 1 : -1)));
       seleziona(visibili[j]);
       mostraRiga(j);
+      // Il fuoco segue la selezione, così i lettori di schermo la annunciano.
+      requestAnimationFrame(() =>
+        tick().then(() => elencoEl?.querySelector<HTMLElement>('.voce[aria-current="true"]')?.focus()),
+      );
     }
   }
 
@@ -349,7 +363,10 @@
 
 {#if info && imp}
   <div class="app">
+    <a class="salta visually-hidden-focusable" href="#contenuto" onclick={(e) => { e.preventDefault(); document.getElementById("contenuto")?.focus(); }}>Vai al contenuto principale</a>
     <header class="testata">
+      <button class="btn btn-xs btn-testata menu-stretto" aria-expanded={menuAperto} aria-controls="menu-laterale"
+        onclick={() => (menuAperto = !menuAperto)}><Icona nome="it-burger" /> Menu</button>
       <div class="marchio">
         <span class="logo"><Icona nome="it-file" /></span>
         <span class="nome">RustinVoice</span>
@@ -368,22 +385,22 @@
       <div class="comandi">
         <button class="btn btn-xs btn-testata" onclick={apriFile} title="Apri file (Ctrl+O)"><Icona nome="it-file" /> Apri file</button>
         <button class="btn btn-xs btn-testata" onclick={aggiungiCartella}><Icona nome="it-folder" /> Aggiungi cartella</button>
-        <button class="btn btn-xs btn-testata" onclick={scansiona} title="Rileggi le cartelle" disabled={scansione}>
+        <button class="btn btn-xs btn-testata" onclick={scansiona} title="Rileggi le cartelle" aria-label="Rileggi le cartelle" disabled={scansione}>
           <Icona nome="it-refresh" classe={scansione ? "gira" : ""} />
         </button>
       </div>
     </header>
 
     <div class="corpo">
-      <nav class="laterale ri-pannello ri-scroll" aria-label="Sezioni">
+      <nav class="laterale ri-pannello ri-scroll" id="menu-laterale" class:aperto={menuAperto} aria-label="Sezioni">
         <ul>
           <li>
-            <button class:attivo={vista === "statistiche"} onclick={() => (vista = "statistiche")}>
+            <button class:attivo={vista === "statistiche"} aria-current={vista === "statistiche" ? "page" : undefined} onclick={() => (vista = "statistiche")}>
               <Icona nome="it-chart-line" /> <span>Statistiche</span>
             </button>
           </li>
           <li>
-            <button class:attivo={vista === "rubrica"} onclick={() => (vista = "rubrica")}>
+            <button class:attivo={vista === "rubrica"} aria-current={vista === "rubrica" ? "page" : undefined} onclick={() => (vista = "rubrica")}>
               <Icona nome="it-user" /> <span>Clienti e fornitori</span>
             </button>
           </li>
@@ -394,7 +411,7 @@
           {#each ["tutte", "ricevute", "emesse", "da_leggere", "contrassegnate", "anomalie"] as const as s (s)}
             {#if !((s === "ricevute" || s === "emesse") && propri.size === 0) && !(s === "anomalie" && conteggi.anomalie === 0)}
               <li>
-                <button class:attivo={vista === "documenti" && sezione === s && anno === null} onclick={() => vaiA(s)}>
+                <button class:attivo={vista === "documenti" && sezione === s && anno === null} aria-current={vista === "documenti" && sezione === s && anno === null ? "page" : undefined} onclick={() => vaiA(s)}>
                   <Icona nome={icone[s]} /> <span>{etichette[s]}</span> <small>{conteggi[s]}</small>
                 </button>
               </li>
@@ -407,7 +424,7 @@
           <ul>
             {#each anni as a (a)}
               <li>
-                <button class:attivo={vista === "documenti" && anno === a} onclick={() => vaiA(sezione, a)}>
+                <button class:attivo={vista === "documenti" && anno === a} aria-current={vista === "documenti" && anno === a ? "page" : undefined} onclick={() => vaiA(sezione, a)}>
                   <Icona nome="it-calendar" /> <span>{a}</span>
                   <small>{esito.voci.filter((v) => v.anno === a).length}</small>
                 </button>
@@ -419,18 +436,18 @@
         <h2 class="titoletto">Strumenti</h2>
         <ul>
           <li>
-            <button class:attivo={vista === "messaggi"} onclick={() => (vista = "messaggi")}>
+            <button class:attivo={vista === "messaggi"} aria-current={vista === "messaggi" ? "page" : undefined} onclick={() => (vista = "messaggi")}>
               <Icona nome="it-mail" /> <span>Notifiche SdI</span>
               <small>{esito.messaggi.filter((m) => m.sigla !== "MT").length || ""}</small>
             </button>
           </li>
           <li>
-            <button class:attivo={vista === "impostazioni"} onclick={() => (vista = "impostazioni")}>
+            <button class:attivo={vista === "impostazioni"} aria-current={vista === "impostazioni" ? "page" : undefined} onclick={() => (vista = "impostazioni")}>
               <Icona nome="it-settings" /> <span>Impostazioni</span>
             </button>
           </li>
           <li>
-            <button class:attivo={vista === "credits"} onclick={() => (vista = "credits")}>
+            <button class:attivo={vista === "credits"} aria-current={vista === "credits" ? "page" : undefined} onclick={() => (vista = "credits")}>
               <Icona nome="it-info-circle" /> <span>Credits</span>
             </button>
           </li>
@@ -444,7 +461,7 @@
         {/if}
       </nav>
 
-      <main class="principale">
+      <main class="principale" id="contenuto" tabindex="-1">
         {#if vista === "documenti"}
           {#if vuoto}
             <div class="benvenuto">
@@ -473,15 +490,15 @@
                       <small class="text-secondary-ri fw-normal"> · {visibili.length}</small>
                     </h1>
                     <div class="d-flex">
-                      <button class="btn btn-link btn-xs" class:attivo={filtriAperti} title="Filtri" onclick={() => (filtriAperti = !filtriAperti)}><Icona nome="it-funnel" /></button>
-                      <button class="btn btn-link btn-xs" title="Esporta l'elenco in CSV" onclick={esportaCsv}><Icona nome="it-download" /></button>
+                      <button class="btn btn-link btn-xs" class:attivo={filtriAperti} title="Filtri" aria-label="Filtri" aria-expanded={filtriAperti} onclick={() => (filtriAperti = !filtriAperti)}><Icona nome="it-funnel" /></button>
+                      <button class="btn btn-link btn-xs" title="Esporta l'elenco in CSV" aria-label="Esporta l'elenco in CSV" onclick={esportaCsv}><Icona nome="it-download" /></button>
                     </div>
                   </div>
                   {#if contatto || ricerca || dal || al}
                     <div class="filtri-attivi">
-                      {#if contatto}<span class="filtro">{nomeContatto}<button aria-label="Togli filtro" onclick={() => (contatto = null)}><Icona nome="it-close" dimensione="xs" /></button></span>{/if}
-                      {#if ricerca}<span class="filtro">"{ricerca}"<button aria-label="Togli filtro" onclick={() => (ricerca = "")}><Icona nome="it-close" dimensione="xs" /></button></span>{/if}
-                      {#if dal || al}<span class="filtro">{dal ? data(dal) : "…"} – {al ? data(al) : "…"}<button aria-label="Togli filtro" onclick={() => { dal = ""; al = ""; }}><Icona nome="it-close" dimensione="xs" /></button></span>{/if}
+                      {#if contatto}<span class="filtro">{nomeContatto}<button aria-label="Togli il filtro {nomeContatto}" onclick={() => (contatto = null)}><Icona nome="it-close" dimensione="xs" /></button></span>{/if}
+                      {#if ricerca}<span class="filtro">"{ricerca}"<button aria-label="Togli la ricerca {ricerca}" onclick={() => (ricerca = "")}><Icona nome="it-close" dimensione="xs" /></button></span>{/if}
+                      {#if dal || al}<span class="filtro">{dal ? data(dal) : "…"} – {al ? data(al) : "…"}<button aria-label="Togli il filtro per date" onclick={() => { dal = ""; al = ""; }}><Icona nome="it-close" dimensione="xs" /></button></span>{/if}
                       <button class="btn btn-link btn-xs p-0" onclick={azzeraFiltri}>Azzera</button>
                     </div>
                   {/if}
@@ -513,21 +530,23 @@
                     <button class="btn btn-link btn-xs p-0" onclick={scansiona}>Riprova</button>
                   </div>
                 {/if}
-                <ul class="voci ri-scroll" bind:this={elencoEl} bind:clientHeight={altezzaElenco}
+                <ul class="voci ri-scroll" aria-label="Documenti" bind:this={elencoEl} bind:clientHeight={altezzaElenco}
                   onscroll={() => (scorrimento = elencoEl?.scrollTop ?? 0)}>
                   {#if primaRiga > 0}<li class="spazio" style="height: {primaRiga * ALTEZZA_RIGA}px" aria-hidden="true"></li>{/if}
-                  {#each righeDisegnate as v (v.id)}
+                  {#each righeDisegnate as v, k (v.id)}
                     {@const altro = controparte(v, propri)}
                     {@const dir = direzione(v, propri)}
-                    <li class="riga-elenco">
+                    <li class="riga-elenco" aria-setsize={visibili.length} aria-posinset={primaRiga + k + 1}>
                       <button
                         class="voce"
+                        aria-current={selezionata?.id === v.id ? "true" : undefined}
                         class:selezionata={selezionata?.id === v.id}
                         class:non-letta={!lette.has(v.id)}
                         onclick={() => seleziona(v)}
                         ondblclick={() => segnaComeNonLetta(v)}
                       >
-                        <span class="avatar-ri" class:emessa={dir === "emessa"}>{iniziali(altro.nome)}</span>
+                        <span class="avatar-ri" class:emessa={dir === "emessa"} aria-hidden="true">{iniziali(altro.nome)}</span>
+                        {#if !lette.has(v.id)}<span class="visually-hidden">Da leggere.</span>{/if}
                         <span class="dati">
                           <span class="riga">
                             <span class="soggetto">{altro.nome || altro.chiave}</span>
@@ -560,7 +579,7 @@
                   {/each}
                   {#if ultimaRiga < visibili.length}<li class="spazio" style="height: {(visibili.length - ultimaRiga) * ALTEZZA_RIGA}px" aria-hidden="true"></li>{/if}
                 </ul>
-                <footer class="piede">
+                <footer class="piede" aria-live="polite">
                   <span>{visibili.length} documenti</span>
                   <strong>{importo(totaleVisibili.toFixed(2))}</strong>
                 </footer>
@@ -571,6 +590,8 @@
                   <Anteprima
                     voce={selezionata}
                     contrassegnata={contrassegnate.has(selezionata.id)}
+                    letta={lette.has(selezionata.id)}
+                    onNonLetta={() => segnaComeNonLetta(selezionata!)}
                     schedaIniziale={imp.vista}
                     foglioPresente={foglio?.presente ?? false}
                     onContrassegna={() => contrassegna(selezionata!)}
@@ -700,7 +721,7 @@
   </div>
 
   {#if trascinamento}
-    <div class="rilascio">
+    <div class="rilascio" aria-hidden="true">
       <div>
         <Icona nome="it-upload" dimensione="lg" />
         <p class="h4 mt-3">Rilascia qui fatture .xml, .p7m, archivi .zip, email .eml o cartelle</p>
@@ -709,7 +730,7 @@
   {/if}
 
   {#if info && info.primo_avvio && !sceltaDatiFatta}
-    <div class="velo" role="dialog" aria-modal="true" aria-labelledby="titolo-dati">
+    <div class="velo" role="dialog" aria-modal="true" aria-labelledby="titolo-dati" use:modale>
       <div class="finestra ri-pannello">
         <h2 id="titolo-dati" class="h5">Dove vuoi salvare i dati di RustinVoice?</h2>
         <SceltaDati {info} etichettaConferma="Inizia" onFatto={() => (sceltaDatiFatta = true)} />
@@ -719,7 +740,7 @@
   {/if}
 
   {#if daConfermare}
-    <div class="velo" role="dialog" aria-modal="true" aria-labelledby="titolo-rilascio">
+    <div class="velo" role="dialog" aria-modal="true" aria-labelledby="titolo-rilascio" use:modale={() => (daConfermare = null)}>
       <div class="finestra ri-pannello">
         <h2 id="titolo-rilascio" class="h5">Dove vuoi tenere {daConfermare.length === 1 ? "il file" : `i ${daConfermare.length} file`}?</h2>
         <p>
@@ -741,13 +762,13 @@
   {/if}
 
   {#if avviso}
-    <div class="notifica" class:errore={avviso.tipo === "errore"} role="status">
+    <div class="notifica" class:errore={avviso.tipo === "errore"} role={avviso.tipo === "errore" ? "alert" : "status"}>
       {avviso.testo}
-      <button aria-label="Chiudi" onclick={() => (avviso = null)}><Icona nome="it-close" dimensione="xs" /></button>
+      <button aria-label="Chiudi l'avviso" onclick={() => (avviso = null)}><Icona nome="it-close" dimensione="xs" /></button>
     </div>
   {/if}
 {:else}
-  <div class="avvio"><div class="progress-spinner progress-spinner-active"></div></div>
+  <div class="avvio" role="status"><div class="progress-spinner progress-spinner-active"></div><span class="visually-hidden">Caricamento in corso</span></div>
 {/if}
 
 <style>
@@ -767,6 +788,9 @@
     padding: 0 1rem;
     height: 60px;
     flex: none;
+  }
+  .btn-testata.menu-stretto {
+    display: none;
   }
   .marchio {
     display: flex;
@@ -797,7 +821,7 @@
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    background: rgba(255, 255, 255, 0.16);
+    background: rgba(0, 0, 0, 0.22);
     border-radius: 6px;
     padding: 0 0.75rem;
     height: 40px;
@@ -825,10 +849,11 @@
     color: #1a1a1a;
   }
   .cerca input::placeholder {
-    color: rgba(255, 255, 255, 0.8);
+    color: #fff;
+    opacity: 1;
   }
   .cerca:focus-within input::placeholder {
-    color: #768594;
+    color: var(--ri-testo-2);
   }
   .comandi {
     display: flex;
@@ -842,8 +867,9 @@
     align-items: center;
     gap: 0.35rem;
   }
-  .btn-testata:hover {
-    background: rgba(255, 255, 255, 0.12);
+  .btn-testata:hover,
+  .btn-testata[aria-expanded="true"] {
+    background: rgba(0, 0, 0, 0.18);
     color: #fff;
   }
   .btn-testata :global(.icon) {
@@ -1053,6 +1079,13 @@
   .voce.selezionata:focus:not(:focus-visible) {
     box-shadow: inset 3px 0 0 var(--ri-primario) !important;
   }
+  /* Fuoco da tastiera ben visibile: la riga ha overflow nascosto, quindi
+     l'indicatore va disegnato all'interno. */
+  /* Bootstrap Italia disegna il fuoco all'esterno (qui nascosto dalla riga):
+     per il fuoco da tastiera si usa un bordo interno. */
+  .voci > li.riga-elenco > .voce:focus:not([data-focus-mouse="true"]) {
+    box-shadow: inset 0 0 0 3px var(--ri-primario) !important;
+  }
   .voce:hover {
     background: var(--ri-sfondo);
   }
@@ -1143,7 +1176,7 @@
     fill: var(--ri-testo-2);
   }
   .segni :global(.icon.stella) {
-    fill: #e8a400;
+    fill: #a37400;
   }
   .segni :global(.icon.errore-controllo) {
     fill: var(--ri-errore);
@@ -1358,5 +1391,82 @@
     display: flex;
     align-items: center;
     justify-content: center;
+  }
+
+  /* Collegamento per saltare al contenuto: visibile solo con il fuoco. */
+  .salta:focus {
+    position: fixed;
+    top: 0.5rem;
+    left: 0.5rem;
+    z-index: 3000;
+    background: #fff;
+    color: var(--ri-primario);
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    font-weight: 600;
+  }
+  .principale:focus {
+    outline: none;
+  }
+
+  /* Finestra stretta o testo ingrandito (zoom al 200% e oltre): il menu va
+     sopra il contenuto e l'elenco sopra l'anteprima, senza scorrimento
+     orizzontale della pagina. */
+  @media (max-width: 900px) {
+    .testata {
+      flex-wrap: wrap;
+      height: auto;
+      padding: 0.5rem 1rem;
+      gap: 0.5rem 1rem;
+    }
+    .marchio {
+      width: auto;
+    }
+    .cerca {
+      order: 3;
+      flex-basis: 100%;
+      max-width: none;
+    }
+    .corpo {
+      flex-direction: column;
+    }
+    .btn-testata.menu-stretto {
+      display: inline-flex;
+    }
+    .laterale {
+      display: none;
+    }
+    .laterale.aperto {
+      display: block;
+      width: auto;
+      max-height: 60vh;
+      border-right: 0;
+      border-bottom: 1px solid var(--ri-bordo);
+      padding: 0.25rem 0;
+    }
+    .laterale ul {
+      display: flex;
+      flex-wrap: wrap;
+    }
+    .laterale ul button {
+      width: auto;
+      padding: 0.35rem 0.75rem;
+    }
+    .titoletto {
+      display: none;
+    }
+    /* Elenco e anteprima uno sotto l'altro, con scorrimento verticale. */
+    .principale {
+      overflow-y: auto;
+    }
+    .documenti {
+      grid-template-columns: 1fr;
+      grid-template-rows: 75vh 90vh;
+      height: auto;
+    }
+    .elenco {
+      border-right: 0;
+      border-bottom: 1px solid var(--ri-bordo);
+    }
   }
 </style>

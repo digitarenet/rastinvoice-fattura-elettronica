@@ -25,7 +25,7 @@ pub fn html_moderna(f: &FatturaElettronica) -> String {
     h.push_str("<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">");
     h.push_str("<title>Fattura</title><style>");
     h.push_str(CSS);
-    h.push_str("</style></head><body>");
+    h.push_str("</style></head><body><main>");
     for (i, corpo) in f.corpi.iter().enumerate() {
         if i > 0 {
             h.push_str("<div class=\"salto\"></div>");
@@ -33,13 +33,13 @@ pub fn html_moderna(f: &FatturaElettronica) -> String {
         documento(&mut h, f, corpo, i, f.corpi.len());
     }
     if !f.avvisi.is_empty() {
-        h.push_str("<section class=\"avvisi\"><h3>Anomalie rilevate nel file</h3><ul>");
+        h.push_str("<section class=\"avvisi\"><h2>Anomalie rilevate nel file</h2><ul>");
         for a in &f.avvisi {
             h.push_str(&format!("<li>{}</li>", esc(a)));
         }
         h.push_str("</ul></section>");
     }
-    h.push_str("</body></html>");
+    h.push_str("</main></body></html>");
     h
 }
 
@@ -104,7 +104,7 @@ fn documento(
 
     // Causale e riferimenti
     if !d.causale.is_empty() {
-        h.push_str("<section class=\"blocco\"><h3>Causale</h3><p>");
+        h.push_str("<section class=\"blocco\"><h2>Causale</h2><p>");
         h.push_str(&esc(&d.causale.join(" ")));
         h.push_str("</p></section>");
     }
@@ -122,7 +122,7 @@ fn documento(
 
     // Allegati
     if !c.allegati.is_empty() {
-        h.push_str("<section class=\"blocco\"><h3>Allegati</h3><ul class=\"allegati\">");
+        h.push_str("<section class=\"blocco\"><h2>Allegati</h2><ul class=\"allegati\">");
         for a in &c.allegati {
             h.push_str(&format!(
                 "<li><strong>{}</strong> {} <span class=\"tenue\">{} · {} KB</span></li>",
@@ -276,7 +276,7 @@ fn riferimenti(h: &mut String, dg: &DatiGenerali) {
     if voci.is_empty() {
         return;
     }
-    h.push_str("<section class=\"blocco\"><h3>Riferimenti</h3><ul class=\"rif\">");
+    h.push_str("<section class=\"blocco\"><h2>Riferimenti</h2><ul class=\"rif\">");
     for v in voci {
         h.push_str(&format!("<li>{v}</li>"));
     }
@@ -423,7 +423,7 @@ fn riepilogo(h: &mut String, c: &Corpo) {
     if c.riepiloghi.is_empty() {
         return;
     }
-    h.push_str("<section class=\"blocco\"><h3>Riepilogo IVA</h3><table class=\"riep\"><thead><tr>");
+    h.push_str("<section class=\"blocco\"><h2>Riepilogo IVA</h2><table class=\"riep\"><thead><tr>");
     h.push_str("<th>Aliquota / natura</th><th class=\"n\">Imponibile</th><th class=\"n\">Imposta</th><th>Esigibilità</th></tr></thead><tbody>");
     for r in &c.riepiloghi {
         let mut prima = iva(r.aliquota_iva, r.natura.as_deref());
@@ -522,7 +522,7 @@ fn pagamenti(h: &mut String, c: &Corpo) {
     if dettagli.is_empty() {
         return;
     }
-    h.push_str("<section class=\"blocco\"><h3>Pagamento</h3><table class=\"riep\"><thead><tr>");
+    h.push_str("<section class=\"blocco\"><h2>Pagamento</h2><table class=\"riep\"><thead><tr>");
     h.push_str("<th>Modalità</th><th>Scadenza</th><th>Coordinate</th><th class=\"n\">Importo</th></tr></thead><tbody>");
     for (p, d) in dettagli {
         let mp = d.modalita_pagamento.as_deref().unwrap_or("");

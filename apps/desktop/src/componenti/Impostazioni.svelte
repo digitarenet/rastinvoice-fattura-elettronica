@@ -109,7 +109,7 @@
         aggiungiId(nuovoId);
       }}
     >
-      <input class="form-control form-control-sm w-auto" placeholder="es. 01234567890" bind:value={nuovoId} />
+      <input class="form-control form-control-sm w-auto" placeholder="es. 01234567890" aria-label="Partita IVA o codice fiscale da aggiungere" bind:value={nuovoId} />
       <button class="btn btn-outline-primary btn-xs" type="submit">Aggiungi</button>
     </form>
   </section>
@@ -120,12 +120,12 @@
     <ul class="percorsi">
       {#each imp.cartelle as c (c)}
         <li><Icona nome="it-folder" /> <span class="selezionabile">{c}</span>
-          <button class="btn btn-link btn-xs" onclick={() => api.apriCartella(c)}>Apri</button>
-          <button class="btn btn-link btn-xs text-danger" onclick={() => togliCartella(c)}>Rimuovi</button></li>
+          <button class="btn btn-link btn-xs" aria-label="Apri la cartella {c}" onclick={() => api.apriCartella(c)}>Apri</button>
+          <button class="btn btn-link btn-xs text-danger" aria-label="Rimuovi la cartella {c}" onclick={() => togliCartella(c)}>Rimuovi</button></li>
       {/each}
       {#each imp.file_singoli as f (f)}
         <li><Icona nome="it-file" /> <span class="selezionabile">{f}</span>
-          <button class="btn btn-link btn-xs text-danger" onclick={() => togliFile(f)}>Rimuovi</button></li>
+          <button class="btn btn-link btn-xs text-danger" aria-label="Rimuovi il file {f}" onclick={() => togliFile(f)}>Rimuovi</button></li>
       {/each}
       {#if imp.cartelle.length === 0 && imp.file_singoli.length === 0}
         <li class="text-secondary-ri">Nessuna cartella.</li>
@@ -169,21 +169,22 @@
   </section>
 
   <section>
-    <h2 class="h5">Aspetto</h2>
-    <label class="etichetta" for="tema">Tema</label>
-    <select id="tema" class="form-select form-select-sm w-auto" value={imp.tema}
-      onchange={(e) => onSalva({ ...imp, tema: (e.currentTarget as HTMLSelectElement).value as Impostazioni["tema"] })}>
-      <option value="sistema">Come il sistema</option>
-      <option value="chiaro">Chiaro</option>
-      <option value="scuro">Scuro</option>
+    <h2 class="h5">Leggibilità</h2>
+    <label class="etichetta" for="zoom">Dimensione dell'interfaccia</label>
+    <select id="zoom" class="form-select form-select-sm w-auto" value={String(imp.zoom)}
+      onchange={(e) => onSalva({ ...imp, zoom: Number((e.currentTarget as HTMLSelectElement).value) })}>
+      {#each [1, 1.25, 1.5, 1.75, 2] as z (z)}
+        <option value={String(z)}>{Math.round(z * 100)}%</option>
+      {/each}
     </select>
+    <p class="text-secondary-ri mt-2 mb-0"><small>Ingrandisce testi, pulsanti e menu; con valori alti la disposizione si adatta alla finestra.</small></p>
   </section>
 
   <section>
     <h2 class="h5">Dati dell'applicazione</h2>
     <SceltaDati {info} onFatto={() => {}} />
     <p class="selezionabile mt-3 mb-0"><small>In uso: <code>{info.cartella_dati}</code></small>
-      <button class="btn btn-link btn-xs" onclick={() => api.apriCartella(info.cartella_dati)}>Apri</button></p>
+      <button class="btn btn-link btn-xs" aria-label="Apri la cartella dei dati" onclick={() => api.apriCartella(info.cartella_dati)}>Apri</button></p>
   </section>
 
 </div>

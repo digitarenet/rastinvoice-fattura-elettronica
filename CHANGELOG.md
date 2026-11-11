@@ -4,6 +4,33 @@ Tutte le modifiche rilevanti di RustinVoice. Il numero di versione segue lo sche
 MAGGIORE.MINORE.CORREZIONE: la versione minore cresce con le nuove funzioni, quella di
 correzione con le sole correzioni.
 
+## 0.8.0 - 2026-11-11
+
+### Aggiunto
+- Accessibilità secondo le WCAG 2.1 livello AA (EN 301 549, Linee guida AgID), descritta in
+  `ACCESSIBILITA.md`:
+  - collegamento "Vai al contenuto principale";
+  - nomi accessibili per tutti i pulsanti con sola icona;
+  - schede navigabili con le frecce;
+  - finestre modali che trattengono il fuoco e lo restituiscono alla chiusura;
+  - elenco dei documenti che annuncia posizione, voce corrente e documenti da leggere;
+  - fuoco che segue le frecce, con un indicatore ben visibile;
+  - messaggi di stato annunciati;
+  - pulsanti di almeno 24 px.
+- Impostazione **Dimensione dell'interfaccia** (100-200%), con disposizione adattiva e menu a scomparsa
+  quando lo spazio è poco.
+- Pulsante **Segna come da leggere** nell'anteprima, utilizzabile anche da tastiera (prima solo con il
+  doppio clic).
+- Sezione Accessibilità in README e Credits.
+
+### Modificato
+- Contrasti dei testi secondari e dei colori di stato portati ad almeno 4,5:1 anche sulle righe
+  selezionate; stella dei contrassegni e testo segnaposto della ricerca resi più leggibili.
+- Vista Moderna: titoli di sezione in ordine gerarchico e area principale dichiarata.
+
+### Rimosso
+- Tema scuro, non previsto dal design system di Designers Italia.
+
 ## 0.7.0 - 2026-11-11
 
 ### Aggiunto

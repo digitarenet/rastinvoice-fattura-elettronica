@@ -21,6 +21,8 @@
   let {
     voce,
     contrassegnata,
+    letta = true,
+    onNonLetta = () => {},
     schedaIniziale = "moderna",
     foglioPresente,
     onContrassegna,
@@ -32,6 +34,8 @@
     notifiche?: VoceMessaggio[];
     voce: Voce;
     contrassegnata: boolean;
+    letta?: boolean;
+    onNonLetta?: () => void;
     schedaIniziale?: "moderna" | "standard";
     foglioPresente: boolean;
     onContrassegna: () => void;
@@ -118,6 +122,27 @@
       untrack(() => tentativoFoglio++);
     }
   });
+
+  const SCHEDE: [Scheda, string][] = [
+    ["moderna", "Moderna"],
+    ["standard", "AssoSoftware"],
+    ["xml", "XML"],
+  ];
+
+  /** Frecce, Home e Fine spostano la scheda attiva, come nello schema ARIA. */
+  function tastiSchede(e: KeyboardEvent) {
+    const i = SCHEDE.findIndex(([s]) => s === scheda);
+    let j = i;
+    if (e.key === "ArrowRight") j = (i + 1) % SCHEDE.length;
+    else if (e.key === "ArrowLeft") j = (i + SCHEDE.length - 1) % SCHEDE.length;
+    else if (e.key === "Home") j = 0;
+    else if (e.key === "End") j = SCHEDE.length - 1;
+    else return;
+    e.preventDefault();
+    e.stopPropagation();
+    cambiaScheda(SCHEDE[j][0]);
+    document.getElementById(`scheda-${SCHEDE[j][0]}`)?.focus();
+  }
 
   function cambiaScheda(s: Scheda) {
     scheda = s;
@@ -260,36 +285,40 @@
 
 <section class="anteprima ri-pannello">
   <div class="barra">
-    <div class="schede" role="tablist">
-      <button role="tab" class:attiva={scheda === "moderna"} aria-selected={scheda === "moderna"} onclick={() => cambiaScheda("moderna")}>Moderna</button>
-      <button role="tab" class:attiva={scheda === "standard"} aria-selected={scheda === "standard"} onclick={() => cambiaScheda("standard")}>AssoSoftware</button>
-      <button role="tab" class:attiva={scheda === "xml"} aria-selected={scheda === "xml"} onclick={() => cambiaScheda("xml")}>XML</button>
+    <div class="schede" role="tablist" aria-label="Viste del documento" tabindex="-1" onkeydown={tastiSchede}>
+      {#each SCHEDE as [s, etichetta] (s)}
+        <button role="tab" id="scheda-{s}" aria-controls="pannello-documento" class:attiva={scheda === s} aria-selected={scheda === s}
+          tabindex={scheda === s ? 0 : -1} onclick={() => cambiaScheda(s)}>{etichetta}</button>
+      {/each}
     </div>
     <div class="azioni">
       <div class="zoom" role="group" aria-label="Zoom">
-        <button class="btn btn-xs btn-link" title="Riduci (Ctrl -)" onclick={() => cambiaZoom(-1)} disabled={zoom <= LIVELLI_ZOOM[0]}>−</button>
-        <button class="btn btn-xs btn-link percentuale" title="Dimensione reale (Ctrl 0)" onclick={() => cambiaZoom(0)}>{Math.round(zoom * 100)}%</button>
-        <button class="btn btn-xs btn-link" title="Ingrandisci (Ctrl +)" onclick={() => cambiaZoom(1)} disabled={zoom >= LIVELLI_ZOOM[LIVELLI_ZOOM.length - 1]}>+</button>
+        <button class="btn btn-xs btn-link" title="Riduci (Ctrl -)" aria-label="Riduci" onclick={() => cambiaZoom(-1)} disabled={zoom <= LIVELLI_ZOOM[0]}>−</button>
+        <button class="btn btn-xs btn-link percentuale" title="Dimensione reale (Ctrl 0)" aria-label="{Math.round(zoom * 100)}%, dimensione reale" onclick={() => cambiaZoom(0)}>{Math.round(zoom * 100)}%</button>
+        <button class="btn btn-xs btn-link" title="Ingrandisci (Ctrl +)" aria-label="Ingrandisci" onclick={() => cambiaZoom(1)} disabled={zoom >= LIVELLI_ZOOM[LIVELLI_ZOOM.length - 1]}>+</button>
       </div>
       {#if scheda === "xml"}
         <button class="btn btn-xs btn-link interruttore" aria-pressed={xmlFormattato} title="Alterna tra XML formattato e testo originale del file"
           onclick={() => (xmlFormattato = !xmlFormattato)}>{xmlFormattato ? "Mostra originale" : "Formatta"}</button>
       {/if}
-      <button class="btn btn-xs btn-link" title={contrassegnata ? "Togli contrassegno" : "Contrassegna"} onclick={onContrassegna}>
+      <button class="btn btn-xs btn-link" title={contrassegnata ? "Togli contrassegno" : "Contrassegna"} aria-label="Contrassegna" aria-pressed={contrassegnata} onclick={onContrassegna}>
         <Icona nome={contrassegnata ? "it-star-full" : "it-star-outline"} classe={contrassegnata ? "stella" : ""} />
       </button>
+      <button class="btn btn-xs btn-link" title="Segna come da leggere" aria-label="Segna come da leggere" disabled={!letta} onclick={onNonLetta}>
+        <Icona nome="it-mail" />
+      </button>
       {#if scheda !== "xml"}
-        <button class="btn btn-xs btn-link" title="Stampa (Ctrl+P)" onclick={stampa}>
+        <button class="btn btn-xs btn-link" title="Stampa (Ctrl+P)" aria-label="Stampa" onclick={stampa}>
           <Icona nome="it-print" />
         </button>
-        <button class="btn btn-xs btn-link" title="Salva come pagina HTML" onclick={salvaHtml}>
+        <button class="btn btn-xs btn-link" title="Salva come pagina HTML" aria-label="Salva come pagina HTML" onclick={salvaHtml}>
           <Icona nome="it-download" />
         </button>
       {/if}
-      <button class="btn btn-xs btn-link" title="Salva l'XML estratto" onclick={salvaXml}>
+      <button class="btn btn-xs btn-link" title="Salva l'XML estratto" aria-label="Salva l'XML estratto" onclick={salvaXml}>
         <Icona nome="it-file-xml" />
       </button>
-      <button class="btn btn-xs btn-link" title="Mostra il file nella cartella" onclick={() => api.mostraNellaCartella(voce.file).catch((e) => onErrore(String(e)))}>
+      <button class="btn btn-xs btn-link" title="Mostra il file nella cartella" aria-label="Mostra il file nella cartella" onclick={() => api.mostraNellaCartella(voce.file).catch((e) => onErrore(String(e)))}>
         <Icona nome="it-folder" />
       </button>
     </div>
@@ -327,8 +356,8 @@
           <button class="btn btn-link p-0 nome" title={a.descrizione ? `${a.descrizione} · Visualizza` : "Visualizza"}
             onclick={() => (allegatoAperto = i)}>{a.nome ?? `allegato ${i + 1}`}</button>
           <span class="text-secondary-ri">{dimensione(a.dimensione)}</span>
-          <button class="btn btn-link p-0" title="Apri con il programma predefinito" onclick={() => apriAllegato(i)}><Icona nome="it-external-link" dimensione="xs" /></button>
-          <button class="btn btn-link p-0" title="Salva" onclick={() => salvaAllegato(i)}><Icona nome="it-download" dimensione="xs" /></button>
+          <button class="btn btn-link p-0" title="Apri con il programma predefinito" aria-label="Apri {a.nome ?? `allegato ${i + 1}`} con il programma predefinito" onclick={() => apriAllegato(i)}><Icona nome="it-external-link" dimensione="xs" /></button>
+          <button class="btn btn-link p-0" title="Salva" aria-label="Salva {a.nome ?? `allegato ${i + 1}`}" onclick={() => salvaAllegato(i)}><Icona nome="it-download" dimensione="xs" /></button>
         </span>
       {/each}
     </div>
@@ -396,9 +425,9 @@
     </div>
   {/if}
 
-  <div class="contenuto">
+  <div class="contenuto" id="pannello-documento" role="tabpanel" aria-labelledby="scheda-{scheda}" aria-busy={caricamento}>
     {#if caricamento && !dettaglio}
-      <div class="stato"><div class="progress-spinner progress-spinner-active"></div></div>
+      <div class="stato" role="status"><div class="progress-spinner progress-spinner-active"></div><span class="visually-hidden">Apertura del documento</span></div>
     {:else if errore}
       <div class="stato">
         <div class="alert alert-danger" role="alert">Impossibile aprire il documento: {errore}</div>
@@ -426,7 +455,7 @@
             </div>
           </div>
         {:else}
-          <div class="stato"><div class="progress-spinner progress-spinner-active"></div></div>
+          <div class="stato" role="status"><div class="progress-spinner progress-spinner-active"></div><span class="visually-hidden">Apertura del documento</span></div>
         {/if}
       {:else}
         <pre class="xml selezionabile" class:a-capo={!righeXml} style="font-size: {0.8 * zoom}rem">{#if righeXml}{#each righeXml as r, i (i)}<span class="riga-xml" style="padding-left: {r.rientro * 1.5}em">{#each r.parti as p, j (j)}<span class="x-{p.tipo}">{p.testo}</span>{/each}</span>
@@ -487,7 +516,7 @@
     fill: var(--ri-primario);
   }
   .azioni :global(.stella) {
-    fill: #e8a400;
+    fill: #a37400;
   }
   .info {
     display: flex;
@@ -732,20 +761,11 @@
     font-weight: 600;
   }
   .x-commento {
-    color: #7a8794;
+    color: var(--ri-testo-2);
     font-style: italic;
   }
   .x-pi {
-    color: #7a8794;
-  }
-  :global(:root[data-tema="scuro"]) .x-tag {
-    color: #79b8ff;
-  }
-  :global(:root[data-tema="scuro"]) .x-attr {
-    color: #f0b46b;
-  }
-  :global(:root[data-tema="scuro"]) .x-valore {
-    color: #85e89d;
+    color: var(--ri-testo-2);
   }
   .zoom {
     display: flex;
@@ -773,5 +793,10 @@
   }
   .azioni .btn {
     text-decoration: none;
+  }
+  /* Pulsanti piccoli degli allegati: area attiva di almeno 24 px (WCAG 2.5.8). */
+  .allegato :global(.btn) {
+    min-width: 24px;
+    min-height: 24px;
   }
 </style>
