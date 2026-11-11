@@ -32,6 +32,7 @@ RastInvoice si collega a Internet solo in questi casi, e solo quando li chiede l
 | Controllo delle nuove versioni, se attivato (Impostazioni > Aggiornamenti; solo nelle versioni non scaricate da uno store) | api.github.com | una richiesta del numero dell'ultima versione |
 | Clic sul collegamento a digitare.net nei Credits | digitare.net | il browser apre la pagina, con parametri che indicano la provenienza da RastInvoice |
 | Clic su "Scarica la versione" (Impostazioni > Aggiornamenti) | github.com | il browser apre la pagina di download |
+| Installazione della nuova versione nelle versioni Linux scaricate da GitHub (automatica per AppImage con il controllo attivo, con il pulsante "Installa" per .deb e .rpm) | github.com | una normale richiesta di download del file con l'elenco delle versioni e del pacchetto |
 | Clic su "Fai una donazione con PayPal" (Credits) | paypal.biz | il browser apre la pagina di PayPal |
 | Clic su "Scrivi l'email" (Credits) | nessuno | si apre il programma di posta con un messaggio da rivedere: RastInvoice non invia nulla |
 

@@ -6,6 +6,13 @@
 # Distribuzione scelta:
 # - Linux: pacchetti .deb, .rpm e AppImage allegati a una release in bozza su
 #   GitHub, da controllare e pubblicare a mano.
+#   Aggiornamento integrato: se nel repository ci sono il segreto
+#   CHIAVE_PRIVATA_AGGIORNAMENTI (con PASSWORD_CHIAVE_AGGIORNAMENTI, se la
+#   chiave ha una password) e la variabile CHIAVE_PUBBLICA_AGGIORNAMENTI, i
+#   pacchetti vengono firmati e alla release si aggiunge latest.json, che le
+#   versioni già installate leggono per aggiornarsi. La coppia di chiavi si
+#   crea una volta sola con `npx tauri signer generate`; senza chiavi i
+#   pacchetti funzionano ma si aggiornano solo scaricandoli dalla release.
 # - Windows: solo Microsoft Store. Il pacchetto MSIX non va nella release ma
 #   tra i file del workflow ("Artifacts"), da caricare in Partner Center.
 #   Serve che nel repository siano definite le variabili MSIX_NOME_PACCHETTO,
@@ -42,11 +49,32 @@ jobs:
 
       - name: Compilazione e pacchetti
         working-directory: apps/desktop
-        run: npx tauri build --bundles deb,rpm,appimage
+        env:
+          RASTINVOICE_CHIAVE_AGGIORNAMENTI: ${{ vars.CHIAVE_PUBBLICA_AGGIORNAMENTI }}
+          TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.CHIAVE_PRIVATA_AGGIORNAMENTI }}
+          TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.PASSWORD_CHIAVE_AGGIORNAMENTI }}
+        run: |
+          if [ -n "$TAURI_SIGNING_PRIVATE_KEY" ] && [ -n "$RASTINVOICE_CHIAVE_AGGIORNAMENTI" ]; then
+            echo "Pacchetti firmati per l'aggiornamento integrato"
+            npx tauri build --bundles deb,rpm,appimage --config '{"bundle":{"createUpdaterArtifacts":true}}'
+            echo "FIRMATI=si" >> "$GITHUB_ENV"
+          else
+            echo "::warning::Chiavi di aggiornamento assenti: pacchetti senza aggiornamento integrato"
+            unset RASTINVOICE_CHIAVE_AGGIORNAMENTI TAURI_SIGNING_PRIVATE_KEY
+            npx tauri build --bundles deb,rpm,appimage
+          fi
 
       - name: Versione
         id: versione
         run: echo "valore=$(node -p "require('./apps/desktop/src-tauri/tauri.conf.json').version")" >> "$GITHUB_OUTPUT"
+
+      - name: File per l'aggiornamento integrato
+        if: env.FIRMATI == 'si'
+        run: >
+          node store/linux/manifesto-aggiornamenti.mjs
+          "${{ steps.versione.outputs.valore }}"
+          "https://github.com/${{ github.repository }}/releases/download/v${{ steps.versione.outputs.valore }}"
+          > target/release/bundle/latest.json
 
       - name: Release in bozza
         uses: softprops/action-gh-release@v2
@@ -58,6 +86,7 @@ jobs:
             target/release/bundle/appimage/*.AppImage
             target/release/bundle/deb/*.deb
             target/release/bundle/rpm/*.rpm
+            target/release/bundle/latest.json
 
   microsoft-store:
     if: vars.MSIX_NOME_PACCHETTO != ''

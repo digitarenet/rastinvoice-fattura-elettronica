@@ -97,6 +97,12 @@ export interface Avvio {
   distribuzione: string;
   /** Installato da uno store: aggiornamenti e cartella dati li gestisce lo store. */
   da_store: boolean;
+  /**
+   * Aggiornamento dall'applicazione (pacchetti Linux scaricati da GitHub):
+   * "automatico" per AppImage, "pacchetto" per .deb e .rpm (chiede la password),
+   * vuoto se si scarica dalla pagina delle versioni.
+   */
+  aggiornamento_integrato: "automatico" | "pacchetto" | "";
 }
 
 export interface Allegato {
@@ -191,6 +197,9 @@ export const api = {
   apriSito: () => invoke<void>("apri_sito"),
   controllaAggiornamenti: () => invoke<EsitoAggiornamenti>("controlla_aggiornamenti"),
   apriDownload: () => invoke<void>("apri_download"),
+  /** Installa l'ultima versione; restituisce quella installata o null se non ce n'è una nuova. */
+  installaAggiornamento: () => invoke<string | null>("installa_aggiornamento"),
+  riavvia: () => invoke<void>("riavvia"),
   scriviEmail: (oggetto: string, testo: string) => invoke<void>("scrivi_email", { oggetto, testo }),
   apriDonazione: (url: string) => invoke<void>("apri_donazione", { url }),
   copiaInArchivio: (percorsi: string[]) =>

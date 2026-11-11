@@ -4,7 +4,17 @@ Novità, miglioramenti e correzioni di RastInvoice (fino alla 0.9.0 chiamato Rus
 versione segue lo schema MAGGIORE.MINORE.CORREZIONE: la versione minore cresce con le nuove funzioni, quella
 di correzione con le sole correzioni. Le versioni senza novità nel programma non sono elencate.
 
-## 1.0.0 - 2026-11-11
+## 1.1.0 - 2026-11-11
+
+### Aggiunto
+- Aggiornamento dall'applicazione per le versioni Linux scaricate dal sito (AppImage, .deb e .rpm). Con il
+  controllo delle nuove versioni attivo, la versione AppImage scarica e installa da sola la nuova versione,
+  che diventa attiva al riavvio; per i pacchetti .deb e .rpm basta un clic su **Installa** in Impostazioni,
+  con la password di amministratore. Prima dell'installazione il programma verifica la firma digitale
+  dell'autore, così si installano solo versioni originali. Le versioni scaricate dagli store continuano ad
+  aggiornarsi tramite lo store.
+
+## 1.0.0
 
 Prima versione stabile, pronta per la pubblicazione negli store.
 

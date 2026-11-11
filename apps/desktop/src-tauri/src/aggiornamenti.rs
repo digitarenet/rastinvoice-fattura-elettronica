@@ -5,6 +5,13 @@
 // disattivato in modo predefinito: l'applicazione non si collega a Internet
 // se l'utente non lo chiede nelle impostazioni. Non viene inviato alcun dato
 // oltre alla normale richiesta HTTP.
+//
+// Su Linux, per i pacchetti scaricati da GitHub (AppImage, .deb, .rpm), la
+// nuova versione può essere anche scaricata e installata dall'applicazione.
+// Il file scaricato viene installato solo se la sua firma corrisponde alla
+// chiave pubblica inclusa nel programma in fase di compilazione. Le versioni
+// degli store (Microsoft Store, Mac App Store, Flathub, Snap) si aggiornano
+// tramite lo store e non usano questo meccanismo.
 
 use serde::Serialize;
 use std::io::Read;
@@ -13,6 +20,14 @@ use std::io::Read;
 const URL_ULTIMA: &str = "https://api.github.com/repos/digitarenet/rastinvoice-fattura-elettronica/releases/latest";
 /// Pagina delle release da aprire per scaricare la nuova versione.
 pub const URL_RELEASE: &str = "https://github.com/digitarenet/rastinvoice-fattura-elettronica/releases/latest";
+/// Descrizione delle versioni pubblicate per l'aggiornamento integrato, con
+/// indirizzo e firma di ogni pacchetto.
+#[cfg(target_os = "linux")]
+const URL_MANIFESTO: &str = "https://github.com/digitarenet/rastinvoice-fattura-elettronica/releases/latest/download/latest.json";
+/// Chiave pubblica con cui verificare la firma dei pacchetti. La imposta il
+/// workflow di rilascio; senza chiave l'aggiornamento integrato è disattivato
+/// e resta solo il collegamento alla pagina di download.
+const CHIAVE_PUBBLICA: Option<&str> = option_env!("RASTINVOICE_CHIAVE_AGGIORNAMENTI");
 /// Dimensione massima della risposta letta.
 const MAX_BYTE: u64 = 1024 * 1024;
 
@@ -55,6 +70,70 @@ pub fn controlla() -> Result<Esito, String> {
         ultima,
         disponibile,
     })
+}
+
+/// Modalità di aggiornamento integrato del pacchetto in uso:
+/// - `automatico`: AppImage, la nuova versione sostituisce il file senza
+///   chiedere nulla e diventa attiva al riavvio;
+/// - `pacchetto`: .deb o .rpm, l'installazione chiede la password di
+///   amministratore, quindi parte solo su richiesta dell'utente;
+/// - stringa vuota: nessun aggiornamento integrato (store, compilazione in
+///   proprio, Windows e macOS), si apre la pagina di download.
+pub fn integrato() -> &'static str {
+    if CHIAVE_PUBBLICA.is_none_or(|c| c.trim().is_empty()) {
+        return "";
+    }
+    #[cfg(target_os = "linux")]
+    {
+        use tauri::utils::{config::BundleType, platform::bundle_type};
+        match bundle_type() {
+            Some(BundleType::AppImage) if std::env::var_os("APPIMAGE").is_some() => {
+                return "automatico";
+            }
+            Some(BundleType::Deb | BundleType::Rpm) => return "pacchetto",
+            _ => {}
+        }
+    }
+    ""
+}
+
+/// Scarica e installa l'ultima versione, se più recente di quella in uso.
+/// Restituisce la versione installata, oppure `None` se non c'è nulla da fare.
+#[cfg(target_os = "linux")]
+pub async fn installa(app: tauri::AppHandle) -> Result<Option<String>, String> {
+    use tauri_plugin_updater::UpdaterExt;
+
+    if integrato().is_empty() {
+        return Err("aggiornamento integrato non disponibile per questa versione".into());
+    }
+    let chiave = CHIAVE_PUBBLICA.unwrap_or_default().trim();
+    let url = URL_MANIFESTO
+        .parse()
+        .map_err(|e| format!("indirizzo non valido: {e}"))?;
+    let aggiornatore = app
+        .updater_builder()
+        .pubkey(chiave)
+        .endpoints(vec![url])
+        .and_then(|b| b.build())
+        .map_err(|e| format!("aggiornamento non disponibile: {e}"))?;
+    let Some(nuova) = aggiornatore
+        .check()
+        .await
+        .map_err(|e| format!("controllo non riuscito: {e}"))?
+    else {
+        return Ok(None);
+    };
+    nuova
+        .download_and_install(|_, _| {}, || {})
+        .await
+        .map_err(|e| format!("installazione non riuscita: {e}"))?;
+    Ok(Some(nuova.version))
+}
+
+/// Su Windows e macOS gli aggiornamenti passano dagli store.
+#[cfg(not(target_os = "linux"))]
+pub async fn installa(_app: tauri::AppHandle) -> Result<Option<String>, String> {
+    Err("aggiornamento integrato non disponibile per questa versione".into())
 }
 
 /// Confronta due versioni nella forma `x.y.z` (eventuali suffissi ignorati).

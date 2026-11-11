@@ -42,6 +42,9 @@ struct Avvio {
     distribuzione: &'static str,
     /// Vero se installato da uno store: aggiornamenti e cartella dati li gestisce lo store.
     da_store: bool,
+    /// Aggiornamento dall'applicazione: `automatico`, `pacchetto` o vuoto
+    /// (vedi [`aggiornamenti::integrato`]).
+    aggiornamento_integrato: &'static str,
 }
 
 /// Riconosce il canale di distribuzione: `microsoft-store`, `mac-app-store`,
@@ -91,6 +94,11 @@ fn avvio(stato: tauri::State<'_, Stato>) -> Avvio {
         portable_possibile: impostazioni::portable_possibile(),
         distribuzione: distribuzione(),
         da_store: distribuzione() != "diretta",
+        aggiornamento_integrato: if distribuzione() == "diretta" {
+            aggiornamenti::integrato()
+        } else {
+            ""
+        },
     }
 }
 
@@ -544,6 +552,22 @@ async fn controlla_aggiornamenti() -> Result<aggiornamenti::Esito, String> {
         .map_err(|e| e.to_string())?
 }
 
+/// Scarica e installa l'ultima versione (solo pacchetti Linux scaricati da
+/// GitHub). Restituisce la versione installata, se ce n'era una più recente.
+#[tauri::command]
+async fn installa_aggiornamento(app: tauri::AppHandle) -> Result<Option<String>, String> {
+    if distribuzione() != "diretta" {
+        return Err("gli aggiornamenti li gestisce lo store".into());
+    }
+    aggiornamenti::installa(app).await
+}
+
+/// Riavvia l'applicazione, per usare la versione appena installata.
+#[tauri::command]
+fn riavvia(app: tauri::AppHandle) {
+    app.restart();
+}
+
 /// Apre nel browser la pagina di download dell'ultima versione.
 #[tauri::command]
 fn apri_download() -> Result<(), String> {
@@ -659,7 +683,11 @@ fn navigazione_consentita(url: &tauri::Url) -> bool {
 
 /// Avvia l'applicazione.
 pub fn avvia() {
-    tauri::Builder::default()
+    let costruttore = tauri::Builder::default();
+    // Aggiornamento integrato dei pacchetti Linux (vedi `aggiornamenti`).
+    #[cfg(target_os = "linux")]
+    let costruttore = costruttore.plugin(tauri_plugin_updater::Builder::new().build());
+    costruttore
         .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_opener::init())
         .plugin(
@@ -708,6 +736,8 @@ pub fn avvia() {
             byte_allegato,
             cambia_cartella_dati,
             controlla_aggiornamenti,
+            installa_aggiornamento,
+            riavvia,
             apri_download,
             scrivi_email,
             apri_donazione

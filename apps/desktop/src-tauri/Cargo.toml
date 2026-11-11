@@ -36,6 +36,11 @@ zip.workspace = true
 calamine.workspace = true
 encoding_rs.workspace = true
 
+# Aggiornamento integrato solo su Linux (AppImage, .deb, .rpm scaricati da GitHub):
+# su Windows e macOS gli aggiornamenti li gestiscono gli store.
+[target.'cfg(target_os = "linux")'.dependencies]
+tauri-plugin-updater = "2"
+
 [features]
 # Predefinita: l'interfaccia compilata (cartella dist) è inclusa nell'eseguibile,
 # così `cargo run` e il pulsante Run dell'IDE funzionano senza server di sviluppo.

@@ -10,6 +10,7 @@
   import { api, type Avvio, type EsitoAggiornamenti, type Impostazioni, type StatoFoglio } from "../lib/api";
   import { normalizzaIdentificativo } from "../lib/archivio";
   import Icona from "./Icona.svelte";
+  import { aggiornamento } from "../lib/aggiornamento.svelte";
 
   let {
     imp,
@@ -35,6 +36,27 @@
   let controllo = $state(false);
   let esitoAggiornamenti = $state<EsitoAggiornamenti | null>(null);
   let messaggioAggiornamenti = $state("");
+
+  let installazione = $state(false);
+
+  // Scarica e installa la nuova versione (pacchetti Linux scaricati da GitHub).
+  async function installaOra() {
+    installazione = true;
+    messaggioAggiornamenti = "";
+    try {
+      const v = await api.installaAggiornamento();
+      if (v) {
+        aggiornamento.installata = v;
+        esitoAggiornamenti = null;
+      } else {
+        messaggioAggiornamenti = "La versione in uso è già la più recente.";
+      }
+    } catch (e) {
+      messaggioAggiornamenti = `Aggiornamento non riuscito: ${e}`;
+    } finally {
+      installazione = false;
+    }
+  }
 
   async function controllaOra() {
     controllo = true;
@@ -207,19 +229,40 @@
     <div class="form-check">
       <input id="aggiornamenti" type="checkbox" checked={imp.aggiornamenti}
         onchange={(e) => onSalva({ ...imp, aggiornamenti: (e.currentTarget as HTMLInputElement).checked })} />
-      <label for="aggiornamenti">Controlla all'avvio se c'è una nuova versione</label>
+      <label for="aggiornamenti">{info.aggiornamento_integrato === "automatico"
+        ? "Controlla all'avvio se c'è una nuova versione e installala"
+        : "Controlla all'avvio se c'è una nuova versione"}</label>
     </div>
-    <p class="text-secondary-ri mb-2"><small>Richiede Internet: l'applicazione legge solo il numero dell'ultima versione pubblicata e non invia dati.</small></p>
+    <p class="text-secondary-ri mb-2"><small>Richiede Internet: l'applicazione legge solo il numero dell'ultima versione pubblicata e non invia dati.
+      {#if info.aggiornamento_integrato === "automatico"}
+        La nuova versione viene scaricata, verificata con la firma digitale dell'autore e usata dal prossimo avvio.
+      {:else if info.aggiornamento_integrato === "pacchetto"}
+        La nuova versione si installa da qui, dopo la verifica della firma digitale dell'autore; il sistema chiede la
+        password di amministratore.
+      {/if}</small></p>
     <div class="d-flex gap-2 align-items-center flex-wrap">
       <button class="btn btn-outline-primary btn-xs" onclick={controllaOra} disabled={controllo}>
         {controllo ? "Controllo in corso..." : "Controlla ora"}
       </button>
-      {#if esitoAggiornamenti?.disponibile}
+      {#if aggiornamento.installata}
+        <button class="btn btn-primary btn-xs" onclick={() => api.riavvia()}>
+          Riavvia per usare la versione {aggiornamento.installata}
+        </button>
+      {:else if esitoAggiornamenti?.disponibile && info.aggiornamento_integrato}
+        <button class="btn btn-primary btn-xs" onclick={installaOra} disabled={installazione}>
+          <Icona nome="it-download" classe="bianca" />
+          {installazione ? "Installazione in corso..." : `Installa la versione ${esitoAggiornamenti.ultima}`}
+        </button>
+      {:else if esitoAggiornamenti?.disponibile}
         <button class="btn btn-primary btn-xs" onclick={() => api.apriDownload()}>
           <Icona nome="it-download" classe="bianca" /> Scarica la versione {esitoAggiornamenti.ultima}
         </button>
       {/if}
     </div>
+    {#if aggiornamento.installata}
+      <div class="alert alert-success mt-3 py-2" role="status">La versione {aggiornamento.installata} è installata
+        e sarà attiva al prossimo avvio.</div>
+    {/if}
     {#if messaggioAggiornamenti}
       <div class="alert alert-info mt-3 py-2" role="status">{messaggioAggiornamenti}</div>
     {/if}

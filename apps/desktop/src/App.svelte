@@ -29,6 +29,7 @@
   import Credits from "./componenti/Credits.svelte";
   import SceltaDati from "./componenti/SceltaDati.svelte";
   import Statistiche from "./componenti/Statistiche.svelte";
+  import { aggiornamento } from "./lib/aggiornamento.svelte";
 
   type Vista = "documenti" | "statistiche" | "rubrica" | "messaggi" | "impostazioni" | "credits";
 
@@ -131,9 +132,21 @@
       foglio = await api.foglioStato();
       if (imp.aggiornamenti && !info.da_store) {
         // Controllo facoltativo, in silenzio se non c'è rete.
-        api.controllaAggiornamenti()
-          .then((e) => e.disponibile && mostra(`È disponibile la versione ${e.ultima}: scaricala da Impostazioni.`))
-          .catch(() => {});
+        if (info.aggiornamento_integrato === "automatico") {
+          // AppImage: la nuova versione si installa da sola e vale dal prossimo avvio.
+          api.installaAggiornamento()
+            .then((v) => {
+              if (!v) return;
+              aggiornamento.installata = v;
+              mostra(`RastInvoice è stato aggiornato alla versione ${v}: sarà attiva al prossimo avvio.`);
+            })
+            .catch(() => {});
+        } else {
+          const dove = info.aggiornamento_integrato === "pacchetto" ? "installala" : "scaricala";
+          api.controllaAggiornamenti()
+            .then((e) => e.disponibile && mostra(`È disponibile la versione ${e.ultima}: ${dove} da Impostazioni.`))
+            .catch(() => {});
+        }
       }
       await scansiona();
       smetti = await getCurrentWebview().onDragDropEvent((e) => {
