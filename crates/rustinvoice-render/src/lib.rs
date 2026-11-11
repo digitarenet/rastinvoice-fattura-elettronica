@@ -9,6 +9,7 @@
 // ordini alle righe a cui si riferiscono.
 
 pub mod formato;
+pub mod pdf;
 
 use formato::{data, esc, importo, numero, percentuale};
 use rust_decimal::Decimal;

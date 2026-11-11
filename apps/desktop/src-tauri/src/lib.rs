@@ -215,9 +215,17 @@ async fn dettaglio(file: String, corpo: usize) -> Result<Dettaglio, String> {
     .map_err(|e| e.to_string())?
 }
 
+/// Indice speciale degli allegati: indica il PDF della fattura stessa, generato
+/// al momento. Così visualizzatore, salvataggio e apertura esterna degli
+/// allegati funzionano anche per il PDF senza comandi a parte.
+const INDICE_PDF_FATTURA: usize = 999_999;
+
 fn allegato(file: &str, corpo: usize, indice: usize) -> Result<(String, Vec<u8>), String> {
     let doc = apri_file(file).map_err(|e| e.to_string())?;
     let f = doc.fattura().ok_or("il file non contiene una fattura")?;
+    if indice == INDICE_PDF_FATTURA {
+        return pdf_fattura(file, f, corpo);
+    }
     let a = f
         .corpi
         .get(corpo)
@@ -236,6 +244,33 @@ fn allegato(file: &str, corpo: usize, indice: usize) -> Result<(String, Vec<u8>)
     // Evita percorsi annidati nel nome scelto dal mittente.
     let nome = nome.replace(['/', '\\', ':'], "_");
     Ok((nome, a.dati.clone()))
+}
+
+/// PDF del documento indicato (per i lotti solo quello), con il nome del file
+/// senza estensioni.
+fn pdf_fattura(
+    file: &str,
+    f: &rustinvoice_core::modello::FatturaElettronica,
+    corpo: usize,
+) -> Result<(String, Vec<u8>), String> {
+    let mut singolo = f.clone();
+    if corpo < singolo.corpi.len() && singolo.corpi.len() > 1 {
+        singolo.corpi = vec![singolo.corpi[corpo].clone()];
+    }
+    let dati = rustinvoice_render::pdf::pdf_moderna(&singolo)?;
+    let mut base = Path::new(file.rsplit("!/").next().unwrap_or(file))
+        .file_name()
+        .map(|n| n.to_string_lossy().to_string())
+        .unwrap_or_else(|| "fattura".into());
+    for estensione in [".p7m", ".P7M", ".xml", ".XML"] {
+        if let Some(senza) = base.strip_suffix(estensione) {
+            base = senza.to_owned();
+        }
+    }
+    if f.corpi.len() > 1 {
+        base = format!("{base}_{}", corpo + 1);
+    }
+    Ok((format!("{}.pdf", base.replace(['/', '\\', ':'], "_")), dati))
 }
 
 /// Anteprima di un allegato (o di un file dentro un allegato zip, indicato

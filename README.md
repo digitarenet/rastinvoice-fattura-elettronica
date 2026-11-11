@@ -56,8 +56,9 @@ Apre fatture emesse e ricevute in tutti i formati in cui arrivano di solito: `.x
   pagamenti, saldo IVA indicativo, grafico mensile o annuale, classifica di clienti e fornitori.
 
 **Stampa ed esportazione**
-- Stampa della fattura e salvataggio in PDF tramite la stampante PDF del sistema, con il nome del file già
-  proposto.
+- Stampa della fattura.
+- PDF della fattura creato direttamente dal programma, senza finestra di stampa: si apre nel visualizzatore
+  integrato, da cui si salva o si apre con il programma predefinito. Formato A4, testo selezionabile.
 - Salvataggio in HTML e salvataggio dell'XML estratto dalla busta firmata.
 - Esportazione dell'elenco in CSV, con protezione contro le formule nei fogli di calcolo.
 
@@ -148,7 +149,7 @@ Sono previste in seguito un'edizione web (SaaS) e una mobile.
 | Trascina e rilascia, modalità portable | fatto |
 | Stampa, salvataggio HTML e XML, allegati, esportazione CSV | fatto |
 | Visualizzatore allegati (PDF, immagini, Word, Excel, ODS, CSV, testo, zip) | fatto |
-| Esportazione PDF diretta | da fare |
+| Esportazione PDF diretta | fatto |
 | Fattura elettronica europea (norma EN 16931): UBL e CII, documenti della rete Peppol, PDF con XML incorporato ZUGFeRD e Factur-X | da fare |
 | Trasformazione XSL nativa (indipendente dal motore web di sistema) | fatto |
 | Notifiche SdI collegate alle fatture, con spiegazione delle sigle | fatto |
@@ -272,6 +273,8 @@ Si ringraziano gli autori delle librerie open source su cui si basa il progetto.
 | [Tauri](https://tauri.app) e plugin dialog, opener | Tauri Programme within The Commons Conservancy | MIT / Apache-2.0 |
 | [rayon](https://github.com/rayon-rs/rayon) | Niko Matsakis, Josh Stone | MIT / Apache-2.0 |
 | [ureq](https://github.com/algesten/ureq) | Martin Algesten | MIT / Apache-2.0 |
+| [printpdf](https://github.com/fschutt/printpdf) | Felix Schütt | MIT |
+| [ttf-parser](https://github.com/harfbuzz/ttf-parser) | Yevhenii Reizner | MIT / Apache-2.0 |
 | [zip](https://github.com/zip-rs/zip2) | Mathijs van de Nes, Marli Frost, Ryan Levick, Chris Hennick | MIT |
 | [rsa](https://github.com/RustCrypto/RSA), [sha1, sha2](https://github.com/RustCrypto/hashes), [p256, p384](https://github.com/RustCrypto/elliptic-curves) | RustCrypto Developers | MIT / Apache-2.0 |
 | [calamine](https://github.com/tafia/calamine) | Johann Tuffe e contributori | MIT |

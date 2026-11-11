@@ -29,7 +29,7 @@ Nessuna iscrizione richiesta. Basta pubblicare la release.
 
 È lo store predefinito della maggior parte delle distribuzioni, compresa la "Software" di Fedora e Mint.
 
-1. Pubblicare la release `v0.11.0` su GitHub (il manifesto compila dal tag).
+1. Pubblicare la release `v1.0.0` su GitHub (il manifesto compila dal tag).
 2. Generare gli elenchi delle dipendenze, dalla radice del repository, con
    [flatpak-builder-tools](https://github.com/flatpak/flatpak-builder-tools):
    ```bash
@@ -60,8 +60,8 @@ e la rete (foglio di stile e aggiornamenti, solo su richiesta): sono da motivare
 2. Su Ubuntu: `sudo snap install snapcraft --classic` e `snapcraft login`.
 3. Registrare il nome: `snapcraft register rastinvoice`.
 4. Copiare `store/linux/snap/snapcraft.yaml` in `snap/snapcraft.yaml` nella radice e lanciare `snapcraft`.
-5. Provare: `sudo snap install --dangerous rastinvoice_0.11.0_amd64.snap`.
-6. Pubblicare: `snapcraft upload --release=stable rastinvoice_0.11.0_amd64.snap`.
+5. Provare: `sudo snap install --dangerous rastinvoice_1.0.0_amd64.snap`.
+6. Pubblicare: `snapcraft upload --release=stable rastinvoice_1.0.0_amd64.snap`.
 7. Nella pagina del pacchetto su snapcraft.io completare la scheda: icona, schermate, categoria
    **Productivity** e informativa privacy.
 

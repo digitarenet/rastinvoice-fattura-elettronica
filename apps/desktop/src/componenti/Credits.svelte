@@ -26,6 +26,8 @@
     { nome: 'Tauri e plugin dialog, opener', autori: 'Tauri Programme within The Commons Conservancy', licenza: 'MIT / Apache-2.0' },
     { nome: 'rayon', autori: 'Niko Matsakis, Josh Stone', licenza: 'MIT / Apache-2.0' },
     { nome: 'ureq', autori: 'Martin Algesten', licenza: 'MIT / Apache-2.0' },
+    { nome: 'printpdf', autori: 'Felix Schütt', licenza: 'MIT' },
+    { nome: 'ttf-parser', autori: 'Yevhenii Reizner', licenza: 'MIT / Apache-2.0' },
     { nome: 'zip', autori: 'Mathijs van de Nes, Marli Frost, Ryan Levick, Chris Hennick', licenza: 'MIT' },
     { nome: 'rsa, sha1, sha2, p256, p384', autori: 'RustCrypto Developers', licenza: 'MIT / Apache-2.0' },
     { nome: 'calamine', autori: 'Johann Tuffe e contributori', licenza: 'MIT' },

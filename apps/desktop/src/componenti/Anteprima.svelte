@@ -244,17 +244,12 @@
     return voce.nome_file.replace(/\.(xml|p7m)$/gi, "").replace(/\.xml$/i, "");
   }
 
-  // Salvataggio in PDF tramite la finestra di stampa del sistema, che offre
-  // sempre la destinazione "Salva come PDF". Il titolo del documento diventa
-  // il nome proposto per il file.
+  // PDF generato dal programma (vista Moderna) e mostrato nel visualizzatore
+  // integrato, da cui si salva o si apre con il programma predefinito.
+  // L'indice speciale indica al visualizzatore il PDF della fattura.
+  const INDICE_PDF_FATTURA = 999_999;
   function salvaPdf() {
-    const documento = cornice?.contentDocument;
-    if (!documento) return stampa();
-    const titolo = documento.title;
-    documento.title = nomeBase();
-    onAvviso("Nella finestra di stampa scegli \"Salva come PDF\" o \"Microsoft Print to PDF\".");
-    stampa();
-    documento.title = titolo;
+    allegatoAperto = INDICE_PDF_FATTURA;
   }
 
   async function salvaHtml() {
@@ -330,7 +325,7 @@
         <button class="btn btn-xs btn-link" title="Stampa (Ctrl+P)" aria-label="Stampa" onclick={stampa}>
           <Icona nome="it-print" />
         </button>
-        <button class="btn btn-xs btn-link" title="Salva in PDF" aria-label="Salva in PDF" onclick={salvaPdf}>
+        <button class="btn btn-xs btn-link" title="Crea il PDF della fattura" aria-label="Crea il PDF della fattura" onclick={salvaPdf}>
           <Icona nome="it-file-pdf" />
         </button>
         <button class="btn btn-xs btn-link" title="Salva come pagina HTML" aria-label="Salva come pagina HTML" onclick={salvaHtml}>
@@ -490,7 +485,7 @@
       file={voce.file}
       corpo={voce.corpo}
       indice={allegatoAperto}
-      nome={allegati[allegatoAperto]?.nome ?? `allegato ${allegatoAperto + 1}`}
+      nome={allegatoAperto === INDICE_PDF_FATTURA ? `${nomeBase()}.pdf` : (allegati[allegatoAperto]?.nome ?? `allegato ${allegatoAperto + 1}`)}
       onChiudi={() => (allegatoAperto = null)}
       {onErrore}
     />

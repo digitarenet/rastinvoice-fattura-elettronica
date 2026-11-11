@@ -161,7 +161,7 @@
 <svelte:window onkeydown={tasti} />
 
 <div class="sfondo" role="presentation" onclick={(e) => e.target === e.currentTarget && onChiudi()}>
-  <div class="finestra ri-pannello" role="dialog" aria-modal="true" aria-label="Allegato {titolo}" tabindex="-1" bind:this={finestraEl} use:modale>
+  <div class="finestra ri-pannello" role="dialog" aria-modal="true" aria-label="{titolo}" tabindex="-1" bind:this={finestraEl} use:modale>
     <header class="barra">
       <div class="titolo">
         <Icona nome="it-clip" dimensione="sm" />
@@ -191,7 +191,7 @@
         <button class="btn btn-xs btn-link" title="Apri con il programma predefinito" aria-label="Apri con il programma predefinito" onclick={apriEsterno}>
           <Icona nome="it-external-link" />
         </button>
-        <button class="btn btn-xs btn-link" title="Salva l'allegato" aria-label="Salva l'allegato" onclick={salva}>
+        <button class="btn btn-xs btn-link" title="Salva il file" aria-label="Salva il file" onclick={salva}>
           <Icona nome="it-download" />
         </button>
         <button class="btn btn-xs btn-link" title="Chiudi (Esc)" aria-label="Chiudi" onclick={onChiudi}>
@@ -202,9 +202,9 @@
 
     <div class="contenuto">
       {#if caricamento}
-        <div class="centro text-secondary-ri">Apertura dell'allegato...</div>
+        <div class="centro text-secondary-ri">Apertura del file...</div>
       {:else if errore}
-        <div class="centro"><p class="text-danger">Impossibile mostrare l'allegato: {errore}</p></div>
+        <div class="centro"><p class="text-danger">Impossibile mostrare il file: {errore}</p></div>
       {:else if anteprima?.tipo === "immagine"}
         <div class="immagine ri-scroll">
           <img src={urlImmagine} alt={titolo} style={zoom === 1 ? "" : `max-width: none; width: ${zoom * 100}%`} />
