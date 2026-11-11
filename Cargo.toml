@@ -13,7 +13,7 @@ members = [
 ]
 
 [workspace.package]
-version = "0.3.2"
+version = "0.4.0"
 edition = "2021"
 authors = ["Andrea Re <info@digitare.net>"]
 rust-version = "1.80"
@@ -28,6 +28,7 @@ serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 thiserror = "2"
 base64 = "0.22"
+calamine = { version = "0.38", default-features = false, features = ["dates"] }
 clap = { version = "4", features = ["derive"] }
 walkdir = "2"
 rsa = "0.9"

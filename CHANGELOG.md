@@ -4,6 +4,24 @@ Tutte le modifiche rilevanti di RustinVoice. Il numero di versione segue lo sche
 MAGGIORE.MINORE.CORREZIONE: la versione minore cresce con le nuove funzioni, quella di
 correzione con le sole correzioni.
 
+## 0.4.0 - 2026-11-11
+
+### Aggiunto
+- **Visualizzatore degli allegati** integrato: si apre facendo clic sul nome dell'allegato.
+  - PDF (con PDF.js, senza accesso alla rete né esecuzione di script del documento).
+  - Immagini PNG, JPEG, GIF, WebP, BMP e SVG.
+  - Documenti Word .docx, convertiti in pagina.
+  - Fogli di calcolo Excel (.xlsx, .xls, .xlsb) e OpenDocument (.ods), con un foglio per scheda.
+  - CSV come tabella, testo, XML formattato, pagine HTML senza script.
+  - Archivi .zip, sfogliabili, e buste firmate .p7m, aperte automaticamente.
+  - Il tipo viene riconosciuto dal contenuto e non dal nome dato dal mittente; i formati
+    senza anteprima (per esempio .doc, .rtf, .tiff) si aprono con il programma predefinito
+    o si salvano.
+
+### Modificato
+- Registro delle modifiche nella pagina Credits con un carattere più piccolo.
+- Le pagine Credits e Impostazioni occupano tutta la larghezza disponibile.
+
 ## 0.3.2 - 2026-11-11
 
 ### Sicurezza

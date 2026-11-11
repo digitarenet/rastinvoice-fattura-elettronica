@@ -1,7 +1,7 @@
 {
   "name": "rustinvoice-desktop",
   "private": true,
-  "version": "0.3.2",
+  "version": "0.4.0",
   "description": "Interfaccia dell'applicazione desktop RustinVoice",
   "author": "Andrea Re <info@digitare.net>",
   "type": "module",
@@ -17,7 +17,9 @@
     "@tauri-apps/api": "^2.12.0",
     "@tauri-apps/plugin-dialog": "^2.8.0",
     "@tauri-apps/plugin-opener": "^2.5.0",
-    "bootstrap-italia": "^2.18.0"
+    "bootstrap-italia": "^2.18.0",
+    "mammoth": "^1.13.0",
+    "pdfjs-dist": "^6.5.438"
   },
   "devDependencies": {
     "@sveltejs/vite-plugin-svelte": "^7.0.0",

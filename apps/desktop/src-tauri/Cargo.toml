@@ -31,6 +31,8 @@ chrono = { workspace = true, features = ["clock"] }
 rayon = "1.10"
 ureq = "3"
 zip.workspace = true
+calamine.workspace = true
+encoding_rs.workspace = true
 
 [features]
 # Predefinita: l'interfaccia compilata (cartella dist) è inclusa nell'eseguibile,

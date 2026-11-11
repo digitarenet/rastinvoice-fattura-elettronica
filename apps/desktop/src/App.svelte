@@ -266,6 +266,8 @@
 
   // Navigazione da tastiera.
   function tastiera(e: KeyboardEvent) {
+    // Con una finestra in primo piano (visualizzatore allegati) i tasti sono suoi.
+    if (document.querySelector('[aria-modal="true"]')) return;
     const ctrl = e.ctrlKey || e.metaKey;
     if (ctrl && e.key.toLowerCase() === "f") {
       e.preventDefault();

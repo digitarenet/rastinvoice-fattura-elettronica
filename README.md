@@ -31,6 +31,7 @@ Fase 2 in corso: applicazione desktop con interfaccia grafica, costruita sul nuc
 | Rubrica clienti e fornitori | fatto |
 | Trascina e rilascia, modalità portable | fatto |
 | Stampa, salvataggio HTML e XML, allegati, esportazione CSV | fatto |
+| Visualizzatore allegati (PDF, immagini, Word, Excel, ODS, CSV, testo, zip) | fatto |
 | Esportazione PDF diretta | da fare |
 | Trasformazione XSL nativa (indipendente dal motore web di sistema) | da fare |
 
@@ -128,6 +129,9 @@ Si ringraziano gli autori delle librerie open source su cui si basa il progetto.
 | [ureq](https://github.com/algesten/ureq) | Martin Algesten | MIT / Apache-2.0 |
 | [zip](https://github.com/zip-rs/zip2) | Mathijs van de Nes, Marli Frost, Ryan Levick, Chris Hennick | MIT |
 | [rsa](https://github.com/RustCrypto/RSA), [sha1, sha2](https://github.com/RustCrypto/hashes), [p256, p384](https://github.com/RustCrypto/elliptic-curves) | RustCrypto Developers | MIT / Apache-2.0 |
+| [calamine](https://github.com/tafia/calamine) | Johann Tuffe e contributori | MIT |
+| [PDF.js](https://mozilla.github.io/pdf.js/) | Mozilla e contributori | Apache-2.0 |
+| [mammoth](https://github.com/mwilliamson/mammoth.js) | Michael Williamson | BSD-2-Clause |
 | [Svelte](https://svelte.dev) | Rich Harris e contributori | MIT |
 | [Vite](https://vite.dev) | Evan You e contributori | MIT |
 | [TypeScript](https://www.typescriptlang.org) | Microsoft | Apache-2.0 |

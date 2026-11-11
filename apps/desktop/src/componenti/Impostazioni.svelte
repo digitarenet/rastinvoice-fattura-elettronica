@@ -198,7 +198,7 @@
   .impostazioni {
     height: 100%;
     padding: 2rem 2.5rem;
-    max-width: 900px;
+    width: 100%;
   }
   section {
     margin-bottom: 2rem;

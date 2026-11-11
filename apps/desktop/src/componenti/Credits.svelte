@@ -27,6 +27,9 @@
     { nome: 'ureq', autori: 'Martin Algesten', licenza: 'MIT / Apache-2.0' },
     { nome: 'zip', autori: 'Mathijs van de Nes, Marli Frost, Ryan Levick, Chris Hennick', licenza: 'MIT' },
     { nome: 'rsa, sha1, sha2, p256, p384', autori: 'RustCrypto Developers', licenza: 'MIT / Apache-2.0' },
+    { nome: 'calamine', autori: 'Johann Tuffe e contributori', licenza: 'MIT' },
+    { nome: 'PDF.js', autori: 'Mozilla e contributori', licenza: 'Apache-2.0' },
+    { nome: 'mammoth', autori: 'Michael Williamson', licenza: 'BSD-2-Clause' },
     { nome: 'Svelte', autori: 'Rich Harris e contributori', licenza: 'MIT' },
     { nome: 'Vite', autori: 'Evan You e contributori', licenza: 'MIT' },
     { nome: 'TypeScript', autori: 'Microsoft', licenza: 'Apache-2.0' },
@@ -80,7 +83,7 @@
 
 <style>
   .credits {
-    max-width: 860px;
+    width: 100%;
     padding: 1.5rem 2rem 3rem;
     overflow: auto;
     height: 100%;
@@ -96,17 +99,33 @@
   table {
     font-size: 0.9rem;
   }
+  /* Registro più compatto del resto della pagina (scala tipografica
+     di Bootstrap Italia: testo piccolo 0.875rem, titoli ridotti). */
   .registro {
-    font-size: 0.92rem;
+    font-size: 0.875rem;
+    line-height: 1.5;
+  }
+  .registro :global(h3) {
+    font-size: 1rem;
+  }
+  .registro ul {
+    padding-left: 1.25rem;
+    margin-bottom: 0.5rem;
+  }
+  /* Bootstrap Italia assegna una dimensione propria a paragrafi ed elenchi. */
+  .registro li,
+  .registro p {
+    font-size: inherit;
+    line-height: inherit;
+    margin-bottom: 0.15rem;
   }
   .registro :global(.sottotitolo) {
-    font-size: 0.9rem;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
     font-weight: 700;
     margin: 0.75rem 0 0.25rem;
     color: var(--ri-testo-2);
-  }
-  .registro ul {
-    margin-bottom: 0.5rem;
   }
   .registro :global(code) {
     font-family: "Roboto Mono", monospace;

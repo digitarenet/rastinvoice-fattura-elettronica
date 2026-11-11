@@ -121,6 +121,22 @@ export interface Dettaglio {
   controlli: Controllo[];
 }
 
+export interface FoglioTabella {
+  nome: string;
+  righe: string[][];
+  troncato: boolean;
+}
+
+export type AnteprimaAllegato =
+  | { tipo: "immagine"; mime: string }
+  | { tipo: "pdf" }
+  | { tipo: "word" }
+  | { tipo: "testo"; testo: string; formato: "testo" | "xml" | "json"; troncato: boolean }
+  | { tipo: "html"; html: string }
+  | { tipo: "tabella"; fogli: FoglioTabella[] }
+  | { tipo: "archivio"; voci: { nome: string; dimensione: number }[] }
+  | { tipo: "non_disponibile"; motivo: string };
+
 export interface StatoFoglio {
   presente: boolean;
   aggiornato_il: string;
@@ -139,6 +155,10 @@ export const api = {
     invoke<boolean>("salva_allegato", { file, corpo, indice }),
   apriAllegato: (file: string, corpo: number, indice: number) =>
     invoke<void>("apri_allegato", { file, corpo, indice }),
+  anteprimaAllegato: (file: string, corpo: number, indice: number, interno: string[]) =>
+    invoke<AnteprimaAllegato>("anteprima_allegato", { file, corpo, indice, interno }),
+  byteAllegato: (file: string, corpo: number, indice: number, interno: string[]) =>
+    invoke<ArrayBuffer>("byte_allegato", { file, corpo, indice, interno }),
   apriCartella: (percorso: string) => invoke<void>("apri_cartella", { percorso }),
   mostraNellaCartella: (file: string) => invoke<void>("mostra_nella_cartella", { file }),
   apriSito: () => invoke<void>("apri_sito"),

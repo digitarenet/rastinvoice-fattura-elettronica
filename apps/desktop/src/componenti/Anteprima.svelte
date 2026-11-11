@@ -11,6 +11,7 @@
   import * as xslt from "../lib/xslt";
   import { formatta, type Riga } from "../lib/xmlformato";
   import Icona from "./Icona.svelte";
+  import Visualizzatore from "./Visualizzatore.svelte";
 
   type Scheda = "moderna" | "standard" | "xml";
 
@@ -216,6 +217,14 @@
     }
   }
 
+  // Allegato aperto nel visualizzatore integrato.
+  let allegatoAperto = $state<number | null>(null);
+  // Cambiando documento il visualizzatore si chiude.
+  $effect(() => {
+    void voce.id;
+    allegatoAperto = null;
+  });
+
   async function salvaAllegato(i: number) {
     try {
       await api.salvaAllegato(voce.file, voce.corpo, i);
@@ -291,9 +300,10 @@
       {#each allegati as a, i (i)}
         <span class="chip-ri allegato">
           <Icona nome="it-clip" dimensione="xs" />
-          <span class="nome" title={a.descrizione ?? ""}>{a.nome ?? `allegato ${i + 1}`}</span>
+          <button class="btn btn-link p-0 nome" title={a.descrizione ? `${a.descrizione} · Visualizza` : "Visualizza"}
+            onclick={() => (allegatoAperto = i)}>{a.nome ?? `allegato ${i + 1}`}</button>
           <span class="text-secondary-ri">{dimensione(a.dimensione)}</span>
-          <button class="btn btn-link p-0" title="Apri" onclick={() => apriAllegato(i)}><Icona nome="it-external-link" dimensione="xs" /></button>
+          <button class="btn btn-link p-0" title="Apri con il programma predefinito" onclick={() => apriAllegato(i)}><Icona nome="it-external-link" dimensione="xs" /></button>
           <button class="btn btn-link p-0" title="Salva" onclick={() => salvaAllegato(i)}><Icona nome="it-download" dimensione="xs" /></button>
         </span>
       {/each}
@@ -383,6 +393,16 @@
       {/if}
     {/if}
   </div>
+  {#if allegatoAperto !== null}
+    <Visualizzatore
+      file={voce.file}
+      corpo={voce.corpo}
+      indice={allegatoAperto}
+      nome={allegati[allegatoAperto]?.nome ?? `allegato ${allegatoAperto + 1}`}
+      onChiudi={() => (allegatoAperto = null)}
+      {onErrore}
+    />
+  {/if}
 </section>
 
 <style>

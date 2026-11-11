@@ -3,6 +3,7 @@
 //
 // Applicazione desktop: comandi esposti all'interfaccia.
 
+mod anteprima;
 mod archivio;
 mod foglio_stile;
 mod impostazioni;
@@ -140,6 +141,34 @@ fn allegato(file: &str, corpo: usize, indice: usize) -> Result<(String, Vec<u8>)
     // Evita percorsi annidati nel nome scelto dal mittente.
     let nome = nome.replace(['/', '\\', ':'], "_");
     Ok((nome, a.dati.clone()))
+}
+
+/// Anteprima di un allegato (o di un file dentro un allegato zip, indicato
+/// da `interno`). Il tipo si riconosce dal contenuto.
+#[tauri::command]
+async fn anteprima_allegato(
+    file: String,
+    corpo: usize,
+    indice: usize,
+    interno: Vec<String>,
+) -> Result<anteprima::Anteprima, String> {
+    let (nome, dati) = allegato(&file, corpo, indice)?;
+    let (nome, dati) = anteprima::risolvi(&nome, dati, &interno)?;
+    Ok(anteprima::prepara(&nome, &dati))
+}
+
+/// Byte di un allegato per i visualizzatori dell'interfaccia (PDF, immagini,
+/// Word), trasferiti senza conversione in testo.
+#[tauri::command]
+async fn byte_allegato(
+    file: String,
+    corpo: usize,
+    indice: usize,
+    interno: Vec<String>,
+) -> Result<tauri::ipc::Response, String> {
+    let (nome, dati) = allegato(&file, corpo, indice)?;
+    let (_, dati) = anteprima::risolvi(&nome, dati, &interno)?;
+    Ok(tauri::ipc::Response::new(dati))
 }
 
 /// Salva un allegato dove sceglie l'utente. La finestra di salvataggio è
@@ -454,7 +483,9 @@ pub fn avvia() {
             foglio_stile_aggiorna,
             foglio_stile_importa,
             foglio_stile_leggi,
-            salva_testo
+            salva_testo,
+            anteprima_allegato,
+            byte_allegato
         ])
         .run(tauri::generate_context!())
         .expect("errore durante l'avvio dell'applicazione");
