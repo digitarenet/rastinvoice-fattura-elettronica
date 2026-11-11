@@ -4,6 +4,16 @@ Tutte le modifiche rilevanti di RastInvoice (fino alla 0.9.0 chiamato RustinVoic
 MAGGIORE.MINORE.CORREZIONE: la versione minore cresce con le nuove funzioni, quella di
 correzione con le sole correzioni.
 
+## 0.10.3 - 2026-11-11
+
+### Corretto
+- Copiando nell'archivio un file con lo stesso nome di uno già presente ma diverso, il numero veniva aggiunto
+  dopo l'estensione (`fatture.zip_1`) e il file non veniva più riconosciuto. Ora il numero va prima delle
+  estensioni (`fatture_1.zip`).
+
+### Modificato
+- La finestra dei file trascinati spiega che archivi ZIP ed email vengono copiati interi, senza estrarli.
+
 ## 0.10.2 - 2026-11-11
 
 ### Corretto

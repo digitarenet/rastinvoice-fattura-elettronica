@@ -754,6 +754,7 @@
           <strong>Copia nell'archivio</strong>: i file vengono copiati nella cartella dati dell'app e restano disponibili anche
           se sposti o cancelli gli originali.<br />
           <strong>Lascia dove sono</strong>: l'app ricorda solo il percorso dei file originali.
+          <br /><small>Archivi ZIP ed email vengono copiati interi, senza estrarli: l'app legge le fatture al loro interno.</small>
         </p>
         <div class="form-check">
           <input id="ricorda" type="checkbox" bind:checked={ricordaScelta} />

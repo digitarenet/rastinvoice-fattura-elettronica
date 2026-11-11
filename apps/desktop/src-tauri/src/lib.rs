@@ -448,7 +448,9 @@ fn copia_in_archivio(
             if std::fs::read(&obiettivo).ok() == std::fs::read(&p).ok() {
                 break;
             }
-            obiettivo = dest.join(format!("{}_{n}", nome.to_string_lossy()));
+            // Il numero va prima dell'estensione (fatture_1.zip), così il file
+            // resta riconoscibile dal tipo.
+            obiettivo = dest.join(nome_con_numero(Path::new(nome), n));
             n += 1;
         }
         if !obiettivo.exists() {
@@ -457,6 +459,16 @@ fn copia_in_archivio(
         copiati.push(obiettivo.to_string_lossy().to_string());
     }
     Ok(copiati)
+}
+
+/// `fatture.xml.p7m` con `n = 2` diventa `fatture_2.xml.p7m`: il numero va
+/// prima di tutte le estensioni.
+fn nome_con_numero(nome: &Path, n: u32) -> String {
+    let testo = nome.to_string_lossy();
+    match testo.find('.') {
+        Some(i) if i > 0 => format!("{}_{n}{}", &testo[..i], &testo[i..]),
+        _ => format!("{testo}_{n}"),
+    }
 }
 
 #[tauri::command]
@@ -579,4 +591,24 @@ pub fn avvia() {
         ])
         .run(tauri::generate_context!())
         .expect("errore durante l'avvio dell'applicazione");
+}
+
+#[cfg(test)]
+mod test {
+    use super::nome_con_numero;
+    use std::path::Path;
+
+    #[test]
+    fn numero_prima_delle_estensioni() {
+        assert_eq!(
+            nome_con_numero(Path::new("fatture.zip"), 1),
+            "fatture_1.zip"
+        );
+        assert_eq!(
+            nome_con_numero(Path::new("IT01_A.xml.p7m"), 2),
+            "IT01_A_2.xml.p7m"
+        );
+        assert_eq!(nome_con_numero(Path::new("senza"), 3), "senza_3");
+        assert_eq!(nome_con_numero(Path::new(".nascosto"), 1), ".nascosto_1");
+    }
 }
