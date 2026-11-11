@@ -3,18 +3,39 @@
  * Copyright (c) 2026 Andrea Re - info@digitare.net
  * Autore: Andrea Re @ 2026 - info@digitare.net
  *
- * Modulo contatti di rastinvoice.it: controlla i dati e li invia per email con mail() di PHP.
+ * Modulo contatti di rastinvoice.it: controlla i dati e li invia per email.
  * Risponde in JSON se la richiesta lo chiede (invio da JavaScript), altrimenti reindirizza a
  * grazie.html o alla pagina iniziale. Non salva i messaggi sul server.
+ *
+ * Invio: con la funzione mail() di PHP (nessuna credenziale) oppure, se configurato, con un server
+ * SMTP autenticato. La configurazione sta nel file rastinvoice-config.php, da mettere nella cartella
+ * SOPRA la radice del sito, così non è raggiungibile dal web (modello: config-esempio.php).
  */
 
 declare(strict_types=1);
 
-// Configurazione
-const DESTINATARIO = 'rastinvoice@digitare.net';
-const MITTENTE = 'sito@rastinvoice.it';      // indirizzo del dominio, per non finire nello spam
-const INVII_PER_ORA = 5;                      // limite di invii per indirizzo IP
-const SECONDI_MINIMI = 3;                     // un modulo compilato più in fretta è automatico
+// Configurazione predefinita, sovrascritta da rastinvoice-config.php se presente
+$config = [
+    'destinatario' => 'info@digitare.net',
+    'mittente' => 'sito@rastinvoice.it',    // indirizzo del dominio, per non finire nello spam
+    'smtp_host' => '',                       // vuoto: si usa mail() di PHP
+    'smtp_porta' => 587,                     // 587 con STARTTLS, 465 con SSL
+    'smtp_sicurezza' => 'tls',               // 'tls' (STARTTLS), 'ssl' oppure '' (sconsigliato)
+    'smtp_utente' => '',
+    'smtp_password' => '',
+    'invii_per_ora' => 5,                    // limite di invii per indirizzo IP
+    'secondi_minimi' => 3,                   // un modulo compilato più in fretta è automatico
+];
+foreach ([dirname(__DIR__) . '/rastinvoice-config.php', __DIR__ . '/rastinvoice-config.php'] as $file) {
+    if (is_file($file)) {
+        $config = array_merge($config, (array)require $file);
+        break;
+    }
+}
+define('DESTINATARIO', (string)$config['destinatario']);
+define('MITTENTE', (string)$config['mittente']);
+define('INVII_PER_ORA', (int)$config['invii_per_ora']);
+define('SECONDI_MINIMI', (int)$config['secondi_minimi']);
 
 $json = str_contains($_SERVER['HTTP_ACCEPT'] ?? '', 'application/json');
 
@@ -88,6 +109,67 @@ if (count($invii) >= INVII_PER_ORA) {
     rispondi(false, 'Hai già inviato diversi messaggi. Riprova tra un\'ora o scrivi a ' . DESTINATARIO . '.');
 }
 
+/**
+ * Invio con un server SMTP autenticato (AUTH LOGIN), senza librerie esterne.
+ * Restituisce true se il server accetta il messaggio.
+ */
+function invia_smtp(array $c, string $a, string $oggetto, string $corpo, string $rispondiA): bool
+{
+    $sicurezza = strtolower((string)$c['smtp_sicurezza']);
+    $host = ($sicurezza === 'ssl' ? 'ssl://' : '') . $c['smtp_host'];
+    $s = @stream_socket_client($host . ':' . (int)$c['smtp_porta'], $n, $e, 15);
+    if (!$s) {
+        return false;
+    }
+    stream_set_timeout($s, 15);
+    $leggi = function () use ($s): int {
+        $riga = '';
+        while (($r = fgets($s, 515)) !== false) {
+            $riga = $r;
+            if (strlen($r) < 4 || $r[3] !== '-') {
+                break;
+            }
+        }
+        return (int)substr($riga, 0, 3);
+    };
+    $comando = function (string $cmd, array $attesi) use ($s, $leggi): bool {
+        fwrite($s, $cmd . "\r\n");
+        return in_array($leggi(), $attesi, true);
+    };
+    $dominio = substr(strrchr((string)$c['mittente'], '@') ?: '@localhost', 1);
+    $ok = $leggi() === 220 && $comando('EHLO ' . $dominio, [250]);
+    if ($ok && $sicurezza === 'tls') {
+        $ok = $comando('STARTTLS', [220])
+            && stream_socket_enable_crypto($s, true, STREAM_CRYPTO_METHOD_TLS_CLIENT)
+            && $comando('EHLO ' . $dominio, [250]);
+    }
+    if ($ok && $c['smtp_utente'] !== '') {
+        $ok = $comando('AUTH LOGIN', [334])
+            && $comando(base64_encode((string)$c['smtp_utente']), [334])
+            && $comando(base64_encode((string)$c['smtp_password']), [235]);
+    }
+    $ok = $ok && $comando('MAIL FROM:<' . $c['mittente'] . '>', [250])
+        && $comando('RCPT TO:<' . $a . '>', [250, 251])
+        && $comando('DATA', [354]);
+    if ($ok) {
+        $messaggio = implode("\r\n", [
+            'Date: ' . date('r'),
+            'From: RastInvoice <' . $c['mittente'] . '>',
+            'To: <' . $a . '>',
+            'Reply-To: ' . $rispondiA,
+            'Subject: ' . $oggetto,
+            'Message-ID: <' . bin2hex(random_bytes(12)) . '@' . $dominio . '>',
+            'MIME-Version: 1.0',
+            'Content-Type: text/plain; charset=UTF-8',
+            'Content-Transfer-Encoding: base64',
+        ]) . "\r\n\r\n" . chunk_split(base64_encode($corpo), 76, "\r\n") . '.';
+        $ok = $comando($messaggio, [250]);
+    }
+    @fwrite($s, "QUIT\r\n");
+    fclose($s);
+    return $ok;
+}
+
 $oggetto = '=?UTF-8?B?' . base64_encode('[RastInvoice] ' . $argomento . ' - ' . $nome) . '?=';
 $corpo = "Nuovo messaggio dal modulo contatti di rastinvoice.it\n\n"
     . "Nome: $nome\n"
@@ -103,7 +185,10 @@ $intestazioni = implode("\r\n", [
     'Content-Transfer-Encoding: 8bit',
 ]);
 
-if (!mail(DESTINATARIO, $oggetto, $corpo, $intestazioni, '-f' . MITTENTE)) {
+$inviato = $config['smtp_host'] !== ''
+    ? invia_smtp($config, DESTINATARIO, $oggetto, $corpo, $email)
+    : mail(DESTINATARIO, $oggetto, $corpo, $intestazioni, '-f' . MITTENTE);
+if (!$inviato) {
     rispondi(false, 'Non è stato possibile inviare il messaggio. Riprova più tardi o scrivi a ' . DESTINATARIO . '.');
 }
 

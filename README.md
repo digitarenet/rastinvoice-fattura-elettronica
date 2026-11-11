@@ -24,7 +24,7 @@ Apre fatture emesse e ricevute in tutti i formati in cui arrivano di solito: `.x
 <p align="center">
   <a href="https://apps.microsoft.com/search?query=RastInvoice"><img src="https://get.microsoft.com/images/it-it%20dark.svg" alt="Scarica dal Microsoft Store" height="56"></a>
   &nbsp;
-  <a href="https://apps.apple.com/it/"><img src="https://tools.applemarketingtools.com/api/badges/download-on-the-mac-app-store/black/it-it" alt="Scarica dal Mac App Store" height="56"></a>
+  <a href="https://apps.apple.com/it/"><img src="https://img.shields.io/badge/Mac%20App%20Store-Scarica-000000?style=for-the-badge&logo=apple&logoColor=white" alt="Scarica dal Mac App Store" height="56"></a>
 </p>
 <p align="center">
   <a href="https://flathub.org/apps/net.digitare.rastinvoice"><img src="https://flathub.org/api/badge?locale=it" alt="Scarica da Flathub" height="56"></a>
@@ -159,7 +159,7 @@ Le immagini usano un archivio dimostrativo con dati di fantasia.
 | ![Notifiche del Sistema di Interscambio collegate alle fatture](docs/immagini/notifiche.png) | ![Elenco dei documenti e vista Moderna](docs/immagini/documenti.png) |
 | **Notifiche SdI** collegate alle fatture | **Documenti** e vista Moderna |
 
-Versione attuale: **1.0.3** (vedi il [registro delle modifiche](CHANGELOG.md)).
+Versione attuale: **1.0.4** (vedi il [registro delle modifiche](CHANGELOG.md)).
 
 ## Domande frequenti
 

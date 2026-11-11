@@ -1,0 +1,8 @@
+# Copyright (c) 2026 Andrea Re - info@digitare.net
+# Autore: Andrea Re @ 2026 - info@digitare.net
+#
+# Per server Apache: blocca l'accesso ai file di configurazione e di documentazione.
+<FilesMatch "^(rastinvoice-config\.php|config-esempio\.php|README\.md)$">
+  Require all denied
+</FilesMatch>
+Options -Indexes

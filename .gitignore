@@ -48,3 +48,4 @@ desktop.ini
 /dati/
 *.local.json
 .env
+sito/rastinvoice-config.php
