@@ -1,0 +1,16 @@
+# Copyright (c) 2026 Andrea Re - info@digitare.net
+# Autore: Andrea Re @ 2026 - info@digitare.net
+
+[package]
+name = "rustinvoice-render"
+description = "Rappresentazioni della fattura elettronica: HTML \"Moderna\" e formati di esportazione"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+rust-version.workspace = true
+repository.workspace = true
+
+[dependencies]
+rustinvoice-core = { path = "../rustinvoice-core" }
+rust_decimal.workspace = true
+chrono.workspace = true

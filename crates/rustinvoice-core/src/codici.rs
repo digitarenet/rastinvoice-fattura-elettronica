@@ -2,7 +2,7 @@
 // Autore: Andrea Re @ 2026 - info@digitare.net
 //
 // Tabelle dei codici previsti dalle specifiche tecniche FatturaPA
-// (versione 1.9, in vigore dal 1° aprile 2025), con la descrizione da
+// (versione 1.9.1, in vigore dal 15 maggio 2026), con la descrizione da
 // mostrare all'utente. Un codice assente dalle tabelle restituisce `None`:
 // l'interfaccia lo mostrerà come "codice non previsto", senza bloccare la
 // visualizzazione.
@@ -273,6 +273,16 @@ pub fn esigibilita_iva(codice: &str) -> Option<&'static str> {
 }
 pub fn condizioni_pagamento(codice: &str) -> Option<&'static str> {
     cerca(CONDIZIONI_PAGAMENTO, codice)
+}
+
+/// Valori di `AltriDatiGestionali/TipoDato` con un significato normativo.
+pub const TIPO_DATO_NORMATIVO: &[(&str, &str)] = &[(
+    "ESENZSPORT",
+    "Compenso esente per lavoro sportivo dilettantistico",
+)];
+
+pub fn tipo_dato_normativo(codice: &str) -> Option<&'static str> {
+    cerca(TIPO_DATO_NORMATIVO, codice)
 }
 
 /// Indica se il tipo documento rappresenta una nota di credito, cioè un

@@ -1,0 +1,40 @@
+/* Copyright (c) 2026 Andrea Re - info@digitare.net
+   Autore: Andrea Re @ 2026 - info@digitare.net
+   Foglio di stile della rappresentazione "Moderna". */
+:root { --testo:#1a1a1a; --tenue:#5c6f82; --linea:#d9dadb; --fondo:#f2f7fc; --accento:#0066cc; }
+* { box-sizing:border-box; }
+body { margin:0; padding:24px; font-family:"Titillium Web", "Segoe UI", system-ui, sans-serif; font-size:13px; line-height:1.45; color:var(--testo); background:#fff; }
+.doc { max-width:820px; margin:0 auto; }
+.testa { display:flex; justify-content:space-between; align-items:flex-start; gap:24px; padding-bottom:14px; border-bottom:3px solid var(--accento); }
+.lotto { font-size:11px; font-weight:600; color:var(--accento); text-transform:uppercase; letter-spacing:.05em; }
+h1 { margin:0; font-size:22px; font-weight:700; }
+h1 .num { font-weight:400; }
+.sotto { color:var(--tenue); }
+.totale { text-align:right; display:flex; flex-direction:column; }
+.totale span { color:var(--tenue); font-size:12px; }
+.totale strong { font-size:22px; }
+.parti { display:grid; grid-template-columns:1fr 1fr; gap:24px; margin-top:16px; }
+.parte .etichetta, h3 { font-size:11px; font-weight:600; color:var(--tenue); text-transform:uppercase; letter-spacing:.06em; margin:0 0 4px; }
+.parte .nome { font-size:15px; font-weight:700; }
+.blocco { margin-top:18px; }
+.blocco p { margin:0; }
+ul.rif, ul.allegati { margin:0; padding-left:18px; }
+table { width:100%; border-collapse:collapse; }
+th { text-align:left; font-size:11px; font-weight:600; color:var(--tenue); text-transform:uppercase; border-bottom:2px solid var(--accento); padding:5px 6px; }
+td { padding:6px; border-bottom:1px solid var(--linea); vertical-align:top; }
+.n { text-align:right; white-space:nowrap; }
+td.desc { width:52%; }
+.codice { font-family:"Roboto Mono", Consolas, monospace; font-size:11px; color:var(--tenue); }
+.tenue { color:var(--tenue); font-size:12px; }
+.iban { font-family:"Roboto Mono", Consolas, monospace; }
+abbr { text-decoration:none; border-bottom:1px dotted var(--tenue); }
+.piede { margin-top:22px; padding-top:8px; border-top:1px solid var(--linea); color:var(--tenue); font-size:11px; }
+.avvisi { max-width:820px; margin:20px auto 0; padding:10px 14px; background:#fff4e5; border-left:4px solid #a66300; }
+.avvisi h3 { color:#7a4a00; }
+.avvisi ul { margin:0; padding-left:18px; }
+.salto { height:32px; }
+@media print {
+  body { padding:0; font-size:11px; }
+  .salto { height:0; page-break-after:always; break-after:page; }
+  tr { page-break-inside:avoid; break-inside:avoid; }
+}

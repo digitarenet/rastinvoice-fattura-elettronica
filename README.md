@@ -8,7 +8,7 @@ Apre fatture emesse e ricevute in tutti i formati in cui arrivano di solito: `.x
 
 ## Stato del progetto
 
-Fase 1 in corso: nucleo di lettura e riga di comando. L'interfaccia grafica arriverà nella fase 2.
+Fase 2 in corso: applicazione desktop con interfaccia grafica, costruita sul nucleo di lettura della fase 1.
 
 | Funzione | Stato |
 | --- | --- |
@@ -16,20 +16,31 @@ Fase 1 in corso: nucleo di lettura e riga di comando. L'interfaccia grafica arri
 | Lettura XML con codifiche UTF-8, UTF-16, ISO-8859-1, Windows-1252 | fatto |
 | Buste firmate `.p7m` (DER, BER, base64, annidate) | fatto |
 | Riconoscimento ricevute e notifiche SdI | fatto |
-| Tabelle codici (specifiche 1.9) | fatto |
+| Tabelle codici (specifiche 1.9.1) | fatto |
 | Riga di comando (`info`, `json`, `scansiona`) | fatto |
 | Validazione XSD e controlli SdI | da fare |
 | Verifica crittografica della firma | da fare |
 | Email PEC `.eml`, Outlook `.msg`, archivi `.zip` | da fare |
-| Fogli di stile, PDF, stampa | da fare |
-| Applicazione desktop | da fare |
+| Applicazione desktop (Windows, Linux, macOS) | prima versione |
+| Vista "Moderna" e foglio di stile ufficiale AssoSoftware (scaricabile) | fatto |
+| Ricerca a testo libero, filtri per sezione, anno, date, contatto | fatto |
+| Rubrica clienti e fornitori | fatto |
+| Trascina e rilascia, modalità portable | fatto |
+| Stampa, salvataggio HTML e XML, allegati, esportazione CSV | fatto |
+| Esportazione PDF diretta | da fare |
+| Trasformazione XSL nativa (indipendente dal motore web di sistema) | da fare |
 
 ## Struttura
 
 ```
 crates/
-  rustinvoice-core/   nucleo: modello dati, lettura, buste firmate (nessuna dipendenza grafica)
-  rustinvoice-cli/    riga di comando
+  rustinvoice-core/     nucleo: modello dati, lettura, buste firmate (nessuna dipendenza grafica)
+  rustinvoice-render/   vista "Moderna" in HTML a partire dal modello dati
+  rustinvoice-cli/      riga di comando
+apps/
+  desktop/              applicazione desktop (Tauri 2 + Svelte 5 + Bootstrap Italia)
+    src/                interfaccia
+    src-tauri/          parte nativa in Rust
 ```
 
 ## Compilazione
@@ -42,6 +53,27 @@ cargo test
 ```
 
 L'eseguibile si trova in `target/release/rustinvoice` (`rustinvoice.exe` su Windows).
+
+### Applicazione desktop
+
+Servono anche [Node.js](https://nodejs.org) 20 o successivo e i prerequisiti di Tauri per il proprio sistema
+([elenco](https://v2.tauri.app/start/prerequisites/)): su Windows WebView2, già presente in Windows 10 e 11;
+su Linux i pacchetti di sviluppo di WebKitGTK 4.1.
+
+```sh
+cd apps/desktop
+npm install
+npx tauri dev                 # avvio in sviluppo con ricarica automatica
+npx tauri build --no-bundle   # eseguibile singolo in target/release
+npx tauri build               # anche installer/pacchetti (NSIS, AppImage, DMG)
+```
+
+L'eseguibile `target/release/rustinvoice-desktop` non richiede installazione. Per la **modalità portable**
+basta creare una cartella `dati` accanto all'eseguibile: impostazioni e archivio verranno salvati lì,
+ad esempio su una chiavetta USB. Senza quella cartella si usa la cartella dati dell'utente.
+
+Il foglio di stile ufficiale AssoSoftware non è incluso: si scarica dalle impostazioni dell'applicazione
+(dal sito ufficiale) oppure si importa da un file `.xsl` o `.zip`.
 
 ## Uso da riga di comando
 
@@ -58,7 +90,7 @@ rustinvoice scansiona ./Fatture > elenco.csv
 
 ## Riferimenti normativi
 
-Il software è scritto a partire dalla documentazione pubblica dell'Agenzia delle Entrate sulla [fatturazione elettronica](https://www.agenziaentrate.gov.it/portale/fatturazione-elettronica-e-dati-fatture-transfrontaliere-new): specifiche tecniche del formato FatturaPA (versione 1.9) ed elenco dei controlli del Sistema di Interscambio.
+Il software è scritto a partire dalla documentazione pubblica dell'Agenzia delle Entrate sulla [fatturazione elettronica](https://www.agenziaentrate.gov.it/portale/fatturazione-elettronica-e-dati-fatture-transfrontaliere-new): specifiche tecniche del formato FatturaPA (versione 1.9.1, in vigore dal 15 maggio 2026) ed elenco dei controlli del Sistema di Interscambio.
 
 ## Librerie utilizzate
 
@@ -75,8 +107,20 @@ Si ringraziano gli autori delle librerie open source su cui si basa il progetto.
 | [base64](https://github.com/marshallpierce/rust-base64) | Marshall Pierce, Alice Maz | MIT / Apache-2.0 |
 | [clap](https://github.com/clap-rs/clap) | Kevin K., Ed Page e contributori | MIT / Apache-2.0 |
 | [walkdir](https://github.com/BurntSushi/walkdir) | Andrew Gallant | MIT / Unlicense |
+| [Tauri](https://tauri.app) e plugin dialog, opener | Tauri Programme within The Commons Conservancy | MIT / Apache-2.0 |
+| [rayon](https://github.com/rayon-rs/rayon) | Niko Matsakis, Josh Stone | MIT / Apache-2.0 |
+| [ureq](https://github.com/algesten/ureq) | Martin Algesten | MIT / Apache-2.0 |
+| [zip](https://github.com/zip-rs/zip2) | Mathijs van de Nes, Marli Frost, Ryan Levick, Chris Hennick | MIT |
+| [Svelte](https://svelte.dev) | Rich Harris e contributori | MIT |
+| [Vite](https://vite.dev) | Evan You e contributori | MIT |
+| [TypeScript](https://www.typescriptlang.org) | Microsoft | Apache-2.0 |
+| [Bootstrap Italia](https://italia.github.io/bootstrap-italia/) | Designers Italia / Dipartimento per la trasformazione digitale | BSD-3-Clause |
+| [Titillium Web](https://fonts.google.com/specimen/Titillium+Web) | Accademia di Belle Arti di Urbino | SIL Open Font License 1.1 |
+| [Roboto Mono](https://fonts.google.com/specimen/Roboto+Mono) | Christian Robertson | Apache-2.0 |
 
-L'elenco completo delle dipendenze, incluse quelle indirette, si ottiene con `cargo tree`.
+L'interfaccia segue il [design system di Designers Italia](https://designers.italia.it/design-system/).
+
+L'elenco completo delle dipendenze, incluse quelle indirette, si ottiene con `cargo tree` e `npm ls`.
 
 ## Licenza
 

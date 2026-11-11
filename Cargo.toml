@@ -5,7 +5,12 @@
 
 [workspace]
 resolver = "2"
-members = ["crates/rustinvoice-core", "crates/rustinvoice-cli"]
+members = [
+    "crates/rustinvoice-core",
+    "crates/rustinvoice-render",
+    "crates/rustinvoice-cli",
+    "apps/desktop/src-tauri",
+]
 
 [workspace.package]
 version = "0.1.0"

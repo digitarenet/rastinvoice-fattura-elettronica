@@ -1,0 +1,43 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "RustinVoice",
+  "version": "0.1.0",
+  "identifier": "net.digitare.rustinvoice",
+  "build": {
+    "beforeDevCommand": "npm run dev",
+    "devUrl": "http://localhost:1420",
+    "beforeBuildCommand": "npm run build",
+    "frontendDist": "../dist"
+  },
+  "app": {
+    "windows": [
+      {
+        "title": "RustinVoice",
+        "width": 1360,
+        "height": 860,
+        "minWidth": 980,
+        "minHeight": 620,
+        "dragDropEnabled": true
+      }
+    ],
+    "security": {
+      "csp": "default-src 'self'; img-src 'self' data: blob:; style-src 'self' 'unsafe-inline'; font-src 'self' data:; frame-src 'self' blob: data: about:; script-src 'self'"
+    }
+  },
+  "bundle": {
+    "active": true,
+    "targets": ["nsis", "appimage", "app", "dmg"],
+    "category": "Business",
+    "shortDescription": "Visualizzatore di fatture elettroniche",
+    "longDescription": "Visualizzatore portable di fatture elettroniche italiane in formato FatturaPA.",
+    "copyright": "Copyright (c) 2026 Andrea Re - digitare.net",
+    "publisher": "digitare.net",
+    "icon": [
+      "icons/32x32.png",
+      "icons/128x128.png",
+      "icons/128x128@2x.png",
+      "icons/icon.icns",
+      "icons/icon.ico"
+    ]
+  }
+}

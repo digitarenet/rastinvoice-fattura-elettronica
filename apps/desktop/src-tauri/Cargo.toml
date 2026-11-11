@@ -1,0 +1,33 @@
+# Copyright (c) 2026 Andrea Re - info@digitare.net
+# Autore: Andrea Re @ 2026 - info@digitare.net
+
+[package]
+name = "rustinvoice-desktop"
+description = "Applicazione desktop RustinVoice: visualizzatore di fatture elettroniche"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+rust-version.workspace = true
+repository.workspace = true
+
+[lib]
+name = "rustinvoice_desktop_lib"
+crate-type = ["staticlib", "cdylib", "rlib"]
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+rustinvoice-core = { path = "../../../crates/rustinvoice-core" }
+rustinvoice-render = { path = "../../../crates/rustinvoice-render" }
+tauri = { version = "2", features = [] }
+tauri-plugin-dialog = "2"
+tauri-plugin-opener = "2"
+serde.workspace = true
+serde_json.workspace = true
+walkdir.workspace = true
+rust_decimal.workspace = true
+chrono = { workspace = true, features = ["clock"] }
+rayon = "1.10"
+ureq = "3"
+zip = { version = "4", default-features = false, features = ["deflate"] }
