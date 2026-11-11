@@ -1,7 +1,7 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
   "productName": "RastInvoice",
-  "version": "0.10.3",
+  "version": "0.11.0",
   "identifier": "net.digitare.rustinvoice",
   "build": {
     "beforeDevCommand": "npm run dev",
@@ -26,10 +26,17 @@
   },
   "bundle": {
     "active": true,
-    "targets": ["nsis", "appimage", "app", "dmg"],
+    "targets": [
+      "nsis",
+      "deb",
+      "rpm",
+      "appimage",
+      "app",
+      "dmg"
+    ],
     "category": "Business",
-    "shortDescription": "Visualizzatore di fatture elettroniche",
-    "longDescription": "Visualizzatore portable di fatture elettroniche italiane in formato FatturaPA.",
+    "shortDescription": "Lettore di fatture elettroniche",
+    "longDescription": "Lettore portatile di fatture elettroniche italiane FatturaPA: XML, P7M, ZIP e PEC, verifica della firma, archivio, rubrica e statistiche.",
     "copyright": "Copyright (c) 2026 Andrea Re - digitare.net",
     "publisher": "digitare.net",
     "icon": [
@@ -38,6 +45,12 @@
       "icons/128x128@2x.png",
       "icons/icon.icns",
       "icons/icon.ico"
-    ]
+    ],
+    "linux": {
+      "deb": {
+        "section": "office"
+      },
+      "rpm": {}
+    }
   }
 }

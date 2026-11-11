@@ -73,7 +73,9 @@ Apre fatture emesse e ricevute in tutti i formati in cui arrivano di solito: `.x
 
 **Distribuzione**
 - Pacchetti per Windows (installer e versione portatile `.zip`), macOS (app universale Intel e Apple) e Linux
-  (AppImage), prodotti automaticamente a ogni rilascio.
+  (`.deb` per Debian e Ubuntu, `.rpm` per Fedora e openSUSE, AppImage), prodotti dal workflow Rilascio
+  avviato a mano.
+- Materiale per Microsoft Store, Flathub, Snap Store e Apple nella cartella [`store/`](store/README.md).
 - Pacchetto MSIX per il Microsoft Store, firmato dallo Store al momento della pubblicazione
   (`scripts/msix.ps1`).
 

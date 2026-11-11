@@ -8,7 +8,7 @@ publiccodeYmlVersion: "0.4"
 
 name: RastInvoice
 url: "https://github.com/digitarenet/rust-in-voice"
-softwareVersion: "0.10.3"
+softwareVersion: "0.11.0"
 releaseDate: "2026-11-11"
 
 platforms:

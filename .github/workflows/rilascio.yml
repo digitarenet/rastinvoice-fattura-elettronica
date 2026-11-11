@@ -52,6 +52,24 @@ jobs:
         working-directory: apps/desktop
         run: npm ci
 
+      # Firma e notarizzazione Apple: attive solo se i segreti sono presenti
+      # (vedi store/apple/README.md). Senza segreti il dmg non è firmato.
+      - name: Firma Apple (facoltativa)
+        if: runner.os == 'macOS'
+        shell: bash
+        env:
+          APPLE_CERTIFICATE: ${{ secrets.APPLE_CERTIFICATE }}
+          APPLE_CERTIFICATE_PASSWORD: ${{ secrets.APPLE_CERTIFICATE_PASSWORD }}
+          APPLE_SIGNING_IDENTITY: ${{ secrets.APPLE_SIGNING_IDENTITY }}
+          APPLE_ID: ${{ secrets.APPLE_ID }}
+          APPLE_PASSWORD: ${{ secrets.APPLE_PASSWORD }}
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+        run: |
+          if [ -z "$APPLE_CERTIFICATE" ]; then echo "Segreti Apple assenti: dmg non firmato"; exit 0; fi
+          for v in APPLE_CERTIFICATE APPLE_CERTIFICATE_PASSWORD APPLE_SIGNING_IDENTITY APPLE_ID APPLE_PASSWORD APPLE_TEAM_ID; do
+            echo "$v=${!v}" >> "$GITHUB_ENV"
+          done
+
       - name: Compilazione e pacchetti
         working-directory: apps/desktop
         run: npx tauri build ${{ matrix.argomenti }}
@@ -92,6 +110,8 @@ jobs:
             target/release/bundle/nsis/*.exe
             target/universal-apple-darwin/release/bundle/dmg/*.dmg
             target/release/bundle/appimage/*.AppImage
+            target/release/bundle/deb/*.deb
+            target/release/bundle/rpm/*.rpm
             target/portatile/*.zip
             target/msix/*.msix
           fail_on_unmatched_files: false

@@ -4,6 +4,20 @@ Tutte le modifiche rilevanti di RastInvoice (fino alla 0.9.0 chiamato RustinVoic
 MAGGIORE.MINORE.CORREZIONE: la versione minore cresce con le nuove funzioni, quella di
 correzione con le sole correzioni.
 
+## 0.11.0 - 2026-11-11
+
+### Aggiunto
+- Pacchetti Linux `.deb` (Debian, Ubuntu e derivate) e `.rpm` (Fedora, openSUSE), allegati alla release.
+- Cartella `store/` con il materiale per la pubblicazione: testi comuni, logo e poster, procedura per
+  Microsoft Store, scheda AppStream, file `.desktop`, manifesto Flathub, `snapcraft.yaml` per lo Snap Store
+  e guida per Apple.
+- Informativa privacy (`PRIVACY.md`) da indicare negli store.
+- Firma e notarizzazione per macOS nel workflow Rilascio, attive solo quando sono presenti i segreti Apple.
+
+### Modificato
+- Schermate del README rifatte con il nuovo nome.
+- Si lavora su un solo branch (`main`) e la CI parte solo a comando, per non consumare minuti.
+
 ## 0.10.3 - 2026-11-11
 
 ### Corretto

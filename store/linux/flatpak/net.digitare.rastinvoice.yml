@@ -1,0 +1,52 @@
+# Copyright (c) 2026 Andrea Re - info@digitare.net
+# Autore: Andrea Re @ 2026 - info@digitare.net
+#
+# Manifesto Flatpak per Flathub. Compila dai sorgenti senza accesso alla rete:
+# le dipendenze Rust e npm sono elencate in cargo-sources.json e
+# node-sources.json, generati con gli strumenti di flatpak-builder-tools
+# (vedi README.md).
+id: net.digitare.rastinvoice
+runtime: org.gnome.Platform
+runtime-version: '48'
+sdk: org.gnome.Sdk
+sdk-extensions:
+  - org.freedesktop.Sdk.Extension.rust-stable
+  - org.freedesktop.Sdk.Extension.node24
+command: rastinvoice
+finish-args:
+  - --share=ipc
+  - --socket=wayland
+  - --socket=fallback-x11
+  - --device=dri
+  # Rete: solo per il foglio di stile e il controllo aggiornamenti, su richiesta.
+  - --share=network
+  # Fatture e cartelle d'archivio scelte dall'utente, anche su dischi di rete.
+  - --filesystem=home
+  - --filesystem=/media
+  - --filesystem=/run/media
+  - --filesystem=/mnt
+build-options:
+  append-path: /usr/lib/sdk/rust-stable/bin:/usr/lib/sdk/node24/bin
+  env:
+    CARGO_HOME: /run/build/rastinvoice/cargo
+    XDG_CACHE_HOME: /run/build/rastinvoice/flatpak-node/cache
+    npm_config_cache: /run/build/rastinvoice/flatpak-node/npm-cache
+    npm_config_offline: 'true'
+modules:
+  - name: rastinvoice
+    buildsystem: simple
+    sources:
+      - type: git
+        url: https://github.com/digitarenet/rust-in-voice.git
+        tag: v0.11.0
+      - cargo-sources.json
+      - node-sources.json
+    build-commands:
+      - cd apps/desktop && npm ci --offline
+      - cd apps/desktop && npm run build
+      - cargo --offline build --release -p rustinvoice-desktop
+      - install -Dm755 target/release/rustinvoice-desktop /app/bin/rastinvoice
+      - install -Dm644 apps/desktop/src-tauri/icons/128x128.png /app/share/icons/hicolor/128x128/apps/net.digitare.rastinvoice.png
+      - install -Dm644 apps/desktop/src-tauri/icons/128x128@2x.png /app/share/icons/hicolor/256x256/apps/net.digitare.rastinvoice.png
+      - install -Dm644 store/linux/net.digitare.rastinvoice.desktop /app/share/applications/net.digitare.rastinvoice.desktop
+      - install -Dm644 store/linux/net.digitare.rastinvoice.metainfo.xml /app/share/metainfo/net.digitare.rastinvoice.metainfo.xml

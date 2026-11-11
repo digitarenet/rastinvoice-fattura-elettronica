@@ -1,0 +1,14 @@
+# Copyright (c) 2026 Andrea Re - info@digitare.net
+# Autore: Andrea Re @ 2026 - info@digitare.net
+[Desktop Entry]
+Type=Application
+Name=RastInvoice
+GenericName=Lettore di fatture elettroniche
+Comment=Legge, verifica e archivia le fatture elettroniche italiane
+Exec=rastinvoice %F
+Icon=net.digitare.rastinvoice
+Terminal=false
+Categories=Office;Finance;Viewer;
+Keywords=fattura;fatturapa;p7m;xml;sdi;pec;invoice;
+MimeType=application/xml;text/xml;application/pkcs7-mime;application/zip;message/rfc822;
+StartupWMClass=RastInvoice
