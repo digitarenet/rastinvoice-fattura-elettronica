@@ -65,7 +65,8 @@
     </tbody>
   </table>
   <p class="piccolo">La vista AssoSoftware usa il foglio di stile pubblicato da AssoSoftware, scaricato dal sito
-    dell'associazione. L'interfaccia segue il design system di Designers Italia.</p>
+    dell'associazione. L'interfaccia è realizzata con Bootstrap Italia, il kit ufficiale del design system di
+    Designers Italia, e ne segue le linee guida.</p>
 
   <h2 class="h5 mt-4">Registro delle modifiche</h2>
   <div class="registro">

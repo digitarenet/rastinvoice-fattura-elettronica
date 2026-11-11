@@ -4,6 +4,15 @@ Tutte le modifiche rilevanti di RustinVoice. Il numero di versione segue lo sche
 MAGGIORE.MINORE.CORREZIONE: la versione minore cresce con le nuove funzioni, quella di
 correzione con le sole correzioni.
 
+## 0.6.1 - 2026-11-11
+
+### Modificato
+- Verificata l'aderenza al design system di Designers Italia (componenti Bootstrap Italia,
+  tipografia, palette, contrasti dei testi WCAG 2.1 AA, lingua, tastiera); README e
+  Credits lo descrivono con precisione.
+- Il visualizzatore degli allegati porta il fuoco nella finestra all'apertura e lo
+  restituisce alla chiusura.
+
 ## 0.6.0 - 2026-11-11
 
 ### Aggiunto

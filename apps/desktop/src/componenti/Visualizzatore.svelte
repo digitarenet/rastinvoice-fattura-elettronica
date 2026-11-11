@@ -7,7 +7,7 @@
   contenuti nel file.
 -->
 <script lang="ts">
-  import { onDestroy, tick, untrack } from "svelte";
+  import { onDestroy, onMount, tick, untrack } from "svelte";
   import { api, type AnteprimaAllegato } from "../lib/api";
   import { formatta } from "../lib/xmlformato";
   import Icona from "./Icona.svelte";
@@ -52,7 +52,15 @@
     untrack(() => void carica(percorso));
   });
 
-  onDestroy(pulisci);
+  // Accessibilità: il fuoco va nella finestra all'apertura e torna dove
+  // era alla chiusura (schema dei modali di Bootstrap Italia).
+  let finestraEl = $state<HTMLElement | null>(null);
+  const precedente = document.activeElement as HTMLElement | null;
+  onMount(() => finestraEl?.focus());
+  onDestroy(() => {
+    pulisci();
+    precedente?.focus?.();
+  });
 
   function pulisci() {
     if (urlImmagine) URL.revokeObjectURL(urlImmagine);
@@ -152,7 +160,7 @@
 <svelte:window onkeydown={tasti} />
 
 <div class="sfondo" role="presentation" onclick={(e) => e.target === e.currentTarget && onChiudi()}>
-  <div class="finestra ri-pannello" role="dialog" aria-modal="true" aria-label="Allegato {titolo}">
+  <div class="finestra ri-pannello" role="dialog" aria-modal="true" aria-label="Allegato {titolo}" tabindex="-1" bind:this={finestraEl}>
     <header class="barra">
       <div class="titolo">
         <Icona nome="it-clip" dimensione="sm" />
@@ -273,6 +281,7 @@
     padding: 1.5rem;
   }
   .finestra {
+    outline: none;
     flex: 1;
     display: flex;
     flex-direction: column;

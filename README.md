@@ -140,7 +140,12 @@ Si ringraziano gli autori delle librerie open source su cui si basa il progetto.
 | [Titillium Web](https://fonts.google.com/specimen/Titillium+Web) | Accademia di Belle Arti di Urbino | SIL Open Font License 1.1 |
 | [Roboto Mono](https://fonts.google.com/specimen/Roboto+Mono) | Christian Robertson | Apache-2.0 |
 
-L'interfaccia segue il [design system di Designers Italia](https://designers.italia.it/design-system/).
+L'interfaccia è realizzata con [Bootstrap Italia](https://italia.github.io/bootstrap-italia/), il kit ufficiale
+del [design system di Designers Italia](https://designers.italia.it/design-system/), e ne segue le linee guida:
+tipografia Titillium Web, palette e icone ufficiali, componenti (pulsanti, campi, selettori, schede), lingua
+italiana dichiarata, navigazione da tastiera con fuoco visibile e contrasti dei testi verificati secondo le
+WCAG 2.1 livello AA. Gli elementi propri di un'applicazione desktop (elenco documenti, anteprima, tema scuro,
+grafici) sono costruiti con gli stessi colori, caratteri e spaziature.
 
 L'elenco completo delle dipendenze, incluse quelle indirette, si ottiene con `cargo tree` e `npm ls`.
 
