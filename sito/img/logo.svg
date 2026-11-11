@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-labelledby="t">
+  <!-- Copyright (c) 2026 Andrea Re - info@digitare.net - Autore: Andrea Re @ 2026 - info@digitare.net -->
+  <title id="t">RastInvoice</title>
+  <rect width="64" height="64" rx="14" fill="#0066CC"/>
+  <!-- foglio della fattura con angolo piegato -->
+  <path d="M17 11h20l10 10v32a2 2 0 0 1-2 2H17a2 2 0 0 1-2-2V13a2 2 0 0 1 2-2z" fill="#fff"/>
+  <path d="M37 11l10 10h-8a2 2 0 0 1-2-2z" fill="#A6C8F0"/>
+  <!-- righe dell'intestazione -->
+  <rect x="20" y="18" width="12" height="3" rx="1.5" fill="#0066CC"/>
+  <rect x="20" y="25" width="20" height="3" rx="1.5" fill="#0066CC" opacity=".55"/>
+  <rect x="20" y="31" width="14" height="3" rx="1.5" fill="#0066CC" opacity=".55"/>
+  <!-- lente: visualizzazione e ricerca -->
+  <circle cx="40" cy="42" r="9.5" fill="#008055" stroke="#fff" stroke-width="3"/>
+  <path d="M35.5 42.3l3 3 6-6.2" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M47.2 49.2l5.3 5.3" stroke="#fff" stroke-width="5" stroke-linecap="round"/>
+  <path d="M47.2 49.2l5.3 5.3" stroke="#008055" stroke-width="2.4" stroke-linecap="round"/>
+</svg>

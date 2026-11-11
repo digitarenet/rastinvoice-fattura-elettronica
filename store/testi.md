@@ -129,8 +129,8 @@ l'archivio di fatture emesse e ricevute con ricerca, rubrica e statistiche.
 | Licenza | EUPL-1.2 |
 | Prezzo | gratuito su Windows e Linux; 2,99 € sul Mac App Store |
 | Contatto per l'assistenza | info@digitare.net |
-| Sito | da indicare quando è pronto il dominio rastinvoice.it |
-| Informativa privacy | https://github.com/digitarenet/rastinvoice-fattura-elettronica/blob/main/PRIVACY.md (o la pagina sul sito) |
+| Sito | https://www.rastinvoice.it |
+| Informativa privacy | https://www.rastinvoice.it/privacy.html (in alternativa https://github.com/digitarenet/rastinvoice-fattura-elettronica/blob/main/PRIVACY.md) |
 | Codice sorgente | https://github.com/digitarenet/rastinvoice-fattura-elettronica |
 | Lingua | italiano |
 | Requisiti di sistema | Windows 10 o 11 (64 bit) con WebView2; macOS 10.13 o successivo; Linux a 64 bit con WebKitGTK 4.1 |

@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /grazie.html
+Disallow: /contatti.php
+
+Sitemap: https://www.rastinvoice.it/sitemap.xml

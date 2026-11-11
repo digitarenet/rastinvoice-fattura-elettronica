@@ -159,7 +159,7 @@ Le immagini usano un archivio dimostrativo con dati di fantasia.
 | ![Notifiche del Sistema di Interscambio collegate alle fatture](docs/immagini/notifiche.png) | ![Elenco dei documenti e vista Moderna](docs/immagini/documenti.png) |
 | **Notifiche SdI** collegate alle fatture | **Documenti** e vista Moderna |
 
-Versione attuale: **1.0.2** (vedi il [registro delle modifiche](CHANGELOG.md)).
+Versione attuale: **1.0.3** (vedi il [registro delle modifiche](CHANGELOG.md)).
 
 ## Domande frequenti
 
@@ -234,6 +234,8 @@ apps/
   desktop/              applicazione desktop (Tauri 2 + Svelte 5 + Bootstrap Italia)
     src/                interfaccia
     src-tauri/          parte nativa in Rust
+sito/                   sito rastinvoice.it (HTML, CSS, JavaScript e modulo contatti in PHP)
+store/                  testi, immagini e configurazioni per gli store
 ```
 
 ## Compilazione
