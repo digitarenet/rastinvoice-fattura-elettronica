@@ -1,7 +1,7 @@
 {
   "name": "rustinvoice-desktop",
   "private": true,
-  "version": "0.11.1",
+  "version": "0.11.2",
   "description": "Interfaccia dell'applicazione desktop RastInvoice",
   "author": "Andrea Re <info@digitare.net>",
   "license": "EUPL-1.2",

@@ -192,9 +192,10 @@
               </thead>
               <tbody>
                 {#each blocco.tutti ? blocco.elenco : blocco.elenco.slice(0, 10) as c (c.chiave + c.nome)}
-                  <tr>
+                  <!-- tutta la riga è cliccabile; da tastiera si usa il pulsante col nome -->
+                  <tr class="riga-contatto" onclick={() => onMostraContatto(c.chiave)}>
                     <td>
-                      <button class="btn btn-link btn-xs p-0 text-start" title="Mostra i documenti" onclick={() => onMostraContatto(c.chiave)}>{c.nome}</button>
+                      <button class="btn btn-link btn-xs p-0 text-start nome-contatto" title="Mostra i documenti" onclick={(e) => { e.stopPropagation(); onMostraContatto(c.chiave); }}>{c.nome}</button>
                       <div class="quota" aria-hidden="true"><span class="{blocco.classe}" style="width: {percentuale(c, blocco.elenco)}%"></span></div>
                     </td>
                     <td class="num">{c.documenti}</td>
@@ -218,6 +219,24 @@
 </section>
 
 <style>
+  /* Nomi senza sottolineatura per leggibilità: riga evidenziata al passaggio del mouse */
+  .riga-contatto {
+    cursor: pointer;
+  }
+  .riga-contatto:hover > td {
+    /* Bootstrap colora le celle con un box-shadow interno */
+    box-shadow: inset 0 0 0 9999px #e6f0fa;
+  }
+  .nome-contatto {
+    text-decoration: none;
+    color: #1a1a1a;
+    font-weight: 600;
+  }
+  .riga-contatto:hover .nome-contatto,
+  .nome-contatto:focus-visible {
+    color: #0066cc;
+    text-decoration: underline;
+  }
   .statistiche {
     height: 100%;
     overflow: auto;

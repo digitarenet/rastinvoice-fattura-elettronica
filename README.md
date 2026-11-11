@@ -79,6 +79,28 @@ Apre fatture emesse e ricevute in tutti i formati in cui arrivano di solito: `.x
 - Pacchetto MSIX per il Microsoft Store, firmato dallo Store al momento della pubblicazione
   (`scripts/msix.ps1`).
 
+## Requisiti e supporto
+
+| Sistema | Requisiti |
+| --- | --- |
+| Windows 11 | nessuno: WebView2 è già incluso |
+| Windows 10 (64 bit) | componente Microsoft Edge WebView2, già presente se Windows è aggiornato |
+| Windows 8.1, 8, 7 | non supportati: Microsoft non aggiorna più WebView2 su questi sistemi e gli strumenti di compilazione attuali producono programmi solo per Windows 10 e successivi |
+| macOS | 10.13 High Sierra o successivo, Intel o Apple Silicon |
+| Linux | distribuzioni recenti a 64 bit con WebKitGTK 4.1 (Ubuntu 22.04, Debian 12, Fedora 38 o successive) |
+
+**WebView2 su Windows 10.** WebView2 è il componente di Microsoft che disegna l'interfaccia del programma.
+- L'**installer** controlla se manca e, in quel caso, lo scarica e lo installa da solo (serve la connessione
+  a Internet durante l'installazione).
+- La **versione portatile** non installa nulla: se il programma non si avvia, scaricare e installare
+  "Evergreen Bootstrapper" o "Evergreen Standalone Installer" dalla
+  [pagina ufficiale di WebView2](https://developer.microsoft.com/microsoft-edge/webview2/), poi riavviare
+  RastInvoice. Basta farlo una volta.
+- Con la versione da **Microsoft Store** WebView2 viene fornito da Windows.
+
+**Assistenza.** Per problemi o richieste: [segnalazioni su GitHub](https://github.com/digitarenet/rust-in-voice/issues)
+oppure info@digitare.net, indicando versione di RastInvoice e di Windows.
+
 ## Immagini
 
 Le immagini usano un archivio dimostrativo con dati di fantasia.

@@ -4,6 +4,13 @@ Novità, miglioramenti e correzioni di RastInvoice (fino alla 0.9.0 chiamato Rus
 versione segue lo schema MAGGIORE.MINORE.CORREZIONE: la versione minore cresce con le nuove funzioni, quella
 di correzione con le sole correzioni. Le versioni senza novità nel programma non sono elencate.
 
+## 0.11.2 - 2026-11-11
+
+### Migliorato
+- Statistiche: i nomi di clienti e fornitori non sono più sottolineati e si leggono meglio. Passando con il
+  mouse la riga si evidenzia e un clic su qualsiasi punto della riga apre i documenti del contatto.
+- L'installer per Windows aggiunge da solo il componente WebView2, se manca.
+
 ## 0.11.0 - 2026-11-11
 
 ### Aggiunto

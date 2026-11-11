@@ -58,6 +58,10 @@ ACCESSIBILE
 L'interfaccia segue il design system di Designers Italia ed è progettata secondo le WCAG 2.1 livello AA:
 uso completo da tastiera, contrasti adeguati e ingrandimento fino al 200%.
 
+REQUISITI
+Windows 10 o 11 a 64 bit. Su Windows 10 serve il componente Microsoft Edge WebView2, già presente se il
+sistema è aggiornato; l'installer lo aggiunge da solo se manca. Windows 8 e 7 non sono supportati.
+
 Licenza EUPL-1.2. Codice sorgente: https://github.com/digitarenet/rust-in-voice
 
 ## Funzionalità principali (una per riga, fino a 200 caratteri ciascuna)
@@ -106,4 +110,5 @@ l'archivio di fatture emesse e ricevute con ricerca, rubrica e statistiche.
 | Informativa privacy | https://github.com/digitarenet/rust-in-voice/blob/main/PRIVACY.md (o la pagina sul sito) |
 | Codice sorgente | https://github.com/digitarenet/rust-in-voice |
 | Lingua | italiano |
+| Requisiti di sistema | Windows 10 o 11 (64 bit) con WebView2; macOS 10.13 o successivo; Linux a 64 bit con WebKitGTK 4.1 |
 | Età consigliata | per tutti (nessun contenuto sensibile, nessuna interazione tra utenti, nessun acquisto) |
