@@ -6,7 +6,7 @@
   anteprima; rubrica, messaggi SdI e impostazioni.
 -->
 <script lang="ts">
-  import { onMount } from "svelte";
+  import { onMount, tick } from "svelte";
   import { getCurrentWebview } from "@tauri-apps/api/webview";
   import { open } from "@tauri-apps/plugin-dialog";
   import { api, type Avvio, type Esito, type Impostazioni as Imp, type StatoFoglio, type Voce } from "./lib/api";
@@ -19,7 +19,8 @@
     type Ordinamento,
     type Sezione,
   } from "./lib/archivio";
-  import { data, importo, iniziali } from "./lib/formato";
+  import { data, dataOra, importo, iniziali } from "./lib/formato";
+  import { SIGLE_NOTE, chiaveFattura, indiceFatture, indiceNotifiche, infoSigla, notificheDi } from "./lib/sdi";
   import Icona from "./componenti/Icona.svelte";
   import Anteprima from "./componenti/Anteprima.svelte";
   import Rubrica from "./componenti/Rubrica.svelte";
@@ -74,6 +75,12 @@
     Math.min(visibili.length, Math.ceil((scorrimento + altezzaElenco) / ALTEZZA_RIGA) + RIGHE_MARGINE),
   );
   const righeDisegnate = $derived(visibili.slice(primaRiga, ultimaRiga));
+
+  // Notifiche SdI collegate alle fatture.
+  const notifichePerFattura = $derived(indiceNotifiche(esito.messaggi));
+  const fatturePerNome = $derived(indiceFatture(esito.voci));
+  const notificheOrdinate = $derived([...esito.messaggi].sort((a, b) => b.data.localeCompare(a.data)));
+  let legendaAperta = $state(false);
 
   const anni = $derived([...new Set(esito.voci.map((v) => v.anno).filter((a) => a > 0))].sort((a, b) => b - a));
   const conteggi = $derived({
@@ -293,6 +300,21 @@
     }
   }
 
+  /** Mostra una fattura nell'elenco completo, selezionata. */
+  async function apriFattura(v: Voce) {
+    vista = "documenti";
+    sezione = "tutte";
+    anno = null;
+    ricerca = "";
+    contatto = null;
+    dal = "";
+    al = "";
+    seleziona(v);
+    await tick();
+    const j = visibili.findIndex((x) => x.id === v.id);
+    if (j >= 0 && elencoEl) elencoEl.scrollTop = Math.max(0, j * ALTEZZA_RIGA - elencoEl.clientHeight / 2);
+  }
+
   /** Scorre l'elenco quanto basta per rendere visibile la riga indicata. */
   function mostraRiga(j: number) {
     if (!elencoEl) return;
@@ -386,8 +408,8 @@
           </li>
           <li>
             <button class:attivo={vista === "messaggi"} onclick={() => (vista = "messaggi")}>
-              <Icona nome="it-mail" /> <span>Ricevute SdI</span>
-              <small>{esito.messaggi.length + esito.scartati.length || ""}</small>
+              <Icona nome="it-mail" /> <span>Notifiche SdI</span>
+              <small>{esito.messaggi.filter((m) => m.sigla !== "MT").length || ""}</small>
             </button>
           </li>
           <li>
@@ -543,6 +565,7 @@
                     onVistaCambiata={(v) => imp && imp.vista !== v && salva({ ...imp, vista: v })}
                     onApriImpostazioni={() => (vista = "impostazioni")}
                     onErrore={(m) => mostra(m, "errore")}
+                    notifiche={notificheDi(selezionata, notifichePerFattura)}
                   />
                 {:else}
                   <div class="nessuna-selezione text-secondary-ri">
@@ -571,20 +594,51 @@
           />
         {:else if vista === "messaggi"}
           <div class="messaggi ri-scroll">
-            <h1 class="h4">Ricevute e notifiche del Sistema di Interscambio</h1>
-            <p class="text-secondary-ri">File di notifica trovati nelle cartelle, collegati alla fattura a cui si riferiscono.</p>
-            {#if esito.messaggi.length === 0}
-              <p>Nessuna ricevuta trovata.</p>
+            <h1 class="h4">Notifiche del Sistema di Interscambio</h1>
+            <p class="text-secondary-ri mb-2">
+              Dopo l'invio di una fattura, lo SdI risponde con una notifica: consegnata, scartata, non consegnata e così via.
+              Qui sono raccolte quelle trovate nelle tue cartelle (file come <code>IT01234567890_00005_RC_001.xml</code>), collegate
+              alla fattura a cui si riferiscono. Lo stato compare anche nell'anteprima della fattura.
+            </p>
+            <button class="btn btn-link btn-xs p-0 mb-3" onclick={() => (legendaAperta = !legendaAperta)} aria-expanded={legendaAperta}>
+              {legendaAperta ? "Nascondi" : "Cosa significano"} le sigle
+            </button>
+            {#if legendaAperta}
+              <dl class="legenda">
+                {#each SIGLE_NOTE as l (l.sigla)}
+                  <dt><span class="sigla sigla-{l.gravita}">{l.sigla}</span> {l.nome}</dt>
+                  <dd>{l.spiegazione}</dd>
+                {/each}
+              </dl>
+            {/if}
+            {#if notificheOrdinate.length === 0}
+              <p>Nessuna notifica trovata nelle cartelle.</p>
             {:else}
               <table class="table table-sm">
-                <thead><tr><th>Tipo</th><th>Descrizione</th><th>Riferito al file</th><th>File</th></tr></thead>
+                <thead><tr><th>Data</th><th>Stato</th><th>Fattura</th><th>Dettagli</th></tr></thead>
                 <tbody>
-                  {#each esito.messaggi as m (m.file)}
+                  {#each notificheOrdinate as m (m.file)}
+                    {@const i = infoSigla(m)}
+                    {@const f = fatturePerNome.get(chiaveFattura(m))}
                     <tr>
-                      <td><span class="sigla sigla-{m.sigla}">{m.sigla}</span></td>
-                      <td>{m.descrizione}</td>
-                      <td class="selezionabile">{m.riferito_a}</td>
-                      <td class="selezionabile percorso">{m.file.split(/[\\/]/).pop()}</td>
+                      <td class="text-nowrap">{dataOra(m.data)}</td>
+                      <td><span class="sigla sigla-{i.gravita}" title={i.nome}>{m.sigla}</span> {i.stato}</td>
+                      <td>
+                        {#if f}
+                          <button class="btn btn-link btn-xs p-0 text-start" onclick={() => apriFattura(f)}>
+                            {f.descrizione_tipo || f.tipo_documento} n. {f.numero} del {data(f.data)}
+                          </button>
+                          <div class="text-secondary-ri piccolo">{f.cessionario.nome}</div>
+                        {:else}
+                          <span class="selezionabile">{m.riferito_a || "—"}</span>
+                          <div class="text-secondary-ri piccolo">fattura non presente nelle cartelle</div>
+                        {/if}
+                      </td>
+                      <td>
+                        {#if m.note}<div>{m.note}</div>{/if}
+                        {#each m.errori as e, j (j)}<div>Errore {e.codice}: {e.descrizione}</div>{/each}
+                        <div class="text-secondary-ri piccolo percorso" title={m.file}>{m.file.split(/[\\/]/).pop()}</div>
+                      </td>
                     </tr>
                   {/each}
                 </tbody>
@@ -592,6 +646,10 @@
             {/if}
             {#if esito.scartati.length > 0}
               <h2 class="h5 mt-4">File non riconosciuti</h2>
+              <p class="text-secondary-ri">
+                File trovati nelle cartelle con estensione da fattura (.xml, .p7m) ma che non sono né fatture né notifiche SdI
+                leggibili. Di solito si possono ignorare.
+              </p>
               <table class="table table-sm">
                 <thead><tr><th>File</th><th>Motivo</th></tr></thead>
                 <tbody>
@@ -1151,20 +1209,37 @@
     background: var(--ri-selezione);
     color: var(--ri-primario-scuro);
   }
-  .sigla-NS,
-  .sigla-SE {
+  .sigla-errore {
     background: #f8d7dd;
     color: #8c1c30;
   }
-  .sigla-RC,
-  .sigla-AT {
+  .sigla-ok {
     background: #d9f2e6;
     color: #006644;
   }
-  .sigla-MC,
-  .sigla-DT {
+  .sigla-avviso {
     background: #fdecc8;
     color: #6b4000;
+  }
+  .legenda {
+    display: grid;
+    grid-template-columns: max-content 1fr;
+    gap: 0.4rem 1rem;
+    font-size: 0.88rem;
+    background: var(--ri-pannello);
+    border: 1px solid var(--ri-bordo);
+    border-radius: 6px;
+    padding: 0.75rem 1rem;
+  }
+  .legenda dt {
+    font-weight: 600;
+  }
+  .legenda dd {
+    margin: 0;
+    color: var(--ri-testo-2);
+  }
+  .piccolo {
+    font-size: 0.8rem;
   }
 
   /* Trascina e rilascia. */

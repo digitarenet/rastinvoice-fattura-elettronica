@@ -4,6 +4,16 @@ Tutte le modifiche rilevanti di RustinVoice. Il numero di versione segue lo sche
 MAGGIORE.MINORE.CORREZIONE: la versione minore cresce con le nuove funzioni, quella di
 correzione con le sole correzioni.
 
+## 0.4.1 - 2026-11-11
+
+### Modificato
+- La sezione "Ricevute SdI" diventa **Notifiche SdI** ed è più chiara: ogni notifica mostra
+  data, stato in parole ("Consegnata", "Scartata", "Rifiutata dal cliente"...), errori e
+  motivazioni, con il collegamento alla fattura a cui si riferisce; una legenda spiega
+  tutte le sigle.
+- L'anteprima della fattura mostra lo stato presso lo SdI e la cronologia delle notifiche.
+- I file non riconosciuti sono elencati a parte, con una spiegazione.
+
 ## 0.4.0 - 2026-11-11
 
 ### Aggiunto

@@ -10,6 +10,9 @@
   import { api, type Dettaglio, type Voce } from "../lib/api";
   import * as xslt from "../lib/xslt";
   import { formatta, type Riga } from "../lib/xmlformato";
+  import { infoSigla, statoAttuale } from "../lib/sdi";
+  import { dataOra as dataOraIso } from "../lib/formato";
+  import type { VoceMessaggio } from "../lib/api";
   import Icona from "./Icona.svelte";
   import Visualizzatore from "./Visualizzatore.svelte";
 
@@ -24,7 +27,9 @@
     onVistaCambiata,
     onApriImpostazioni,
     onErrore,
+    notifiche = [],
   }: {
+    notifiche?: VoceMessaggio[];
     voce: Voce;
     contrassegnata: boolean;
     schedaIniziale?: "moderna" | "standard";
@@ -184,6 +189,10 @@
     return s.length >= 16 ? `${s.slice(8, 10)}/${s.slice(5, 7)}/${s.slice(0, 4)} ${s.slice(11, 16)}` : s;
   }
 
+  // Stato presso il Sistema di Interscambio, dalle notifiche trovate.
+  const ultimaNotifica = $derived(statoAttuale(notifiche));
+  let notificheAperte = $state(false);
+
   // XML formattato per la lettura (il file resta com'è).
   let xmlFormattato = $state(true);
   const righeXml = $derived<Riga[] | null>(dettaglio && scheda === "xml" && xmlFormattato ? formatta(dettaglio.xml) : null);
@@ -279,8 +288,16 @@
     </div>
   </div>
 
-  {#if dettaglio && (dettaglio.firmato || allegati.length > 0 || dettaglio.controlli.length > 0)}
+  {#if dettaglio && (dettaglio.firmato || allegati.length > 0 || dettaglio.controlli.length > 0 || ultimaNotifica)}
     <div class="info">
+      {#if ultimaNotifica}
+        {@const i = infoSigla(ultimaNotifica)}
+        <button class="chip-ri sdi-{i.gravita}" onclick={() => (notificheAperte = !notificheAperte)} aria-expanded={notificheAperte}
+          title="Mostra le notifiche del Sistema di Interscambio">
+          <Icona nome={i.gravita === "errore" ? "it-error" : i.gravita === "avviso" ? "it-warning-circle" : "it-mail"} dimensione="xs" />
+          SdI: {i.stato}{#if ultimaNotifica.data}&nbsp;· {dataOraIso(ultimaNotifica.data).slice(0, 10)}{/if}
+        </button>
+      {/if}
       {#if dettaglio.firmato}
         <button class="chip-ri firma-{esitoFirme}" onclick={() => (firmeAperte = !firmeAperte)} aria-expanded={firmeAperte}
           title="Mostra i dettagli della firma">
@@ -307,6 +324,23 @@
           <button class="btn btn-link p-0" title="Salva" onclick={() => salvaAllegato(i)}><Icona nome="it-download" dimensione="xs" /></button>
         </span>
       {/each}
+    </div>
+  {/if}
+
+  {#if dettaglio && notificheAperte && notifiche.length > 0}
+    <div class="pannello-firme">
+      <ol class="cronologia">
+        {#each notifiche as m (m.file)}
+          {@const i = infoSigla(m)}
+          <li class="sdi-{i.gravita}">
+            <div><strong>{i.stato}</strong> <span class="text-secondary-ri">· {i.nome}{#if m.data} · {dataOraIso(m.data)}{/if}</span></div>
+            {#if m.note}<div>{m.note}</div>{/if}
+            {#each m.errori as e, j (j)}
+              <div>Errore {e.codice}: {e.descrizione}{#if e.suggerimento} <span class="text-secondary-ri">({e.suggerimento})</span>{/if}</div>
+            {/each}
+          </li>
+        {/each}
+      </ol>
     </div>
   {/if}
 
@@ -490,6 +524,47 @@
   }
   .chip-ri.firma-non_verificabile :global(.icon) {
     fill: var(--ri-avviso);
+  }
+  .chip-ri.sdi-ok {
+    color: var(--ri-successo);
+  }
+  .chip-ri.sdi-ok :global(.icon) {
+    fill: var(--ri-successo);
+  }
+  .chip-ri.sdi-errore {
+    color: var(--ri-errore);
+    border-color: var(--ri-errore);
+  }
+  .chip-ri.sdi-errore :global(.icon) {
+    fill: var(--ri-errore);
+  }
+  .chip-ri.sdi-avviso {
+    color: var(--ri-avviso);
+  }
+  .chip-ri.sdi-avviso :global(.icon) {
+    fill: var(--ri-avviso);
+  }
+  .chip-ri.sdi-info :global(.icon) {
+    fill: var(--ri-primario);
+  }
+  .cronologia {
+    list-style: none;
+    margin: 0;
+    padding: 0 0 0 0.25rem;
+    font-size: 0.88rem;
+  }
+  .cronologia li {
+    border-left: 3px solid var(--ri-bordo);
+    padding: 0.2rem 0 0.5rem 0.75rem;
+  }
+  .cronologia li.sdi-ok {
+    border-left-color: var(--ri-successo);
+  }
+  .cronologia li.sdi-errore {
+    border-left-color: var(--ri-errore);
+  }
+  .cronologia li.sdi-avviso {
+    border-left-color: var(--ri-avviso);
   }
   .chip-ri.controlli-errore {
     color: var(--ri-errore);

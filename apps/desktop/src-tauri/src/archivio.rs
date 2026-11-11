@@ -59,7 +59,28 @@ pub struct VoceMessaggio {
     pub file: String,
     pub sigla: String,
     pub descrizione: String,
+    /// Nome del file fattura a cui si riferisce la notifica.
     pub riferito_a: String,
+    #[serde(default)]
+    pub identificativo_sdi: String,
+    /// Data e ora della notifica (consegna, se presente, altrimenti ricezione).
+    #[serde(default)]
+    pub data: String,
+    /// Esito del committente (`EC01` accettata, `EC02` rifiutata).
+    #[serde(default)]
+    pub esito: String,
+    /// Note o motivazione indicate nella notifica.
+    #[serde(default)]
+    pub note: String,
+    #[serde(default)]
+    pub errori: Vec<ErroreNotifica>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct ErroreNotifica {
+    pub codice: String,
+    pub descrizione: String,
+    pub suggerimento: String,
 }
 
 /// File che non è stato possibile interpretare.
@@ -239,6 +260,22 @@ fn leggi_documento(
             sigla: m.tipo.sigla().to_owned(),
             descrizione: m.tipo.descrizione().to_owned(),
             riferito_a: m.nome_file.unwrap_or_default(),
+            identificativo_sdi: m.identificativo_sdi.unwrap_or_default(),
+            data: m
+                .data_ora_consegna
+                .or(m.data_ora_ricezione)
+                .unwrap_or_default(),
+            esito: m.esito.unwrap_or_default(),
+            note: m.descrizione.unwrap_or_default(),
+            errori: m
+                .errori
+                .into_iter()
+                .map(|e| ErroreNotifica {
+                    codice: e.codice.unwrap_or_default(),
+                    descrizione: e.descrizione.unwrap_or_default(),
+                    suggerimento: e.suggerimento.unwrap_or_default(),
+                })
+                .collect(),
         }),
         Contenuto::Fattura(f) => {
             let h = &f.intestazione;

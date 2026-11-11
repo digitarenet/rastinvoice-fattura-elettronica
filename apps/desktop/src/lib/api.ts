@@ -41,6 +41,11 @@ export interface VoceMessaggio {
   sigla: string;
   descrizione: string;
   riferito_a: string;
+  identificativo_sdi: string;
+  data: string;
+  esito: string;
+  note: string;
+  errori: { codice: string; descrizione: string; suggerimento: string }[];
 }
 
 export interface FileScartato {

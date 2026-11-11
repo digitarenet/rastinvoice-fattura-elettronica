@@ -23,6 +23,12 @@ export function data(iso: string): string {
   return `${iso.slice(8, 10)}/${iso.slice(5, 7)}/${iso.slice(0, 4)}`;
 }
 
+/** Data e ora ISO `2026-11-03T10:15:00+01:00` → `03/11/2026 10:15` (ora locale del file). */
+export function dataOra(iso: string): string {
+  if (!iso || iso.length < 10) return iso ?? "";
+  return iso.length >= 16 ? `${data(iso)} ${iso.slice(11, 16)}` : data(iso);
+}
+
 /** Iniziali per l'avatar di un soggetto. */
 export function iniziali(nome: string): string {
   const parole = nome

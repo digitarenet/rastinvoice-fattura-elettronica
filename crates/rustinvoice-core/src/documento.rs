@@ -214,7 +214,9 @@ fn leggi_messaggio(tipo: TipoMessaggioSdi, radice: roxmltree::Node<'_, '_>) -> M
         data_ora_consegna: testo(radice, "DataOraConsegna"),
         esito: testo(radice, "Esito")
             .or_else(|| testo_percorso(radice, &["EsitoCommittente", "Esito"])),
-        descrizione: testo(radice, "Descrizione").or_else(|| testo(radice, "Note")),
+        descrizione: testo(radice, "Descrizione")
+            .or_else(|| testo_percorso(radice, &["EsitoCommittente", "Descrizione"]))
+            .or_else(|| testo(radice, "Note")),
         errori,
     }
 }
