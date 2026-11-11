@@ -89,10 +89,17 @@
     erroreStandard = "";
     (async () => {
       try {
-        if (!xslt.disponibile()) throw new Error("il motore XSLT non è disponibile in questo sistema");
-        foglioXsl ??= await api.foglioLeggi();
-        if (!foglioXsl) throw new Error("foglio di stile non presente");
-        const html = xslt.trasforma(d.xml, foglioXsl);
+        let html: string;
+        try {
+          // Motore nativo, indipendente dalla webview.
+          html = await api.trasformaStandard(d.xml);
+        } catch (errNativo) {
+          // Riserva: motore XSLT della webview, finché è disponibile.
+          if (!xslt.disponibile()) throw errNativo;
+          foglioXsl ??= await api.foglioLeggi();
+          if (!foglioXsl) throw errNativo;
+          html = xslt.trasforma(d.xml, foglioXsl);
+        }
         if (dettaglio === d) htmlStandard = html;
       } catch (e) {
         if (dettaglio === d) {

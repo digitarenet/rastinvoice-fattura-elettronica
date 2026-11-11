@@ -21,9 +21,9 @@ jobs:
       - name: Formattazione
         run: cargo fmt --all --check
       - name: Analisi statica
-        run: cargo clippy -p rustinvoice-core -p rustinvoice-render -p rustinvoice-cli --all-targets -- -D warnings
+        run: cargo clippy -p rustinvoice-core -p rustinvoice-render -p rustinvoice-cli -p rustinvoice-xslt --all-targets -- -D warnings
       - name: Test
-        run: cargo test -p rustinvoice-core -p rustinvoice-render -p rustinvoice-cli
+        run: cargo test -p rustinvoice-core -p rustinvoice-render -p rustinvoice-cli -p rustinvoice-xslt
 
   interfaccia:
     runs-on: ubuntu-latest

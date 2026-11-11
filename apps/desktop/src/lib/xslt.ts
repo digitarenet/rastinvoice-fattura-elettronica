@@ -3,9 +3,9 @@
 //
 // Applicazione di un foglio di stile XSL all'XML della fattura.
 //
-// Soluzione provvisoria: usa il motore XSLT integrato nella webview di
-// sistema. Verrà sostituita da una trasformazione nativa lato Rust, perché i
-// motori basati su Chromium stanno rimuovendo il supporto XSLT.
+// Riserva del motore nativo (comando trasforma_standard): usa il motore XSLT
+// integrato nella webview di sistema, finché resta disponibile. I motori
+// basati su Chromium ne stanno rimuovendo il supporto.
 
 export function disponibile(): boolean {
   return typeof (window as any).XSLTProcessor !== "undefined";

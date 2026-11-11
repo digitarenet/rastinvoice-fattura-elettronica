@@ -480,6 +480,17 @@ fn foglio_stile_leggi(stato: tauri::State<'_, Stato>) -> Option<String> {
     foglio_stile::leggi(&stato.dir_dati)
 }
 
+/// Applica il foglio di stile standard con il motore XSLT nativo, che non
+/// dipende dal supporto XSLT della webview.
+#[tauri::command]
+async fn trasforma_standard(stato: tauri::State<'_, Stato>, xml: String) -> Result<String, String> {
+    let foglio = foglio_stile::leggi(&stato.dir_dati).ok_or("foglio di stile non presente")?;
+    tauri::async_runtime::spawn_blocking(move || rustinvoice_xslt::trasforma(&foglio, &xml))
+        .await
+        .map_err(|e| e.to_string())?
+        .map_err(|e| e.to_string())
+}
+
 /// La finestra può mostrare solo l'interfaccia dell'applicazione e le
 /// anteprime generate al suo interno: qualsiasi altra pagina (per esempio un
 /// collegamento contenuto in una fattura) viene bloccata.
@@ -542,6 +553,7 @@ pub fn avvia() {
             foglio_stile_aggiorna,
             foglio_stile_importa,
             foglio_stile_leggi,
+            trasforma_standard,
             salva_testo,
             anteprima_allegato,
             byte_allegato,

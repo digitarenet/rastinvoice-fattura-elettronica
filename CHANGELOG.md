@@ -4,6 +4,15 @@ Tutte le modifiche rilevanti di RustinVoice. Il numero di versione segue lo sche
 MAGGIORE.MINORE.CORREZIONE: la versione minore cresce con le nuove funzioni, quella di
 correzione con le sole correzioni.
 
+## 0.7.0 - 2026-11-11
+
+### Aggiunto
+- Motore XSLT 1.0 / XPath 1.0 nativo (`rustinvoice-xslt`) per la vista AssoSoftware: non
+  dipende più dal supporto XSLT della webview, che i motori basati su Chromium stanno
+  rimuovendo. Il motore della webview resta come riserva.
+- Programma di esempio `trasforma` e prove automatiche del motore, con risultati confrontati
+  con un motore XSLT di riferimento su tutte le fatture di prova.
+
 ## 0.6.1 - 2026-11-11
 
 ### Modificato

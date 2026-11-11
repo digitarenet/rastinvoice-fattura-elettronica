@@ -9,11 +9,12 @@ members = [
     "crates/rustinvoice-core",
     "crates/rustinvoice-render",
     "crates/rustinvoice-cli",
+    "crates/rustinvoice-xslt",
     "apps/desktop/src-tauri",
 ]
 
 [workspace.package]
-version = "0.6.1"
+version = "0.7.0"
 edition = "2021"
 authors = ["Andrea Re <info@digitare.net>"]
 rust-version = "1.80"

@@ -184,6 +184,7 @@ export const api = {
   foglioImporta: (sorgente: string) =>
     invoke<StatoFoglio>("foglio_stile_importa", { sorgente }),
   foglioLeggi: () => invoke<string | null>("foglio_stile_leggi"),
+  trasformaStandard: (xml: string) => invoke<string>("trasforma_standard", { xml }),
   /** Chiede dove salvare e salva; restituisce false se l'utente annulla. */
   salvaTesto: (nome: string, tipo: "csv" | "html" | "xml", testo: string) =>
     invoke<boolean>("salva_testo", { nome, tipo, testo }),

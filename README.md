@@ -34,7 +34,7 @@ Fase 2 in corso: applicazione desktop con interfaccia grafica, costruita sul nuc
 | Stampa, salvataggio HTML e XML, allegati, esportazione CSV | fatto |
 | Visualizzatore allegati (PDF, immagini, Word, Excel, ODS, CSV, testo, zip) | fatto |
 | Esportazione PDF diretta | da fare |
-| Trasformazione XSL nativa (indipendente dal motore web di sistema) | da fare |
+| Trasformazione XSL nativa (indipendente dal motore web di sistema) | fatto |
 
 ## Struttura
 
@@ -43,6 +43,7 @@ crates/
   rustinvoice-core/     nucleo: modello dati, lettura, buste firmate (nessuna dipendenza grafica)
   rustinvoice-render/   vista "Moderna" in HTML a partire dal modello dati
   rustinvoice-cli/      riga di comando
+  rustinvoice-xslt/     motore XSLT 1.0 / XPath 1.0 per i fogli di stile
 apps/
   desktop/              applicazione desktop (Tauri 2 + Svelte 5 + Bootstrap Italia)
     src/                interfaccia
@@ -86,7 +87,10 @@ salvare i dati: nel profilo utente oppure accanto al programma (**modalità port
 chiavetta USB, con la cartella `dati` creata automaticamente). La scelta si può cambiare dalle Impostazioni.
 
 Il foglio di stile ufficiale AssoSoftware non è incluso: si scarica dalle impostazioni dell'applicazione
-(dal sito ufficiale) oppure si importa da un file `.xsl` o `.zip`.
+(dal sito ufficiale) oppure si importa da un file `.xsl` o `.zip`. Il foglio viene applicato da un motore
+XSLT 1.0 scritto apposta per RustinVoice (`crates/rustinvoice-xslt`), che non dipende dal supporto XSLT del
+motore web di sistema; quest'ultimo resta solo come riserva. Il motore copre istruzioni e funzioni usate
+dai fogli di stile per la FatturaPA, con limiti di ricorsione e di dimensione del risultato.
 
 ## Uso da riga di comando
 

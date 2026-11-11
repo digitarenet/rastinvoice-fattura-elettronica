@@ -3595,7 +3595,7 @@ dependencies = [
 
 [[package]]
 name = "rustinvoice-cli"
-version = "0.6.1"
+version = "0.7.0"
 dependencies = [
  "clap",
  "rustinvoice-core",
@@ -3605,7 +3605,7 @@ dependencies = [
 
 [[package]]
 name = "rustinvoice-core"
-version = "0.6.1"
+version = "0.7.0"
 dependencies = [
  "base64 0.22.1",
  "chrono",
@@ -3625,7 +3625,7 @@ dependencies = [
 
 [[package]]
 name = "rustinvoice-desktop"
-version = "0.6.1"
+version = "0.7.0"
 dependencies = [
  "calamine",
  "chrono",
@@ -3634,6 +3634,7 @@ dependencies = [
  "rust_decimal",
  "rustinvoice-core",
  "rustinvoice-render",
+ "rustinvoice-xslt",
  "serde",
  "serde_json",
  "tauri",
@@ -3647,11 +3648,18 @@ dependencies = [
 
 [[package]]
 name = "rustinvoice-render"
-version = "0.6.1"
+version = "0.7.0"
 dependencies = [
  "chrono",
  "rust_decimal",
  "rustinvoice-core",
+]
+
+[[package]]
+name = "rustinvoice-xslt"
+version = "0.7.0"
+dependencies = [
+ "roxmltree",
 ]
 
 [[package]]

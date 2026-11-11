@@ -20,6 +20,7 @@ tauri-build = { version = "2", features = [] }
 [dependencies]
 rustinvoice-core = { path = "../../../crates/rustinvoice-core" }
 rustinvoice-render = { path = "../../../crates/rustinvoice-render" }
+rustinvoice-xslt = { path = "../../../crates/rustinvoice-xslt" }
 tauri = { version = "2", features = [] }
 tauri-plugin-dialog = "2"
 tauri-plugin-opener = "2"
