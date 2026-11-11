@@ -4,6 +4,22 @@ Tutte le modifiche rilevanti di RustinVoice. Il numero di versione segue lo sche
 MAGGIORE.MINORE.CORREZIONE: la versione minore cresce con le nuove funzioni, quella di
 correzione con le sole correzioni.
 
+## 0.6.0 - 2026-11-11
+
+### Aggiunto
+- Sezione **Statistiche** per anno o per tutto il periodo: fatturato e acquisti
+  (imponibile e totale), IVA a debito e a credito, IVA in scissione dei pagamenti, saldo
+  IVA indicativo, grafico mensile o annuale di emesse e ricevute (con tabella dei valori)
+  e classifica di clienti e fornitori con imponibile e IVA.
+- Nella scheda di ogni cliente e fornitore: documenti, imponibile, IVA e totale per anno.
+
+### Modificato
+- Menu riorganizzato: Statistiche e Clienti e fornitori in cima, poi i documenti, gli anni
+  e gli strumenti.
+
+### Corretto
+- Icona mancante nella scheda Clienti e fornitori.
+
 ## 0.5.0 - 2026-11-11
 
 ### Aggiunto

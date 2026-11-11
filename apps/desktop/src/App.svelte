@@ -27,8 +27,9 @@
   import Impostazioni from "./componenti/Impostazioni.svelte";
   import Credits from "./componenti/Credits.svelte";
   import SceltaDati from "./componenti/SceltaDati.svelte";
+  import Statistiche from "./componenti/Statistiche.svelte";
 
-  type Vista = "documenti" | "rubrica" | "messaggi" | "impostazioni" | "credits";
+  type Vista = "documenti" | "statistiche" | "rubrica" | "messaggi" | "impostazioni" | "credits";
 
   let info = $state<Avvio | null>(null);
   let imp = $state<Imp | null>(null);
@@ -376,6 +377,20 @@
     <div class="corpo">
       <nav class="laterale ri-pannello ri-scroll" aria-label="Sezioni">
         <ul>
+          <li>
+            <button class:attivo={vista === "statistiche"} onclick={() => (vista = "statistiche")}>
+              <Icona nome="it-chart-line" /> <span>Statistiche</span>
+            </button>
+          </li>
+          <li>
+            <button class:attivo={vista === "rubrica"} onclick={() => (vista = "rubrica")}>
+              <Icona nome="it-user" /> <span>Clienti e fornitori</span>
+            </button>
+          </li>
+        </ul>
+
+        <h2 class="titoletto">Documenti</h2>
+        <ul>
           {#each ["tutte", "ricevute", "emesse", "da_leggere", "contrassegnate", "anomalie"] as const as s (s)}
             {#if !((s === "ricevute" || s === "emesse") && propri.size === 0) && !(s === "anomalie" && conteggi.anomalie === 0)}
               <li>
@@ -403,11 +418,6 @@
 
         <h2 class="titoletto">Strumenti</h2>
         <ul>
-          <li>
-            <button class:attivo={vista === "rubrica"} onclick={() => (vista = "rubrica")}>
-              <Icona nome="it-user" /> <span>Clienti e fornitori</span>
-            </button>
-          </li>
           <li>
             <button class:attivo={vista === "messaggi"} onclick={() => (vista = "messaggi")}>
               <Icona nome="it-mail" /> <span>Notifiche SdI</span>
@@ -578,6 +588,16 @@
               </section>
             </div>
           {/if}
+        {:else if vista === "statistiche"}
+          <Statistiche
+            voci={esito.voci}
+            {propri}
+            onApriImpostazioni={() => (vista = "impostazioni")}
+            onMostraContatto={(c) => {
+              vaiA("tutte");
+              contatto = c;
+            }}
+          />
         {:else if vista === "rubrica"}
           <Rubrica
             voci={esito.voci}

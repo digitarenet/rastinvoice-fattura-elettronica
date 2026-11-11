@@ -29,6 +29,7 @@ Fase 2 in corso: applicazione desktop con interfaccia grafica, costruita sul nuc
 | Vista "Moderna" e foglio di stile ufficiale AssoSoftware (scaricabile) | fatto |
 | Ricerca a testo libero, filtri per sezione, anno, date, contatto | fatto |
 | Rubrica clienti e fornitori | fatto |
+| Statistiche: fatturato, acquisti, IVA per anno, mese e controparte | fatto |
 | Trascina e rilascia, modalità portable | fatto |
 | Stampa, salvataggio HTML e XML, allegati, esportazione CSV | fatto |
 | Visualizzatore allegati (PDF, immagini, Word, Excel, ODS, CSV, testo, zip) | fatto |

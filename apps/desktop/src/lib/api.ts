@@ -26,6 +26,9 @@ export interface Voce {
   cedente: SoggettoBreve;
   cessionario: SoggettoBreve;
   totale: string;
+  imponibile: string;
+  imposta: string;
+  scissione: boolean;
   divisa: string;
   prima_scadenza: string;
   firmato: boolean;

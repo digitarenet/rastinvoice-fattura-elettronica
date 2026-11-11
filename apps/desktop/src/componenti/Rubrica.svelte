@@ -59,10 +59,18 @@
       : [],
   );
 
-  // Totali per anno del contatto selezionato.
+  // Totali per anno del contatto selezionato, con imponibile e IVA.
   const perAnno = $derived.by(() => {
-    const m = new Map<number, number>();
-    for (const v of documenti) m.set(v.anno, (m.get(v.anno) ?? 0) + importoConSegno(v));
+    const m = new Map<number, { documenti: number; imponibile: number; imposta: number; totale: number }>();
+    for (const v of documenti) {
+      const segno = v.nota_credito ? -1 : 1;
+      const r = m.get(v.anno) ?? { documenti: 0, imponibile: 0, imposta: 0, totale: 0 };
+      r.documenti += 1;
+      r.imponibile += segno * Math.abs(Number(v.imponibile) || 0);
+      r.imposta += segno * Math.abs(Number(v.imposta) || 0);
+      r.totale += importoConSegno(v);
+      m.set(v.anno, r);
+    }
     return [...m.entries()].sort((a, b) => b[0] - a[0]);
   });
 
@@ -135,13 +143,24 @@
         <div class="riquadro"><span>Ultimo</span><strong>{data(corrente.ultimo)}</strong></div>
       </div>
 
-      {#if perAnno.length > 1}
-        <h3 class="h6 mt-4">Totale per anno</h3>
-        <div class="anni">
-          {#each perAnno as [anno, tot] (anno)}
-            <span class="badge-anno"><strong>{anno}</strong> {importo(tot.toFixed(2))}</span>
-          {/each}
-        </div>
+      {#if perAnno.length > 0}
+        <h3 class="h6 mt-4">Per anno</h3>
+        <table class="table table-sm per-anno">
+          <thead>
+            <tr><th>Anno</th><th class="text-end">Documenti</th><th class="text-end">Imponibile</th><th class="text-end">IVA</th><th class="text-end">Totale</th></tr>
+          </thead>
+          <tbody>
+            {#each perAnno as [anno, r] (anno)}
+              <tr>
+                <td><strong>{anno || "—"}</strong></td>
+                <td class="text-end">{r.documenti}</td>
+                <td class="text-end">{importo(r.imponibile.toFixed(2))}</td>
+                <td class="text-end">{importo(r.imposta.toFixed(2))}</td>
+                <td class="text-end">{importo(r.totale.toFixed(2))}</td>
+              </tr>
+            {/each}
+          </tbody>
+        </table>
       {/if}
 
       <h3 class="h6 mt-4">Documenti</h3>
@@ -163,7 +182,7 @@
       </table>
     {:else}
       <div class="vuoto text-secondary-ri">
-        <Icona nome="it-team-digitale" dimensione="lg" />
+        <Icona nome="it-user" dimensione="lg" />
         <p class="mt-3">
           Seleziona un contatto per vedere i documenti.<br />
           {#if propri.size === 0}
@@ -337,17 +356,11 @@
   .riquadro strong {
     font-size: 1.15rem;
   }
-  .anni {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-  }
-  .badge-anno {
-    border: 1px solid var(--ri-bordo);
-    border-radius: 6px;
-    padding: 0.2rem 0.6rem;
-    font-size: 0.85rem;
-    background: var(--ri-pannello);
+  .per-anno {
+    font-size: 0.88rem;
+    font-variant-numeric: tabular-nums;
+    max-width: 640px;
+    color: var(--ri-testo);
   }
   .table {
     font-size: 0.9rem;

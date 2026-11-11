@@ -40,6 +40,14 @@ pub struct Voce {
     pub cessionario: SoggettoBreve,
     /// Totale come stringa decimale (es. `1512.80`), per non perdere precisione.
     pub totale: String,
+    /// Imponibile e imposta (stringhe decimali), per le statistiche IVA.
+    #[serde(default)]
+    pub imponibile: String,
+    #[serde(default)]
+    pub imposta: String,
+    /// IVA in scissione dei pagamenti: non incassata dal cedente.
+    #[serde(default)]
+    pub scissione: bool,
     pub divisa: String,
     pub prima_scadenza: String,
     pub firmato: bool,
@@ -352,6 +360,9 @@ fn leggi_documento(
                         cedente: cedente.clone(),
                         cessionario: cessionario.clone(),
                         totale: totale.map(|t| t.to_string()).unwrap_or_default(),
+                        imponibile: c.imponibile_e_imposta().0.to_string(),
+                        imposta: c.imponibile_e_imposta().1.to_string(),
+                        scissione: c.scissione_pagamenti(),
                         divisa: d.divisa.clone().unwrap_or_else(|| "EUR".into()),
                         prima_scadenza: c
                             .prima_scadenza()

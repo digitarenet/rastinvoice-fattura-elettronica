@@ -467,6 +467,46 @@ impl Corpo {
         None
     }
 
+    /// Imponibile e imposta del documento: dai riepiloghi IVA oppure, per la
+    /// fattura semplificata, dalle voci (il cui importo comprende l'IVA).
+    pub fn imponibile_e_imposta(&self) -> (Decimal, Decimal) {
+        if !self.riepiloghi.is_empty() {
+            let imponibile = self
+                .riepiloghi
+                .iter()
+                .map(|r| r.imponibile_importo.unwrap_or_default())
+                .sum();
+            let imposta = self
+                .riepiloghi
+                .iter()
+                .map(|r| r.imposta.unwrap_or_default())
+                .sum();
+            return (imponibile, imposta);
+        }
+        let mut imponibile = Decimal::ZERO;
+        let mut imposta = Decimal::ZERO;
+        for l in &self.linee {
+            let importo = l.prezzo_totale.unwrap_or_default();
+            let iva = match (l.imposta, l.aliquota_iva) {
+                (Some(i), _) => i,
+                (None, Some(a)) if !a.is_zero() => {
+                    (importo * a / (Decimal::from(100) + a)).round_dp(2)
+                }
+                _ => Decimal::ZERO,
+            };
+            imponibile += importo - iva;
+            imposta += iva;
+        }
+        (imponibile, imposta)
+    }
+
+    /// Vero se l'IVA è in scissione dei pagamenti (versata dall'ente pubblico).
+    pub fn scissione_pagamenti(&self) -> bool {
+        self.riepiloghi
+            .iter()
+            .any(|r| r.esigibilita_iva.as_deref() == Some("S"))
+    }
+
     /// Prima data di scadenza tra le rate di pagamento.
     pub fn prima_scadenza(&self) -> Option<NaiveDate> {
         self.pagamenti
