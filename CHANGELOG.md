@@ -4,6 +4,16 @@ Tutte le modifiche rilevanti di RustinVoice. Il numero di versione segue lo sche
 MAGGIORE.MINORE.CORREZIONE: la versione minore cresce con le nuove funzioni, quella di
 correzione con le sole correzioni.
 
+## 0.3.1 - 2026-11-11
+
+### Migliorato
+- Avvio con l'indice circa 2,8 volte più rapido (10.000 file: da 175 a 63 millisecondi):
+  i dati già letti non vengono più copiati e l'indice si riscrive solo se cambia qualcosa.
+- Le cartelle vengono esplorate in parallelo, riusando i dati di dimensione e data forniti
+  dalla lettura della cartella: molto più veloce su dischi di rete e NAS.
+- L'elenco dei documenti disegna solo le righe visibili: scorrimento e ricerca restano
+  fluidi anche con decine di migliaia di fatture.
+
 ## 0.3.0 - 2026-11-11
 
 ### Aggiunto

@@ -90,25 +90,76 @@ fn e_candidato(p: &Path) -> bool {
 
 /// Elenca i file candidati partendo da file e cartelle (ricorsivamente).
 pub fn elenca(percorsi: &[String]) -> Vec<PathBuf> {
-    let mut file = Vec::new();
-    for p in percorsi {
-        let p = PathBuf::from(p);
-        if p.is_dir() {
-            for voce in walkdir::WalkDir::new(&p)
-                .follow_links(false)
-                .into_iter()
-                .filter_map(|e| e.ok())
-            {
-                if voce.file_type().is_file() && e_candidato(voce.path()) {
-                    file.push(voce.into_path());
-                }
+    elenca_con_impronta(percorsi)
+        .into_iter()
+        .map(|(p, _)| p)
+        .collect()
+}
+
+/// Dimensione e data di modifica (in nanosecondi) di un file.
+type Impronta = (u64, u128);
+
+/// Elenca i file candidati con la loro impronta. Le cartelle vengono visitate
+/// in parallelo: su dischi di rete e NAS il tempo è dominato dall'attesa delle
+/// risposte, e più richieste contemporanee lo riducono molto. I dati del file
+/// arrivano dalla stessa lettura della cartella (su Windows senza ulteriori
+/// accessi al disco).
+fn elenca_con_impronta(percorsi: &[String]) -> Vec<(PathBuf, Impronta)> {
+    let mut file: Vec<(PathBuf, Impronta)> = percorsi
+        .par_iter()
+        .flat_map(|p| {
+            let p = PathBuf::from(p);
+            if p.is_dir() {
+                visita(&p, 0)
+            } else if p.is_file() {
+                let i = impronta(&p).unwrap_or_default();
+                vec![(p, i)]
+            } else {
+                Vec::new()
             }
-        } else if p.is_file() {
-            file.push(p);
+        })
+        .collect();
+    file.par_sort_unstable_by(|a, b| a.0.cmp(&b.0));
+    file.dedup_by(|a, b| a.0 == b.0);
+    file
+}
+
+/// Profondità massima delle sottocartelle, contro cicli e strutture anomale.
+const PROFONDITA_MASSIMA: usize = 64;
+
+fn visita(cartella: &Path, profondita: usize) -> Vec<(PathBuf, Impronta)> {
+    let Ok(voci) = std::fs::read_dir(cartella) else {
+        return Vec::new();
+    };
+    let mut file = Vec::new();
+    let mut sottocartelle = Vec::new();
+    for voce in voci.flatten() {
+        // Il tipo non segue i collegamenti simbolici: non si esce dalla cartella.
+        let Ok(tipo) = voce.file_type() else { continue };
+        if tipo.is_dir() {
+            if profondita < PROFONDITA_MASSIMA {
+                sottocartelle.push(voce.path());
+            }
+        } else if tipo.is_file() {
+            let percorso = voce.path();
+            if e_candidato(&percorso) {
+                let i = voce
+                    .metadata()
+                    .ok()
+                    .and_then(|m| impronta_da(&m))
+                    .unwrap_or_default();
+                file.push((percorso, i));
+            }
         }
     }
-    file.sort();
-    file.dedup();
+    if !sottocartelle.is_empty() {
+        file.extend(
+            sottocartelle
+                .par_iter()
+                .flat_map(|c| visita(c, profondita + 1))
+                .collect::<Vec<_>>(),
+        );
+    }
     file
 }
 
@@ -323,8 +374,11 @@ fn salva_indice(dir: &Path, indice: &Indice) {
 }
 
 /// Firma del file: dimensione e data di modifica.
-fn impronta(p: &Path) -> Option<(u64, u128)> {
-    let m = std::fs::metadata(p).ok()?;
+fn impronta(p: &Path) -> Option<Impronta> {
+    impronta_da(&std::fs::metadata(p).ok()?)
+}
+
+fn impronta_da(m: &std::fs::Metadata) -> Option<Impronta> {
     let t = m
         .modified()
         .ok()?
@@ -346,12 +400,14 @@ fn sotto(file: &str, radice: &str) -> bool {
 /// Legge in parallelo tutti i file indicati (o contenuti nelle cartelle),
 /// riutilizzando l'indice per quelli non modificati.
 pub fn scansiona(percorsi: &[String], dir_dati: &Path) -> Esito {
-    let vecchio = carica_indice(dir_dati);
+    let mut vecchio = carica_indice(dir_dati).file;
     let mut nuovo = Indice {
         versione: env!("CARGO_PKG_VERSION").to_owned(),
-        file: HashMap::new(),
+        file: HashMap::with_capacity(vecchio.len()),
     };
     let mut esito = Esito::default();
+    // L'indice si riscrive solo se qualcosa è cambiato.
+    let mut modificato = false;
 
     // Cartelle o file non raggiungibili: si conservano i dati già noti.
     let mut raggiungibili = Vec::new();
@@ -360,53 +416,120 @@ pub fn scansiona(percorsi: &[String], dir_dati: &Path) -> Esito {
             raggiungibili.push(p.clone());
         } else {
             esito.non_raggiungibili.push(p.clone());
-            for (k, v) in &vecchio.file {
-                if sotto(k, p) {
-                    nuovo.file.insert(k.clone(), v.clone());
+            let chiavi: Vec<String> = vecchio.keys().filter(|k| sotto(k, p)).cloned().collect();
+            for k in chiavi {
+                if let Some(v) = vecchio.remove(&k) {
+                    nuovo.file.insert(k, v);
                 }
             }
         }
     }
 
-    let file = elenca(&raggiungibili);
-    let letti: Vec<(String, VoceIndice)> = file
-        .par_iter()
-        .map(|p| {
-            let chiave = p.to_string_lossy().to_string();
-            let (dimensione, modificato) = impronta(p).unwrap_or_default();
-            if let Some(v) = vecchio.file.get(&chiave) {
-                if v.dimensione == dimensione && v.modificato == modificato && modificato != 0 {
-                    return (chiave, v.clone());
-                }
+    // I file non modificati si spostano dal vecchio indice senza copiarli;
+    // gli altri si leggono in parallelo.
+    let mut da_leggere = Vec::new();
+    for (p, (dimensione, data)) in elenca_con_impronta(&raggiungibili) {
+        let chiave = p.to_string_lossy().to_string();
+        match vecchio.remove(&chiave) {
+            Some(v) if v.dimensione == dimensione && v.modificato == data && data != 0 => {
+                nuovo.file.insert(chiave, v);
             }
+            _ => da_leggere.push((chiave, p, dimensione, data)),
+        }
+    }
+    // File rimossi dalle cartelle: l'indice va aggiornato.
+    modificato |= !vecchio.is_empty() || !da_leggere.is_empty();
+    drop(vecchio);
+    let letti: Vec<(String, VoceIndice)> = da_leggere
+        .into_par_iter()
+        .map(|(chiave, p, dimensione, modificato)| {
             (
                 chiave,
                 VoceIndice {
                     dimensione,
                     modificato,
-                    letti: leggi(p),
+                    letti: leggi(&p),
                 },
             )
         })
         .collect();
     nuovo.file.extend(letti);
 
-    for v in nuovo.file.values() {
-        for l in &v.letti {
+    if modificato {
+        salva_indice(dir_dati, &nuovo);
+    }
+    for v in nuovo.file.into_values() {
+        for l in v.letti {
             match l {
-                Letto::Voci(x) => esito.voci.extend(x.iter().cloned()),
-                Letto::Messaggio(m) => esito.messaggi.push(m.clone()),
-                Letto::Scartato(s) => esito.scartati.push(s.clone()),
+                Letto::Voci(x) => esito.voci.extend(x),
+                Letto::Messaggio(m) => esito.messaggi.push(m),
+                Letto::Scartato(s) => esito.scartati.push(s),
             }
         }
     }
-    salva_indice(dir_dati, &nuovo);
 
     // Più recenti per primi.
-    esito
-        .voci
-        .sort_by(|a, b| b.data.cmp(&a.data).then(a.numero.cmp(&b.numero)));
+    esito.voci.par_sort_unstable_by(|a, b| {
+        b.data
+            .cmp(&a.data)
+            .then_with(|| a.numero.cmp(&b.numero))
+            .then_with(|| a.id.cmp(&b.id))
+    });
     esito.messaggi.sort_by(|a, b| a.file.cmp(&b.file));
     esito.scartati.sort_by(|a, b| a.file.cmp(&b.file));
     esito
+}
+
+#[cfg(test)]
+mod prove {
+    use super::*;
+
+    /// Misura dei tempi di scansione su una cartella indicata dalla variabile
+    /// RUSTINVOICE_CARTELLA_MISURA: prima lettura completa e lettura dall'indice.
+    /// Eseguire con `cargo test --release -p rustinvoice-desktop misura -- --ignored --nocapture`.
+    #[test]
+    #[ignore]
+    fn misura_scansione() {
+        let Some(cartella) = std::env::var_os("RUSTINVOICE_CARTELLA_MISURA") else {
+            return;
+        };
+        let cartella = cartella.to_string_lossy().to_string();
+        let dati = std::env::temp_dir().join("rustinvoice-misura");
+        let _ = std::fs::remove_dir_all(&dati);
+        std::fs::create_dir_all(&dati).unwrap();
+        for giro in ["prima lettura", "da indice", "da indice"] {
+            let inizio = std::time::Instant::now();
+            let esito = scansiona(std::slice::from_ref(&cartella), &dati);
+            println!(
+                "{giro}: {} voci in {:?}",
+                esito.voci.len(),
+                inizio.elapsed()
+            );
+        }
+        let t = std::time::Instant::now();
+        let indice = carica_indice(&dati);
+        println!("  carica indice: {:?}", t.elapsed());
+        let t = std::time::Instant::now();
+        salva_indice(&dati, &indice);
+        println!("  salva indice: {:?}", t.elapsed());
+        let t = std::time::Instant::now();
+        let file = elenca_con_impronta(std::slice::from_ref(&cartella));
+        println!(
+            "  elenca {} file con impronta: {:?}",
+            file.len(),
+            t.elapsed()
+        );
+        let esito = scansiona(std::slice::from_ref(&cartella), &dati);
+        let t = std::time::Instant::now();
+        let json = serde_json::to_string(&esito).unwrap();
+        println!(
+            "  esito in JSON per l'interfaccia: {:?}, {} KB",
+            t.elapsed(),
+            json.len() / 1024
+        );
+        let dimensione = std::fs::metadata(dati.join("indice.json"))
+            .map(|m| m.len())
+            .unwrap_or(0);
+        println!("indice: {} KB", dimensione / 1024);
+    }
 }

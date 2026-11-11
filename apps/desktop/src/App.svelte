@@ -30,7 +30,9 @@
 
   let info = $state<Avvio | null>(null);
   let imp = $state<Imp | null>(null);
-  let esito = $state<Esito>({ voci: [], messaggi: [], scartati: [], non_raggiungibili: [] });
+  // Stato non profondo: l'elenco viene sostituito per intero a ogni lettura e
+  // con migliaia di documenti evita il costo del tracciamento di ogni campo.
+  let esito = $state.raw<Esito>({ voci: [], messaggi: [], scartati: [], non_raggiungibili: [] });
   let foglio = $state<StatoFoglio | null>(null);
   let scansione = $state(false);
   let vista = $state<Vista>("documenti");
@@ -60,6 +62,18 @@
   const visibili = $derived(
     filtra(esito.voci, { sezione, anno, ricerca, contatto, dal, al, ordinamento }, propri, lette, contrassegnate),
   );
+
+  // Elenco virtuale: si disegnano solo le righe visibili (più un margine),
+  // così lo scorrimento resta fluido anche con decine di migliaia di documenti.
+  const ALTEZZA_RIGA = 74;
+  const RIGHE_MARGINE = 8;
+  let scorrimento = $state(0);
+  let altezzaElenco = $state(800);
+  const primaRiga = $derived(Math.max(0, Math.floor(scorrimento / ALTEZZA_RIGA) - RIGHE_MARGINE));
+  const ultimaRiga = $derived(
+    Math.min(visibili.length, Math.ceil((scorrimento + altezzaElenco) / ALTEZZA_RIGA) + RIGHE_MARGINE),
+  );
+  const righeDisegnate = $derived(visibili.slice(primaRiga, ultimaRiga));
 
   const anni = $derived([...new Set(esito.voci.map((v) => v.anno).filter((a) => a > 0))].sort((a, b) => b - a));
   const conteggi = $derived({
@@ -278,8 +292,17 @@
       const i = selezionata ? visibili.findIndex((v) => v.id === selezionata!.id) : -1;
       const j = Math.max(0, Math.min(visibili.length - 1, i + (e.key === "ArrowDown" ? 1 : -1)));
       seleziona(visibili[j]);
-      elencoEl?.querySelectorAll("li")[j]?.scrollIntoView({ block: "nearest" });
+      mostraRiga(j);
     }
+  }
+
+  /** Scorre l'elenco quanto basta per rendere visibile la riga indicata. */
+  function mostraRiga(j: number) {
+    if (!elencoEl) return;
+    const sopra = j * ALTEZZA_RIGA;
+    if (sopra < elencoEl.scrollTop) elencoEl.scrollTop = sopra;
+    else if (sopra + ALTEZZA_RIGA > elencoEl.scrollTop + elencoEl.clientHeight)
+      elencoEl.scrollTop = sopra + ALTEZZA_RIGA - elencoEl.clientHeight;
   }
 
   const etichette: Record<Sezione, string> = {
@@ -459,11 +482,13 @@
                     <button class="btn btn-link btn-xs p-0" onclick={scansiona}>Riprova</button>
                   </div>
                 {/if}
-                <ul class="voci ri-scroll" bind:this={elencoEl}>
-                  {#each visibili as v (v.id)}
+                <ul class="voci ri-scroll" bind:this={elencoEl} bind:clientHeight={altezzaElenco}
+                  onscroll={() => (scorrimento = elencoEl?.scrollTop ?? 0)}>
+                  {#if primaRiga > 0}<li class="spazio" style="height: {primaRiga * ALTEZZA_RIGA}px" aria-hidden="true"></li>{/if}
+                  {#each righeDisegnate as v (v.id)}
                     {@const altro = controparte(v, propri)}
                     {@const dir = direzione(v, propri)}
-                    <li>
+                    <li class="riga-elenco">
                       <button
                         class="voce"
                         class:selezionata={selezionata?.id === v.id}
@@ -502,6 +527,7 @@
                       {scansione ? "Lettura in corso..." : "Nessun documento con questi filtri."}
                     </li>
                   {/each}
+                  {#if ultimaRiga < visibili.length}<li class="spazio" style="height: {(visibili.length - ultimaRiga) * ALTEZZA_RIGA}px" aria-hidden="true"></li>{/if}
                 </ul>
                 <footer class="piede">
                   <span>{visibili.length} documenti</span>
@@ -924,8 +950,14 @@
     padding: 0.6rem 0.75rem 0.6rem 0.9rem;
     border: 0 !important;
   }
-  .voci > li {
+  .voci > li.riga-elenco {
     border-bottom: 1px solid var(--ri-bordo);
+    /* Altezza fissa, uguale ad ALTEZZA_RIGA: serve all'elenco virtuale. */
+    height: 74px;
+    overflow: hidden;
+  }
+  .voci > li.riga-elenco > .voce {
+    height: 73px;
   }
   .voce:focus:not(:focus-visible) {
     box-shadow: none !important;
