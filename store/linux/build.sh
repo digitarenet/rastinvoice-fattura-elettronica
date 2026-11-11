@@ -2,8 +2,7 @@
 # Copyright (c) 2026 Andrea Re - info@digitare.net
 # Autore: Andrea Re @ 2026 - info@digitare.net
 #
-# Pacchetti Linux (.deb, .rpm, AppImage) compilati in locale, senza usare i
-# minuti di GitHub Actions. Per compatibilità con le distribuzioni più diffuse
+# Pacchetti Linux (.deb, .rpm, AppImage) compilati in locale. Per compatibilità con le distribuzioni più diffuse
 # la compilazione avviene in un container Debian 12 (Docker o Podman).
 #
 # Uso, dalla radice del repository:

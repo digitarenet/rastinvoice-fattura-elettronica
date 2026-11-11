@@ -119,8 +119,8 @@ Tutte le versioni e le note di rilascio sono nelle [release di GitHub](https://g
 - **Linux:** `.deb` per Debian e Ubuntu, `.rpm` per Fedora e openSUSE e AppImage nelle
   [release di GitHub](https://github.com/digitarenet/rastinvoice-fattura-elettronica/releases), oltre a Flathub e Snap Store.
 - Chi preferisce può compilare il programma dai sorgenti su qualsiasi sistema (vedi Compilazione).
-- Materiale per gli store nella cartella [`store/`](store/README.md); i pacchetti si producono con il workflow
-  Rilascio, avviato a mano.
+- Materiale per gli store nella cartella [`store/`](store/README.md); i pacchetti si compilano in locale con gli
+  script descritti lì.
 
 ## Sostieni il progetto
 

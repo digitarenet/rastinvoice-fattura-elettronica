@@ -14,19 +14,17 @@ la scheda AppStream, usata da tutti gli store grafici, è [`net.digitare.rastinv
 
 ## 1. Pacchetti .deb, .rpm e AppImage
 
-Li crea il workflow **Rilascio** (Actions > Rilascio > Run workflow) e li allega alla release in bozza:
+Si compilano sul PC Linux con `store/linux/build.sh` e si caricano su una release di GitHub con
+`store/linux/pubblica.sh` (vedi [Compilare in locale](../README.md#compilare-in-locale)):
 
 - `RastInvoice_<versione>_amd64.deb` per Debian, Ubuntu, Linux Mint, Pop!_OS, elementary, Zorin, MX Linux.
-  È compilato su Ubuntu 22.04, quindi funziona su Debian 12 e Ubuntu 22.04 o più recenti.
+  È compilato in un container Debian 12, quindi funziona su Debian 12 e Ubuntu 22.04 o più recenti.
   Installazione: `sudo apt install ./RastInvoice_<versione>_amd64.deb`.
 - `RastInvoice-<versione>-1.x86_64.rpm` per Fedora, openSUSE, RHEL, Rocky e Alma.
   Installazione: `sudo dnf install ./RastInvoice-<versione>-1.x86_64.rpm`.
 - `RastInvoice_<versione>_amd64.AppImage`: un solo file eseguibile, senza installazione.
 
 Nessuna iscrizione richiesta. Basta pubblicare la release.
-
-Si possono anche compilare sul PC Linux e caricare con `store/linux/build.sh` e `store/linux/pubblica.sh`:
-vedi [Compilare in locale](../README.md#compilare-in-locale).
 
 ## 2. Flathub
 
@@ -76,5 +74,5 @@ solo se qualcuno lo chiede: la comunità Arch spesso lo crea da sé.
 ## Stato
 
 Il manifesto Flatpak e il file snapcraft non sono ancora stati compilati: vanno provati una volta su un
-computer Linux prima dell'invio. I pacchetti `.deb`, `.rpm` e AppImage vengono creati dal workflow Rilascio,
-che non è ancora stato eseguito.
+computer Linux prima dell'invio. Lo script per `.deb`, `.rpm` e AppImage
+(`build.sh`) non è ancora stato eseguito.

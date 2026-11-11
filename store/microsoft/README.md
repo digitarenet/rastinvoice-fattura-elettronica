@@ -17,28 +17,26 @@ In Partner Center: **Apps e giochi > Nuovo prodotto > App MSIX o PWA**, nome **R
 
 ## 3. Identità del pacchetto
 
-In **Gestione prodotto > Identità del prodotto** si trovano tre valori. Vanno salvati come variabili del
-repository GitHub (Settings > Secrets and variables > Actions > Variables), non nel codice:
+In **Gestione prodotto > Identità del prodotto** si trovano tre valori. Vanno nella sezione `microsoft` di
+`store/configurazione.local.json` (esclusa da git), non nel codice:
 
-| Variabile GitHub | Valore in Partner Center |
+| Campo | Valore in Partner Center |
 | --- | --- |
-| `MSIX_NOME_PACCHETTO` | Package/Identity/Name |
-| `MSIX_EDITORE` | Package/Identity/Publisher (inizia con `CN=`) |
-| `MSIX_EDITORE_VISUALIZZATO` | Package/Properties/PublisherDisplayName |
+| `nomePacchetto` | Package/Identity/Name |
+| `editore` | Package/Identity/Publisher (inizia con `CN=`) |
+| `editoreVisualizzato` | Package/Properties/PublisherDisplayName |
 
 ## 4. Creazione del pacchetto
 
-Dalla scheda **Actions** di GitHub avviare **Rilascio > Run workflow**. Al termine, nella pagina dell'esecuzione,
-sotto **Artifacts** si scarica `msix` con il file `RastInvoice_<versione>.0_x64.msix` (resta disponibile 14
-giorni). Il pacchetto non è firmato: lo firma Microsoft Store. La versione per Windows si distribuisce solo
-dallo Store: su GitHub non si pubblicano exe o zip, che senza firma farebbero comparire l'avviso di SmartScreen.
-
-Più veloce, sul PC Windows (requisiti in [Compilare in locale](../README.md#compilare-in-locale)):
+Sul PC Windows (requisiti in [Compilare in locale](../README.md#compilare-in-locale)):
 
 ```powershell
 pwsh store/microsoft/build.ps1          # compila e crea target/msix/RastInvoice_<versione>.0_x64.msix
 pwsh store/microsoft/build.ps1 -Prova   # in più installa il pacchetto sul PC per provarlo
 ```
+
+Il pacchetto non è firmato: lo firma Microsoft Store. La versione per Windows si distribuisce solo dallo
+Store: su GitHub non si pubblicano exe o zip, che senza firma farebbero comparire l'avviso di SmartScreen.
 
 ## 5. Invio (Partner Center > Invii > Avvia l'invio)
 
@@ -63,7 +61,7 @@ pwsh store/microsoft/build.ps1 -Prova   # in più installa il pacchetto sul PC p
 ## 6. Dopo la pubblicazione
 
 - La certificazione richiede di solito da qualche ora a 3 giorni lavorativi.
-- A ogni nuova versione: avviare il workflow Rilascio, creare un nuovo invio e caricare il nuovo `.msix`.
+- A ogni nuova versione: eseguire `store/microsoft/build.ps1`, creare un nuovo invio e caricare il nuovo `.msix`.
   Il numero di versione deve crescere ogni volta.
 - Le recensioni si leggono e si rispondono in Partner Center.
 

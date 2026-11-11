@@ -1,8 +1,7 @@
 # Copyright (c) 2026 Andrea Re - info@digitare.net
 # Autore: Andrea Re @ 2026 - info@digitare.net
 #
-# Compilazione su Windows e pacchetto MSIX per il Microsoft Store, senza
-# usare i minuti di GitHub Actions. Il pacchetto non va su GitHub: si carica
+# Compilazione su Windows e pacchetto MSIX per il Microsoft Store. Il pacchetto non va su GitHub: si carica
 # in Partner Center.
 #
 # Prerequisiti (una volta sola):

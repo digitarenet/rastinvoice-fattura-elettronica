@@ -4,8 +4,8 @@
 
 | Store | Cartella | Pacchetto | Costo | Cosa serve da Andrea |
 | --- | --- | --- | --- | --- |
-| Microsoft Store | [`microsoft/`](microsoft/README.md) | MSIX | gratuito | iscrizione individuale, 3 variabili GitHub |
-| GitHub (solo Linux) | [`linux/`](linux/README.md) | deb, rpm, AppImage | gratuito | avviare il workflow Rilascio e pubblicare la bozza |
+| Microsoft Store | [`microsoft/`](microsoft/README.md) | MSIX | gratuito | iscrizione individuale, identità del pacchetto |
+| GitHub (solo Linux) | [`linux/`](linux/README.md) | deb, rpm, AppImage | gratuito | `store/linux/build.sh` e `pubblica.sh` |
 | Flathub | [`linux/`](linux/README.md) | Flatpak | gratuito | prova su Linux, pull request a Flathub |
 | Snap Store | [`linux/`](linux/README.md) | Snap | gratuito | account Ubuntu One, registrazione del nome |
 | Mac App Store | [`apple/`](apple/README.md) | pkg | 99 USD/anno di iscrizione; app a 2,99 € | iscrizione, certificati, revisione Apple |
@@ -26,8 +26,8 @@ Store.
 
 ## Compilare in locale
 
-Compilare sui propri PC è molto più veloce della CI di GitHub e non consuma minuti. Gli script si eseguono
-dalla cartella principale del repository.
+Tutti i pacchetti si compilano sui propri PC: il repository non ha CI su GitHub. Gli script si eseguono dalla
+cartella principale del repository.
 
 ### Configurazione
 
@@ -94,7 +94,11 @@ Crea l'app universale (Apple Silicon e Intel). Con la sezione `apple` compilata 
 `target/mac-app-store/RastInvoice_<versione>_universale.pkg`, da caricare con l'app Transporter. Prima del
 primo invio vanno completate le modifiche per la sandbox descritte in [`apple/`](apple/README.md).
 
-### CI di GitHub
+### Controlli prima di un rilascio
 
-I workflow **Verifica** e **Rilascio** restano disponibili solo da avvio manuale e ora conservano la cache di
-compilazione di Rust: dalla seconda esecuzione sono più rapidi.
+```bash
+cargo fmt --all --check
+cargo clippy -p rustinvoice-core -p rustinvoice-render -p rustinvoice-cli -p rustinvoice-xslt --all-targets -- -D warnings
+cargo test -p rustinvoice-core -p rustinvoice-render -p rustinvoice-cli -p rustinvoice-xslt
+(cd apps/desktop && npm ci && npm run check)
+```
