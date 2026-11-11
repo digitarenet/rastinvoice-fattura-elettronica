@@ -21,7 +21,7 @@ di correzione con le sole correzioni. Le versioni senza novità nel programma no
 - Nelle versioni scaricate da uno store gli aggiornamenti li gestisce lo store: il controllo delle nuove
   versioni e la scelta della cartella dati accanto al programma non vengono mostrati.
 
-## 0.12.0 - 2026-11-11
+## 0.12.0
 
 ### Aggiunto
 - Pulsanti **Indietro** e **Avanti** accanto alla ricerca, come in un browser: ogni clic su una pagina, una
@@ -29,20 +29,20 @@ di correzione con le sole correzioni. Le versioni senza novità nel programma no
   destra e con i tasti laterali del mouse. Mentre si scrive nella ricerca o si scorre l'elenco con le frecce
   viene registrato un solo passo.
 
-## 0.11.2 - 2026-11-11
+## 0.11.2
 
 ### Migliorato
 - Statistiche: i nomi di clienti e fornitori non sono più sottolineati e si leggono meglio. Passando con il
   mouse la riga si evidenzia e un clic su qualsiasi punto della riga apre i documenti del contatto.
 - L'installer per Windows aggiunge da solo il componente WebView2, se manca.
 
-## 0.11.0 - 2026-11-11
+## 0.11.0
 
 ### Aggiunto
 - Pacchetti di installazione per Linux: `.deb` per Debian, Ubuntu e derivate, `.rpm` per Fedora e openSUSE.
 - Informativa sulla privacy: il programma non raccoglie dati e si collega a Internet solo su richiesta.
 
-## 0.10.3 - 2026-11-11
+## 0.10.3
 
 ### Corretto
 - Copiando nell'archivio un file con lo stesso nome di uno già presente ma diverso, il numero veniva aggiunto
@@ -52,14 +52,14 @@ di correzione con le sole correzioni. Le versioni senza novità nel programma no
 ### Modificato
 - La finestra dei file trascinati spiega che archivi ZIP ed email vengono copiati interi, senza estrarli.
 
-## 0.10.2 - 2026-11-11
+## 0.10.2
 
 ### Corretto
 - La casella "Ricorda la scelta" nella finestra dei file trascinati mostrava due quadrati.
 - La barra dei pulsanti dell'anteprima va a capo quando lo spazio non basta, invece di nascondere gli ultimi
   pulsanti.
 
-## 0.10.0 - 2026-11-11
+## 0.10.0
 
 ### Modificato
 - Nuovo nome del prodotto: **RastInvoice**. La cartella dei dati resta la stessa, quindi impostazioni e
@@ -71,7 +71,7 @@ di correzione con le sole correzioni. Le versioni senza novità nel programma no
 - Supporto della fattura elettronica europea secondo la norma EN 16931: formati UBL e CII, documenti della
   rete Peppol e PDF con XML incorporato (ZUGFeRD e Factur-X).
 
-## 0.9.0 - 2026-11-11
+## 0.9.0
 
 ### Aggiunto
 - Licenza open source **EUPL-1.2** (licenza pubblica dell'Unione europea), indicata anche nei Credits.
@@ -83,7 +83,7 @@ di correzione con le sole correzioni. Le versioni senza novità nel programma no
 ### Sicurezza
 - Lettura degli archivi ZIP aggiornata a una versione che elimina quattro vulnerabilità note.
 
-## 0.8.0 - 2026-11-11
+## 0.8.0
 
 ### Aggiunto
 - Accessibilità secondo le WCAG 2.1 livello AA (EN 301 549, Linee guida AgID):
@@ -109,19 +109,19 @@ di correzione con le sole correzioni. Le versioni senza novità nel programma no
 ### Rimosso
 - Tema scuro, non previsto dal design system di Designers Italia.
 
-## 0.7.0 - 2026-11-11
+## 0.7.0
 
 ### Migliorato
 - La vista AssoSoftware usa un motore di trasformazione interno e non dipende più dal browser integrato nel
   sistema, che in futuro potrebbe non supportarla più.
 
-## 0.6.1 - 2026-11-11
+## 0.6.1
 
 ### Modificato
 - Interfaccia allineata al design system di Designers Italia (componenti, tipografia, colori, contrasti).
 - Il visualizzatore degli allegati porta il fuoco nella finestra all'apertura e lo restituisce alla chiusura.
 
-## 0.6.0 - 2026-11-11
+## 0.6.0
 
 ### Aggiunto
 - Sezione **Statistiche** per anno o per tutto il periodo: fatturato e acquisti
@@ -137,7 +137,7 @@ di correzione con le sole correzioni. Le versioni senza novità nel programma no
 ### Corretto
 - Icona mancante nella scheda Clienti e fornitori.
 
-## 0.5.0 - 2026-11-11
+## 0.5.0
 
 ### Aggiunto
 - **Scelta della cartella dati** al primo avvio e nelle Impostazioni: nel profilo utente
@@ -146,7 +146,7 @@ di correzione con le sole correzioni. Le versioni senza novità nel programma no
   vengono copiati nella nuova cartella e l'applicazione si riavvia; la vecchia cartella
   portable viene rinominata, non cancellata.
 
-## 0.4.1 - 2026-11-11
+## 0.4.1
 
 ### Modificato
 - La sezione "Ricevute SdI" diventa **Notifiche SdI** ed è più chiara: ogni notifica mostra
@@ -156,7 +156,7 @@ di correzione con le sole correzioni. Le versioni senza novità nel programma no
 - L'anteprima della fattura mostra lo stato presso lo SdI e la cronologia delle notifiche.
 - I file non riconosciuti sono elencati a parte, con una spiegazione.
 
-## 0.4.0 - 2026-11-11
+## 0.4.0
 
 ### Aggiunto
 - **Visualizzatore degli allegati** integrato: si apre facendo clic sul nome dell'allegato.
@@ -174,7 +174,7 @@ di correzione con le sole correzioni. Le versioni senza novità nel programma no
 - Registro delle modifiche nella pagina Credits con un carattere più piccolo.
 - Le pagine Credits e Impostazioni occupano tutta la larghezza disponibile.
 
-## 0.3.2 - 2026-11-11
+## 0.3.2
 
 ### Sicurezza
 - Le finestre di salvataggio (CSV, HTML, XML, allegati) sono gestite direttamente dal programma, che decide
@@ -186,14 +186,14 @@ di correzione con le sole correzioni. Le versioni senza novità nel programma no
   visualizzazione protetta.
 - L'esportazione CSV neutralizza i testi che Excel eseguirebbe come formule.
 
-## 0.3.1 - 2026-11-11
+## 0.3.1
 
 ### Migliorato
 - Avvio con l'indice circa 2,8 volte più rapido (10.000 file: da 175 a 63 millisecondi).
 - Le cartelle vengono esplorate in parallelo: molto più veloce su dischi di rete e NAS.
 - Scorrimento e ricerca restano fluidi anche con decine di migliaia di fatture.
 
-## 0.3.0 - 2026-11-11
+## 0.3.0
 
 ### Aggiunto
 - Apertura di fatture contenute in archivi **.zip** ed email **.eml**, comprese le PEC
@@ -220,7 +220,7 @@ di correzione con le sole correzioni. Le versioni senza novità nel programma no
 - La vista con foglio di stile poteva mostrare il documento precedente durante lo scorrimento.
 - Apertura degli allegati e delle cartelle bloccata dai permessi dell'applicazione.
 
-## 0.2.0 - 2026-11-11
+## 0.2.0
 
 ### Aggiunto
 - Applicazione desktop: elenco con ricerca a testo libero, sezioni ricevute, emesse, da leggere,
@@ -231,7 +231,7 @@ di correzione con le sole correzioni. Le versioni senza novità nel programma no
 - Trascina e rilascia, modalità portable, stampa, salvataggio HTML e XML, allegati,
   esportazione CSV.
 
-## 0.1.0 - 2026-11-11
+## 0.1.0
 
 ### Aggiunto
 - Lettura delle fatture FatturaPA (specifiche 1.9.1): fatture ordinarie, verso la Pubblica
