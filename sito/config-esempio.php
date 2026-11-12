@@ -20,4 +20,11 @@ return [
     'smtp_sicurezza' => 'tls',
     'smtp_utente' => 'sito@rastinvoice.it',
     'smtp_password' => 'password-della-casella',
+
+    // Protezione dagli invii automatici (facoltativo: questi sono i valori predefiniti)
+    // 'invii_per_ora' => 5,          // per indirizzo IP
+    // 'invii_al_giorno' => 50,       // in tutto
+    // 'invii_senza_gettone' => 10,   // al giorno, dai browser senza JavaScript
+    // 'link_massimi' => 3,           // oltre, il messaggio è scartato come spam
+    // 'segreto' => '',               // vuoto: chiave generata in privato/rastinvoice-segreto
 ];

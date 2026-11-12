@@ -11,6 +11,16 @@
  * SMTP autenticato. La configurazione sta nel file rastinvoice-config.php, da mettere fuori dalla
  * radice del sito, così non è raggiungibile dal web: nella cartella "privato" accanto alla radice
  * (domains/rastinvoice.it/privato/) oppure direttamente sopra la radice (modello: config-esempio.php).
+ *
+ * Protezione dagli invii automatici, senza captcha e senza servizi esterni:
+ * - gettone firmato: la pagina lo chiede con GET contatti.php?gettone=1 e lo rimanda con il modulo; contiene
+ *   l'ora di apertura firmata con HMAC, quindi il tempo minimo di compilazione non si può falsificare;
+ * - campo trappola nascosto, che solo i programmi compilano;
+ * - limite di invii per indirizzo IP all'ora e limite complessivo al giorno;
+ * - limite più basso per gli invii senza gettone (browser senza JavaScript), che non ricevono la conferma;
+ * - al massimo una conferma di ricezione al giorno per lo stesso indirizzo email;
+ * - scarto silenzioso dei messaggi con troppi link.
+ * Ai programmi automatici si risponde sempre "inviato", così non capiscono quale controllo li ha fermati.
  */
 
 declare(strict_types=1);
@@ -25,7 +35,11 @@ $config = [
     'smtp_utente' => '',
     'smtp_password' => '',
     'invii_per_ora' => 5,                    // limite di invii per indirizzo IP
+    'invii_al_giorno' => 50,                 // limite complessivo di messaggi al giorno
+    'invii_senza_gettone' => 10,             // limite al giorno per gli invii senza JavaScript
+    'link_massimi' => 3,                     // oltre questo numero di link il messaggio è spam
     'secondi_minimi' => 3,                   // un modulo compilato più in fretta è automatico
+    'segreto' => '',                         // chiave dei gettoni; vuota: generata e salvata in automatico
 ];
 $cartelle = [dirname(__DIR__) . '/privato', dirname(__DIR__), __DIR__];
 foreach (array_map(fn($c) => $c . '/rastinvoice-config.php', $cartelle) as $file) {
@@ -38,6 +52,53 @@ define('DESTINATARIO', (string)$config['destinatario']);
 define('MITTENTE', (string)$config['mittente']);
 define('INVII_PER_ORA', (int)$config['invii_per_ora']);
 define('SECONDI_MINIMI', (int)$config['secondi_minimi']);
+define('GETTONE_DURATA', 86400);            // un gettone vale un giorno
+
+// Cartella dei registri anti abuso: "privato" se esiste ed è scrivibile, altrimenti la cartella temporanea
+$dati = dirname(__DIR__) . '/privato';
+define('DATI', is_dir($dati) && is_writable($dati) ? $dati : sys_get_temp_dir());
+
+// Chiave dei gettoni: dalla configurazione oppure generata una volta e salvata accanto ai registri
+function segreto(array $config): string
+{
+    if ((string)$config['segreto'] !== '') {
+        return (string)$config['segreto'];
+    }
+    $file = DATI . '/rastinvoice-segreto';
+    $chiave = is_file($file) ? trim((string)file_get_contents($file)) : '';
+    if (strlen($chiave) < 32) {
+        $chiave = bin2hex(random_bytes(32));
+        @file_put_contents($file, $chiave, LOCK_EX);
+        @chmod($file, 0600);
+    }
+    return $chiave;
+}
+
+function firma(string $dato, array $config): string
+{
+    return hash_hmac('sha256', $dato, segreto($config));
+}
+
+// Registri a finestra mobile: un file per chiave con gli orari degli eventi recenti
+function eventi(string $nome, int $finestra): array
+{
+    $file = DATI . '/rastinvoice-' . $nome;
+    if (!is_file($file)) {
+        return [];
+    }
+    $limite = time() - $finestra;
+    return array_values(array_filter(
+        array_map('intval', explode("\n", (string)file_get_contents($file))),
+        fn(int $t) => $t > $limite
+    ));
+}
+
+function registra(string $nome, int $finestra): void
+{
+    $eventi = eventi($nome, $finestra);
+    $eventi[] = time();
+    @file_put_contents(DATI . '/rastinvoice-' . $nome, implode("\n", $eventi), LOCK_EX);
+}
 
 $json = str_contains($_SERVER['HTTP_ACCEPT'] ?? '', 'application/json');
 
@@ -53,6 +114,15 @@ function rispondi(bool $ok, string $errore = ''): never
     } else {
         header('Location: ' . ($ok ? 'grazie.html' : 'index.html?errore=1#contatti'), true, 303);
     }
+    exit;
+}
+
+// Gettone per il modulo, chiesto dalla pagina all'apertura
+if (($_SERVER['REQUEST_METHOD'] ?? '') === 'GET' && isset($_GET['gettone'])) {
+    $ora = (string)time();
+    header('Content-Type: application/json; charset=utf-8');
+    header('Cache-Control: no-store');
+    echo json_encode(['gettone' => $ora . '.' . firma($ora, $config)]);
     exit;
 }
 
@@ -74,10 +144,26 @@ $argomento = riga((string)($_POST['argomento'] ?? 'Altro'), 60);
 $messaggio = mb_substr(trim(str_replace("\0", '', (string)($_POST['messaggio'] ?? ''))), 0, 5000);
 $privacy = ($_POST['privacy'] ?? '') === 'si';
 $trappola = (string)($_POST['sito_web'] ?? '');
-$inizio = (int)($_POST['inizio'] ?? 0);
+
+// Gettone: "ora.firma". Se manca o non è valido, l'invio è trattato come senza JavaScript
+$conGettone = false;
+$parti = explode('.', (string)($_POST['gettone'] ?? ''), 2);
+if (count($parti) === 2 && ctype_digit($parti[0]) && hash_equals(firma($parti[0], $config), $parti[1])) {
+    $eta = time() - (int)$parti[0];
+    if ($eta < SECONDI_MINIMI) {
+        rispondi(true);   // compilato troppo in fretta: automatico
+    }
+    if ($eta > GETTONE_DURATA) {
+        rispondi(false, 'La pagina è aperta da troppo tempo: ricaricala e invia di nuovo il messaggio.');
+    }
+    $conGettone = true;
+} elseif ($json) {
+    // La pagina con JavaScript manda sempre un gettone valido: senza, è un programma automatico
+    rispondi(true);
+}
 
 // Invii automatici: fingiamo che sia andato tutto bene, senza inviare nulla
-if ($trappola !== '' || ($inizio > 0 && time() - $inizio < SECONDI_MINIMI)) {
+if ($trappola !== '') {
     rispondi(true);
 }
 
@@ -96,19 +182,23 @@ if (!$privacy) {
     rispondi(false, "Per inviare il messaggio serve il consenso all'informativa sulla privacy.");
 }
 
-// Limite di invii per IP, con un file nella cartella temporanea (l'IP è salvato solo come impronta)
-$ip = hash('sha256', ($_SERVER['REMOTE_ADDR'] ?? '') . __FILE__);
-$registro = sys_get_temp_dir() . '/rastinvoice-contatti-' . $ip;
-$adesso = time();
-$invii = [];
-if (is_file($registro)) {
-    $invii = array_filter(
-        array_map('intval', explode("\n", (string)file_get_contents($registro))),
-        fn(int $t) => $t > $adesso - 3600
-    );
+// Troppi link: spam, scartato in silenzio
+$link = preg_match_all('~https?://|www\.~i', $messaggio . ' ' . $nome);
+if ($link > (int)$config['link_massimi']) {
+    rispondi(true);
 }
-if (count($invii) >= INVII_PER_ORA) {
+
+// Limiti di invio. IP ed email sono salvati solo come impronta cifrata, non reversibile
+$ip = 'ip-' . firma('ip:' . ($_SERVER['REMOTE_ADDR'] ?? ''), $config);
+$occupato = 'Troppi messaggi in questo momento. Riprova più tardi o scrivi a ' . DESTINATARIO . '.';
+if (count(eventi($ip, 3600)) >= INVII_PER_ORA) {
     rispondi(false, 'Hai già inviato diversi messaggi. Riprova tra un\'ora o scrivi a ' . DESTINATARIO . '.');
+}
+if (count(eventi('giorno', 86400)) >= (int)$config['invii_al_giorno']) {
+    rispondi(false, $occupato);
+}
+if (!$conGettone && count(eventi('senza-gettone', 86400)) >= (int)$config['invii_senza_gettone']) {
+    rispondi(false, $occupato);
 }
 
 /**
@@ -207,10 +297,22 @@ if (!$inviato) {
     rispondi(false, 'Non è stato possibile inviare il messaggio. Riprova più tardi o scrivi a ' . DESTINATARIO . '.');
 }
 
+registra($ip, 3600);
+registra('giorno', 86400);
+if (!$conGettone) {
+    registra('senza-gettone', 86400);
+}
+
 // Conferma di ricezione a chi ha scritto. Il testo è fisso e non riporta nome né
 // messaggio: chi usasse il modulo con l'indirizzo di un altro non può fargli
-// arrivare contenuti scelti da lui. Se la conferma non parte, il messaggio è
-// comunque arrivato e non si segnala errore.
+// arrivare contenuti scelti da lui. Per lo stesso motivo parte solo con il gettone
+// e al massimo una volta al giorno per indirizzo. Se la conferma non parte, il
+// messaggio è comunque arrivato e non si segnala errore.
+$destinatarioConferma = 'email-' . firma('email:' . mb_strtolower($email), $config);
+if (!$conGettone || count(eventi($destinatarioConferma, 86400)) > 0) {
+    rispondi(true);
+}
+registra($destinatarioConferma, 86400);
 $oggettoConferma = '=?UTF-8?B?' . base64_encode('RastInvoice: abbiamo ricevuto il tuo messaggio') . '?=';
 $corpoConferma = "Ciao,\n\n"
     . "grazie per averci scritto dal sito rastinvoice.it: abbiamo ricevuto il tuo messaggio\n"
@@ -232,6 +334,4 @@ if ($config['smtp_host'] !== '') {
     mail($email, $oggettoConferma, $corpoConferma, $intestazioniConferma, '-f' . MITTENTE);
 }
 
-$invii[] = $adesso;
-@file_put_contents($registro, implode("\n", $invii), LOCK_EX);
 rispondi(true);

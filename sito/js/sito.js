@@ -67,8 +67,17 @@
   var modulo = document.getElementById("modulo-contatti");
   if (!modulo) return;
   var esito = document.getElementById("esito");
-  var inizio = document.getElementById("inizio-modulo");
-  if (inizio) inizio.value = String(Math.floor(Date.now() / 1000));
+  var gettone = document.getElementById("gettone-modulo");
+
+  // Gettone firmato dal server: certifica l'ora di apertura del modulo (protezione dagli invii automatici)
+  function nuovoGettone() {
+    if (!gettone) return;
+    fetch(modulo.action + "?gettone=1", { headers: { "Accept": "application/json" }, cache: "no-store" })
+      .then(function (r) { return r.json(); })
+      .then(function (dati) { if (dati && dati.gettone) gettone.value = dati.gettone; })
+      .catch(function () { /* senza gettone l'invio segue il percorso senza JavaScript */ });
+  }
+  nuovoGettone();
 
   function avviso(tipo, testo) {
     esito.innerHTML = "";
@@ -116,7 +125,7 @@
       .then(function (dati) {
         if (dati.ok) {
           modulo.reset();
-          if (inizio) inizio.value = String(Math.floor(Date.now() / 1000));
+          nuovoGettone();
           avviso("success", "Grazie, il messaggio è stato inviato. Ti risponderemo il prima possibile.");
         } else {
           avviso("danger", dati.errore || "Non è stato possibile inviare il messaggio. Riprova più tardi o scrivi a rastinvoice@digitare.net.");

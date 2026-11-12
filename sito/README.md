@@ -63,9 +63,22 @@ nel repository. Se l'hosting non permette di scrivere sopra la radice, il file s
 
 ### Protezione dallo spam
 
-Il modulo non usa captcha, per non chiedere nulla ai visitatori e non caricare servizi esterni. Gli invii
-automatici vengono scartati con tre controlli: un campo nascosto che solo i programmi compilano, il tempo
-minimo di compilazione (3 secondi) e il limite di 5 invii all'ora per indirizzo IP. Se in futuro arrivasse
+Il modulo non usa captcha (niente reCAPTCHA: cookie, dati a Google e consenso GDPR), per non chiedere nulla
+ai visitatori e non caricare servizi esterni. I controlli, tutti in `contatti.php`:
+
+- **gettone firmato**: all'apertura la pagina chiede a `contatti.php?gettone=1` un gettone con l'ora firmata
+  (HMAC) e lo rimanda con il modulo. I programmi che inviano direttamente al modulo non ce l'hanno, e il tempo
+  minimo di compilazione (3 secondi) non si può falsificare;
+- **campo trappola** nascosto, che solo i programmi compilano;
+- **limiti**: 5 invii all'ora per indirizzo IP, 50 messaggi al giorno in tutto, 10 al giorno senza gettone
+  (browser senza JavaScript, che restano supportati);
+- **conferma di ricezione** solo con gettone e al massimo una al giorno per indirizzo email, così il modulo
+  non può essere usato per mandare email a terzi;
+- **più di 3 link** nel messaggio: scartato come spam.
+
+Ai programmi automatici il modulo risponde sempre "inviato". I registri (impronte cifrate di IP ed email,
+con l'orario) e la chiave dei gettoni `rastinvoice-segreto` stanno nella cartella `privato/` se PHP può
+scriverci, altrimenti nella cartella temporanea del server. I limiti si cambiano in `rastinvoice-config.php`. Se in futuro arrivasse
 spam, si può aggiungere un captcha senza tracciamento come ALTCHA (ospitato sul sito) o Cloudflare
 Turnstile, aggiornando l'informativa sulla privacy.
 
