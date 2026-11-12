@@ -48,4 +48,23 @@ desktop.ini
 /dati/
 *.local.json
 .env
-sito/rastinvoice-config.php
+**/rastinvoice-config.php
+**/rastinvoice-segreto
+sito/privato/
+
+# --- Chiavi, certificati e pacchetti firmati -----------------------------
+# Non devono mai finire su git: chiave degli aggiornamenti, certificati
+# Apple/Microsoft, profili di provisioning e pacchetti generati.
+*.key
+*.key.pub
+*.pem
+*.p12
+*.pfx
+*.cer
+*.p8
+*.mobileprovision
+*.provisionprofile
+*.msix
+*.msixupload
+*.appx
+*.pkg

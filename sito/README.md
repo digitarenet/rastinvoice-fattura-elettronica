@@ -12,7 +12,7 @@ contatti usa un piccolo script PHP.
 | `index.html` | pagina principale: presentazione, open source, Designers Italia, funzionalità, scheda tecnica, immagini, download, domande frequenti, contatti |
 | `come-aprire-fattura-elettronica-xml.html`, `come-aprire-file-p7m.html`, `fattura-elettronica-in-pdf.html` | guide per le ricerche più frequenti, con dati strutturati HowTo e FAQ |
 | `404.html` | pagina non trovata |
-| `llms.txt` | riassunto del prodotto per gli assistenti AI (ChatGPT, Claude, Perplexity, Gemini) |
+| `llms.txt` | riassunto del prodotto per gli assistenti di ricerca |
 | `manifest.webmanifest` | nome e icone per browser e dispositivi |
 | `privacy.html` | informativa sulla privacy del sito e del modulo contatti |
 | `grazie.html` | conferma dopo l'invio del modulo quando JavaScript è disattivato |
