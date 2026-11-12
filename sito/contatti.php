@@ -121,20 +121,27 @@ function invia_smtp(array $c, string $a, string $oggetto, string $corpo, string 
     $host = ($sicurezza === 'ssl' ? 'ssl://' : '') . $c['smtp_host'];
     $s = @stream_socket_client($host . ':' . (int)$c['smtp_porta'], $n, $e, 15);
     if (!$s) {
+        error_log("contatti.php: connessione a $host:{$c['smtp_porta']} non riuscita: $e");
         return false;
     }
     stream_set_timeout($s, 15);
-    $leggi = function () use ($s): int {
+    // Ultimo comando e ultima risposta del server, per il registro degli errori
+    $ultimo = 'connessione';
+    $risposta = '';
+    $leggi = function () use ($s, &$risposta): int {
         $riga = '';
         while (($r = fgets($s, 515)) !== false) {
             $riga = $r;
+            $risposta = trim($r);
             if (strlen($r) < 4 || $r[3] !== '-') {
                 break;
             }
         }
         return (int)substr($riga, 0, 3);
     };
-    $comando = function (string $cmd, array $attesi) use ($s, $leggi): bool {
+    // $etichetta sostituisce il comando nel registro (utente, password, testo)
+    $comando = function (string $cmd, array $attesi, string $etichetta = '') use ($s, $leggi, &$ultimo): bool {
+        $ultimo = $etichetta !== '' ? $etichetta : $cmd;
         fwrite($s, $cmd . "\r\n");
         return in_array($leggi(), $attesi, true);
     };
@@ -147,8 +154,8 @@ function invia_smtp(array $c, string $a, string $oggetto, string $corpo, string 
     }
     if ($ok && $c['smtp_utente'] !== '') {
         $ok = $comando('AUTH LOGIN', [334])
-            && $comando(base64_encode((string)$c['smtp_utente']), [334])
-            && $comando(base64_encode((string)$c['smtp_password']), [235]);
+            && $comando(base64_encode((string)$c['smtp_utente']), [334], 'utente')
+            && $comando(base64_encode((string)$c['smtp_password']), [235], 'password');
     }
     $ok = $ok && $comando('MAIL FROM:<' . $c['mittente'] . '>', [250])
         && $comando('RCPT TO:<' . $a . '>', [250, 251])
@@ -165,7 +172,10 @@ function invia_smtp(array $c, string $a, string $oggetto, string $corpo, string 
             'Content-Type: text/plain; charset=UTF-8',
             'Content-Transfer-Encoding: base64',
         ]) . "\r\n\r\n" . chunk_split(base64_encode($corpo), 76, "\r\n") . '.';
-        $ok = $comando($messaggio, [250]);
+        $ok = $comando($messaggio, [250], 'testo del messaggio');
+    }
+    if (!$ok) {
+        error_log("contatti.php: invio SMTP non riuscito dopo \"$ultimo\": $risposta");
     }
     @fwrite($s, "QUIT\r\n");
     fclose($s);
@@ -191,6 +201,9 @@ $inviato = $config['smtp_host'] !== ''
     ? invia_smtp($config, DESTINATARIO, $oggetto, $corpo, $email)
     : mail(DESTINATARIO, $oggetto, $corpo, $intestazioni, '-f' . MITTENTE);
 if (!$inviato) {
+    if ($config['smtp_host'] === '') {
+        error_log('contatti.php: mail() non riuscita: ' . (error_get_last()['message'] ?? 'nessun dettaglio'));
+    }
     rispondi(false, 'Non è stato possibile inviare il messaggio. Riprova più tardi o scrivi a ' . DESTINATARIO . '.');
 }
 
