@@ -31,17 +31,35 @@ config() {
   ' "$radice/store/configurazione.local.json" "$1"
 }
 
-for c in cargo rustup node npm xcrun; do
+for c in cargo rustc node npm xcrun; do
   command -v "$c" >/dev/null || { echo "Manca $c: vedi i prerequisiti in testa a questo script" >&2; exit 1; }
 done
 
 versione="$(node -p "require('./apps/desktop/src-tauri/tauri.conf.json').version")"
 echo "== RastInvoice $versione per macOS"
-rustup target add aarch64-apple-darwin x86_64-apple-darwin >/dev/null
-(cd apps/desktop && npm ci --no-audit --no-fund)
-(cd apps/desktop && npx tauri build --target universal-apple-darwin --bundles app)
 
-app="target/universal-apple-darwin/release/bundle/macos/RastInvoice.app"
+# L'app universale richiede le librerie Rust per entrambe le architetture:
+# con rustup si aggiungono da sole, con il Rust di Homebrew c'è solo quella
+# del Mac in uso e si compila l'app per la sola architettura locale.
+sysroot="$(rustc --print sysroot)"
+if command -v rustup >/dev/null; then
+  rustup target add aarch64-apple-darwin x86_64-apple-darwin >/dev/null
+fi
+if [ -d "$sysroot/lib/rustlib/aarch64-apple-darwin" ] && [ -d "$sysroot/lib/rustlib/x86_64-apple-darwin" ]; then
+  universale=1
+  bersaglio=(--target universal-apple-darwin)
+  app="target/universal-apple-darwin/release/bundle/macos/RastInvoice.app"
+else
+  universale=0
+  bersaglio=()
+  app="target/release/bundle/macos/RastInvoice.app"
+  echo "Attenzione: Rust senza i target aarch64/x86_64-apple-darwin (manca rustup)."
+  echo "Compilo solo per $(uname -m). Per l'app universale installare rustup (https://rustup.rs)."
+fi
+
+(cd apps/desktop && npm ci --no-audit --no-fund)
+(cd apps/desktop && npx tauri build ${bersaglio[@]+"${bersaglio[@]}"} --bundles app)
+
 [ -d "$app" ] || { echo "App non trovata: $app" >&2; exit 1; }
 echo "App pronta: $app"
 
@@ -49,6 +67,12 @@ team="$(config apple.teamId)"
 id_app="$(config apple.identitaApp)"
 id_inst="$(config apple.identitaInstaller)"
 profilo="$(config apple.profilo)"; profilo="${profilo/#\~/$HOME}"
+if [ "$universale" = 0 ]; then
+  echo
+  echo "App non universale: il pacchetto per il Mac App Store non viene creato."
+  echo "Per provarla: open \"$app\""
+  exit 0
+fi
 if [ -z "$team" ] || [ -z "$id_app" ] || [ -z "$id_inst" ] || [ ! -f "$profilo" ]; then
   echo
   echo "Certificati Mac App Store non configurati: creata solo l'app, non il pacchetto."
