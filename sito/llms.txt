@@ -4,7 +4,7 @@
 
 Fatti principali:
 
-- Versione: 1.1.0 (novembre 2026)
+- Versione: 1.1.6 (novembre 2026)
 - Prezzo: gratuito su Windows (Microsoft Store) e Linux (Flathub, .deb, .rpm, AppImage); 2,99 € su Mac App Store
 - Licenza: EUPL-1.2, codice sorgente su GitHub
 - Formati: XML, XML.P7M (DER, BER, base64, firme annidate), ZIP, EML (PEC), lotti di fatture
