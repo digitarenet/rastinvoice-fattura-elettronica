@@ -8,8 +8,9 @@
  * grazie.html o alla pagina iniziale. Non salva i messaggi sul server.
  *
  * Invio: con la funzione mail() di PHP (nessuna credenziale) oppure, se configurato, con un server
- * SMTP autenticato. La configurazione sta nel file rastinvoice-config.php, da mettere nella cartella
- * SOPRA la radice del sito, così non è raggiungibile dal web (modello: config-esempio.php).
+ * SMTP autenticato. La configurazione sta nel file rastinvoice-config.php, da mettere fuori dalla
+ * radice del sito, così non è raggiungibile dal web: nella cartella "privato" accanto alla radice
+ * (domains/rastinvoice.it/privato/) oppure direttamente sopra la radice (modello: config-esempio.php).
  */
 
 declare(strict_types=1);
@@ -26,7 +27,8 @@ $config = [
     'invii_per_ora' => 5,                    // limite di invii per indirizzo IP
     'secondi_minimi' => 3,                   // un modulo compilato più in fretta è automatico
 ];
-foreach ([dirname(__DIR__) . '/rastinvoice-config.php', __DIR__ . '/rastinvoice-config.php'] as $file) {
+$cartelle = [dirname(__DIR__) . '/privato', dirname(__DIR__), __DIR__];
+foreach (array_map(fn($c) => $c . '/rastinvoice-config.php', $cartelle) as $file) {
     if (is_file($file)) {
         $config = array_merge($config, (array)require $file);
         break;
