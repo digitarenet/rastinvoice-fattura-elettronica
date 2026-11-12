@@ -149,6 +149,14 @@
     },
     {
       "@type": "Question",
+      "name": "Perché l'interfaccia somiglia ai siti della Pubblica Amministrazione?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Perché segue il design system di Designers Italia, pensato per servizi digitali chiari e accessibili a tutti, ed è realizzata con Bootstrap Italia. RastInvoice resta un progetto indipendente, non collegato ad amministrazioni pubbliche."
+      }
+    },
+    {
+      "@type": "Question",
       "name": "RastInvoice conserva le fatture a norma?",
       "acceptedAnswer": {
         "@type": "Answer",
@@ -230,6 +238,7 @@
               <li><svg aria-hidden="true"><use href="img/sprites.svg#it-check-circle"></use></svg>Funziona offline</li>
               <li><svg aria-hidden="true"><use href="img/sprites.svg#it-check-circle"></use></svg>Windows, macOS e Linux</li>
               <li><svg aria-hidden="true"><use href="img/sprites.svg#it-check-circle"></use></svg>Specifiche FatturaPA 1.9.1</li>
+              <li><svg aria-hidden="true"><use href="img/sprites.svg#it-check-circle"></use></svg>Design system di Designers Italia</li>
             </ul>
           </div>
         </div>
@@ -338,6 +347,39 @@ cargo build --release -p rustinvoice-desktop</code></pre>
       </div>
     </section>
 
+    <section class="sezione" id="designers-italia" aria-labelledby="titolo-designers">
+      <div class="container">
+        <div class="row g-4 g-lg-5">
+          <div class="col-lg-6">
+            <p class="sopratitolo-blu">Design system della Pubblica Amministrazione</p>
+            <h2 id="titolo-designers">Progettato con il design system di Designers Italia</h2>
+            <p class="intro">L'interfaccia di RastInvoice segue il
+              <a href="https://designers.italia.it/design-system/">design system di Designers Italia</a>, lo stesso
+              usato per i siti e i servizi digitali della Pubblica Amministrazione, ed è realizzata con
+              <a href="https://italia.github.io/bootstrap-italia/">Bootstrap Italia</a>, il suo kit ufficiale e open
+              source. Chi usa i servizi pubblici online ritrova colori, caratteri e comandi già familiari.</p>
+            <p class="nota">RastInvoice è un progetto indipendente: usa liberamente il design system, ma non è
+              realizzato né approvato da Designers Italia o dal Dipartimento per la trasformazione digitale.</p>
+          </div>
+          <div class="col-lg-6">
+            <ul class="elenco-di">
+              <li><svg aria-hidden="true"><use href="img/sprites.svg#it-pencil"></use></svg>
+                <div><h3>Carattere e colori ufficiali</h3>
+                  <p>Titillium Web, la palette e le icone del design system, anche in questo sito.</p></div></li>
+              <li><svg aria-hidden="true"><use href="img/sprites.svg#it-settings"></use></svg>
+                <div><h3>Componenti standard</h3>
+                  <p>Pulsanti, campi, schede e avvisi di Bootstrap Italia; elenco, anteprima e grafici costruiti con
+                    gli stessi colori e spaziature.</p></div></li>
+              <li><svg aria-hidden="true"><use href="img/sprites.svg#it-hearing"></use></svg>
+                <div><h3>Accessibile per tutti</h3>
+                  <p>Progettato per le WCAG 2.1 livello AA: uso completo da tastiera, lettori di schermo, contrasti
+                    adeguati e ingrandimento fino al 200%.</p></div></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <section class="sezione chiara" id="funzionalita" aria-labelledby="titolo-funzionalita">
       <div class="container">
         <h2 id="titolo-funzionalita">Funzionalità</h2>
@@ -424,7 +466,7 @@ cargo build --release -p rustinvoice-desktop</code></pre>
             <div class="funzione">
               <h3><svg aria-hidden="true"><use href="img/sprites.svg#it-hearing"></use></svg>Accessibile</h3>
               <ul>
-                <li>Interfaccia secondo il design system di Designers Italia</li>
+                <li>Interfaccia secondo il <a href="#designers-italia">design system di Designers Italia</a></li>
                 <li>Progettata per le WCAG 2.1 livello AA</li>
                 <li>Uso completo da tastiera e ingrandimento fino al 200%</li>
               </ul>
@@ -618,6 +660,12 @@ cargo build --release -p rustinvoice-desktop</code></pre>
                   seguendo le istruzioni del repository. <a href="#open-source">Come si compila</a>.</p>
               </details>
               <details>
+                <summary>Perché l'interfaccia somiglia ai siti della Pubblica Amministrazione?</summary>
+                <p>Perché segue il design system di Designers Italia, pensato per servizi digitali chiari e accessibili a
+                  tutti. RastInvoice resta un progetto indipendente, non collegato ad amministrazioni pubbliche.
+                  <a href="#designers-italia">Maggiori dettagli</a>.</p>
+              </details>
+              <details>
                 <summary>RastInvoice conserva le fatture a norma?</summary>
                 <p>No. RastInvoice è un visualizzatore: legge e archivia le fatture sul tuo computer, ma non sostituisce la
                   conservazione digitale a norma, che resta a carico del servizio del tuo intermediario o dell'Agenzia
@@ -710,6 +758,7 @@ cargo build --release -p rustinvoice-desktop</code></pre>
           <h2>Progetto</h2>
           <ul>
             <li><a href="#open-source">Open source</a></li>
+            <li><a href="#designers-italia">Designers Italia</a></li>
             <li>Codice sorgente su GitHub (prossimamente)</li>
             <li><a href="privacy.html">Privacy</a></li>
             <li><a href="#contatti">Contatti</a></li>
@@ -719,7 +768,8 @@ cargo build --release -p rustinvoice-desktop</code></pre>
       <div class="fondo">
         <p class="mb-1">© 2026 Andrea Re - <a href="https://www.digitare.net">digitare.net</a> - info@digitare.net.
           RastInvoice è software libero con licenza <a href="https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12">EUPL-1.2</a>.</p>
-        <p class="mb-0">Interfaccia realizzata con <a href="https://italia.github.io/bootstrap-italia/">Bootstrap Italia</a> (BSD-3-Clause)
+        <p class="mb-0">Interfaccia secondo il <a href="https://designers.italia.it/design-system/">design system di Designers Italia</a>,
+          realizzata con <a href="https://italia.github.io/bootstrap-italia/">Bootstrap Italia</a> (BSD-3-Clause)
           e carattere Titillium Web (SIL Open Font License). RastInvoice è un progetto indipendente e non è collegato
           all'Agenzia delle Entrate né ad altre amministrazioni pubbliche.</p>
       </div>

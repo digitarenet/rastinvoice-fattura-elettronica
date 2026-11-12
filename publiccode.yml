@@ -78,7 +78,6 @@ intendedAudience:
   countries:
     - it
 
+# Nessun codice IPA: il software non appartiene a una Pubblica Amministrazione.
 it:
   countryExtensionVersion: "1.0"
-  riuso:
-    codiceIPA: ""

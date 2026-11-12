@@ -224,3 +224,14 @@ a:focus-visible, button:focus-visible, .btn:focus-visible, summary:focus-visible
 .aperta .btn svg { width: 1.3rem; height: 1.3rem; fill: currentColor; }
 .aperta .presto { cursor: default; pointer-events: none; }
 .nota-os { color: #c8d6e5; font-size: .95rem; }
+
+/* Sezione Designers Italia */
+.sopratitolo-blu { text-transform: uppercase; letter-spacing: .08em; font-weight: 600; font-size: .9rem;
+  color: var(--ri-blu); margin-bottom: .5rem; }
+.elenco-di { list-style: none; padding: 0; margin: 0; display: grid; gap: 1rem; }
+.elenco-di li { display: flex; gap: 1rem; align-items: flex-start; background: var(--ri-chiaro);
+  border: 1px solid var(--ri-bordo); border-radius: .75rem; padding: 1.25rem; }
+.elenco-di svg { flex: none; width: 2.75rem; height: 2.75rem; padding: .55rem; border-radius: .6rem;
+  background: var(--ri-blu); fill: #fff; }
+.elenco-di h3 { font-size: 1.15rem; font-weight: 700; color: var(--ri-blu-notte); margin: 0 0 .2rem; }
+.elenco-di p { color: #404040; margin: 0; }

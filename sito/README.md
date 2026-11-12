@@ -9,7 +9,7 @@ contatti usa un piccolo script PHP.
 
 | File | Cosa contiene |
 | --- | --- |
-| `index.html` | pagina principale: presentazione, open source, funzionalità, scheda tecnica, immagini, download, domande frequenti, contatti |
+| `index.html` | pagina principale: presentazione, open source, Designers Italia, funzionalità, scheda tecnica, immagini, download, domande frequenti, contatti |
 | `come-aprire-fattura-elettronica-xml.html`, `come-aprire-file-p7m.html`, `fattura-elettronica-in-pdf.html` | guide per le ricerche più frequenti, con dati strutturati HowTo e FAQ |
 | `404.html` | pagina non trovata |
 | `llms.txt` | riassunto del prodotto per gli assistenti AI (ChatGPT, Claude, Perplexity, Gemini) |

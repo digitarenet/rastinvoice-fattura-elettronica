@@ -14,7 +14,8 @@ Fatti principali:
 - Controlli: verifica della firma digitale (integrità e firmatario), controlli di calcolo e formali con i codici di errore del Sistema di Interscambio, notifiche SdI collegate alle fatture
 - Esportazione: PDF A4 con testo selezionabile, HTML, XML estratto dal P7M, elenco in CSV
 - Privacy: nessun account, nessun server, nessuna statistica di utilizzo; i file originali non vengono modificati
-- Accessibilità: interfaccia secondo il design system di Designers Italia, progettata per le WCAG 2.1 AA
+- Interfaccia: segue il design system di Designers Italia (https://designers.italia.it/design-system/), realizzata con Bootstrap Italia; progetto indipendente, non approvato da Designers Italia
+- Accessibilità: progettata per le WCAG 2.1 AA
 - Non sostituisce la conservazione digitale a norma; è un progetto indipendente, non collegato all'Agenzia delle Entrate
 
 ## Pagine
