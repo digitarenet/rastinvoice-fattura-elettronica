@@ -8,7 +8,7 @@ publiccodeYmlVersion: "0.4"
 
 name: RastInvoice
 url: "https://github.com/digitarenet/rastinvoice-fattura-elettronica"
-softwareVersion: "1.1.5"
+softwareVersion: "1.1.6"
 releaseDate: "2026-11-12"
 
 platforms:

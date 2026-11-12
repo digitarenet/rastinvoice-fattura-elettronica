@@ -681,9 +681,79 @@ fn navigazione_consentita(url: &tauri::Url) -> bool {
     }
 }
 
+/// Barra dei menu di macOS in italiano: quella predefinita di Tauri è in
+/// inglese. Le voci sono quelle standard, con le azioni native del sistema.
+#[cfg(target_os = "macos")]
+fn menu_macos(app: &tauri::AppHandle) -> tauri::Result<tauri::menu::Menu<tauri::Wry>> {
+    use tauri::menu::{AboutMetadata, Menu, PredefinedMenuItem as Voce, Submenu};
+
+    let info = AboutMetadata {
+        name: Some("RastInvoice".into()),
+        version: Some(app.package_info().version.to_string()),
+        copyright: app.config().bundle.copyright.clone(),
+        ..Default::default()
+    };
+    let applicazione = Submenu::with_items(
+        app,
+        "RastInvoice",
+        true,
+        &[
+            &Voce::about(app, Some("Informazioni su RastInvoice"), Some(info))?,
+            &Voce::separator(app)?,
+            &Voce::services(app, Some("Servizi"))?,
+            &Voce::separator(app)?,
+            &Voce::hide(app, Some("Nascondi RastInvoice"))?,
+            &Voce::hide_others(app, Some("Nascondi altre"))?,
+            &Voce::show_all(app, Some("Mostra tutte"))?,
+            &Voce::separator(app)?,
+            &Voce::quit(app, Some("Esci da RastInvoice"))?,
+        ],
+    )?;
+    let archivio = Submenu::with_items(
+        app,
+        "Archivio",
+        true,
+        &[&Voce::close_window(app, Some("Chiudi finestra"))?],
+    )?;
+    let modifica = Submenu::with_items(
+        app,
+        "Modifica",
+        true,
+        &[
+            &Voce::undo(app, Some("Annulla"))?,
+            &Voce::redo(app, Some("Ripristina"))?,
+            &Voce::separator(app)?,
+            &Voce::cut(app, Some("Taglia"))?,
+            &Voce::copy(app, Some("Copia"))?,
+            &Voce::paste(app, Some("Incolla"))?,
+            &Voce::select_all(app, Some("Seleziona tutto"))?,
+        ],
+    )?;
+    let vista = Submenu::with_items(
+        app,
+        "Vista",
+        true,
+        &[&Voce::fullscreen(app, Some("Entra/esci da schermo intero"))?],
+    )?;
+    let finestra = Submenu::with_items(
+        app,
+        "Finestra",
+        true,
+        &[
+            &Voce::minimize(app, Some("Contrai"))?,
+            &Voce::maximize(app, Some("Ingrandisci"))?,
+            &Voce::separator(app)?,
+            &Voce::close_window(app, Some("Chiudi"))?,
+        ],
+    )?;
+    Menu::with_items(app, &[&applicazione, &archivio, &modifica, &vista, &finestra])
+}
+
 /// Avvia l'applicazione.
 pub fn avvia() {
     let costruttore = tauri::Builder::default();
+    #[cfg(target_os = "macos")]
+    let costruttore = costruttore.menu(menu_macos);
     // Aggiornamento integrato dei pacchetti Linux (vedi `aggiornamenti`).
     #[cfg(target_os = "linux")]
     let costruttore = costruttore.plugin(tauri_plugin_updater::Builder::new().build());

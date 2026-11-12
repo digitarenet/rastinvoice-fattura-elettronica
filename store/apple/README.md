@@ -64,4 +64,6 @@ scelta della cartella dati accanto al programma.
 
 ## Stato
 
-Le modifiche per la sandbox (punto 2) non sono ancora state fatte e non c'è ancora un Mac su cui provarle.
+La compilazione dell'app universale con `store/apple/build.sh` è stata provata su un Mac Intel il 12 novembre 2026
+(serve Rust installato con rustup: quello di Homebrew compila solo per l'architettura del Mac in uso). Le
+modifiche per la sandbox (punto 2) non sono ancora state fatte.
