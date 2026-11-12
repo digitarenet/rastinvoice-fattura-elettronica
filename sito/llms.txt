@@ -4,7 +4,7 @@
 
 Fatti principali:
 
-- Versione: 1.2.0 (novembre 2026)
+- Versione: 1.2.1 (novembre 2026)
 - Prezzo: gratuito su Windows (Microsoft Store) e Linux (Flathub, .deb, .rpm, AppImage); 2,99 € su Mac App Store
 - Licenza: EUPL-1.2 (software libero, open source). Il codice sorgente completo è ospitato su GitHub e viene aperto a tutti a breve: chiunque può scaricarlo, verificarlo e compilarlo su Windows, macOS o Linux con Rust e Node.js
 - Formati: XML, XML.P7M (DER, BER, base64, firme annidate), ZIP, EML (PEC), lotti di fatture

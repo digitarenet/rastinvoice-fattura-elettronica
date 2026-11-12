@@ -13,6 +13,8 @@ Materiale comune:
 
 - [`testi.md`](testi.md): nome, descrizioni, funzionalità, parole chiave, didascalie e dati comuni.
 - [`immagini/`](immagini/): logo 300×300 e 1080×1080, poster 720×1080.
+- [`immagini/logo/`](immagini/logo/): file SVG del logo (marchio, logo completo e versione su fondo blu, icone),
+  generati da `genera.py` (richiede `pip install fonttools`).
 - `../docs/immagini/`: schermate a 2720×1720.
 - `../docs/PRIVACY.md`: informativa privacy, da indicare come URL in ogni store.
 

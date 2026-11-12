@@ -4,6 +4,13 @@ Novità, miglioramenti e correzioni di RastInvoice (fino alla 0.9.0 chiamato Rus
 versione segue lo schema MAGGIORE.MINORE.CORREZIONE: la versione minore cresce con le nuove funzioni, quella
 di correzione con le sole correzioni. Le versioni senza novità nel programma non sono elencate.
 
+## 1.2.1 - 2026-11-12
+
+### Modificato
+- Nuovo logo di RastInvoice: la R è un foglio di fattura con l'angolo piegato e la gamba verde indica il
+  documento verificato. Cambiano l'icona del programma su Windows, macOS e Linux e il logo nella barra in alto,
+  con «Rast» in grassetto e «Invoice» in tondo.
+
 ## 1.2.0 - 2026-11-12
 
 ### Aggiunto

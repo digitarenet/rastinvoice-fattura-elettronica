@@ -40,7 +40,10 @@ body { font-family: "Titillium Web", Geneva, Tahoma, sans-serif; color: #1a1a1a;
 .marchio { display: flex; align-items: center; gap: .6rem; color: #fff; text-decoration: none;
   font-weight: 700; font-size: 1.35rem; }
 .marchio:hover { color: #fff; text-decoration: none; }
-.marchio img { width: 2.25rem; height: 2.25rem; border-radius: .5rem; box-shadow: 0 0 0 2px rgba(255, 255, 255, .35); }
+.marchio img { width: 2.25rem; height: 2.25rem; }
+/* logotipo: «Rast» in grassetto, «Invoice» in tondo */
+.marchio span { font-weight: 400; letter-spacing: .01em; }
+.marchio b { font-weight: 700; }
 .menu { margin-left: auto; display: flex; align-items: center; gap: .25rem; list-style: none; margin-bottom: 0; padding: 0; }
 .menu a { color: #fff; text-decoration: none; padding: .5rem .75rem; border-radius: .25rem; font-weight: 600; }
 .menu a:hover, .menu a:focus-visible { background: rgba(255, 255, 255, .15); color: #fff; }

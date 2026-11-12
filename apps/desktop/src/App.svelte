@@ -505,7 +505,7 @@
         onclick={() => (menuAperto = !menuAperto)}><Icona nome="it-burger" /> Menu</button>
       <div class="marchio">
         <img class="logo" src={logo} alt="" width="34" height="34" />
-        <span class="nome">RastInvoice</span>
+        <span class="nome"><b>Rast</b>Invoice</span>
       </div>
       <div class="navigazione">
         <button class="btn btn-xs btn-testata btn-nav" onclick={tornaIndietro} disabled={passiIndietro.length === 0}
@@ -943,15 +943,17 @@
     width: 216px;
   }
   .logo {
-    width: 34px;
-    height: 34px;
-    border-radius: 8px;
-    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.35);
+    width: 32px;
+    height: 32px;
   }
+  /* logotipo: «Rast» in grassetto, «Invoice» in tondo */
   .nome {
-    font-weight: 700;
-    font-size: 1.25rem;
+    font-weight: 400;
+    font-size: 1.3rem;
     letter-spacing: 0.01em;
+  }
+  .nome b {
+    font-weight: 700;
   }
   .navigazione {
     display: flex;
