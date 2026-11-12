@@ -1,3 +1,5 @@
+<p align="center"><img src="store/immagini/logo/logo.svg" alt="RastInvoice, visualizzatore di fatture elettroniche" width="440"></p>
+
 # RastInvoice: visualizzatore di fatture elettroniche XML e P7M (FatturaPA)
 
 **Visualizzatore gratuito e open source per la fattura elettronica italiana.** Apre, legge, stampa e converte in
