@@ -207,6 +207,31 @@ if (!$inviato) {
     rispondi(false, 'Non è stato possibile inviare il messaggio. Riprova più tardi o scrivi a ' . DESTINATARIO . '.');
 }
 
+// Conferma di ricezione a chi ha scritto. Il testo è fisso e non riporta nome né
+// messaggio: chi usasse il modulo con l'indirizzo di un altro non può fargli
+// arrivare contenuti scelti da lui. Se la conferma non parte, il messaggio è
+// comunque arrivato e non si segnala errore.
+$oggettoConferma = '=?UTF-8?B?' . base64_encode('RastInvoice: abbiamo ricevuto il tuo messaggio') . '?=';
+$corpoConferma = "Ciao,\n\n"
+    . "grazie per averci scritto dal sito rastinvoice.it: abbiamo ricevuto il tuo messaggio\n"
+    . "e ti risponderemo il prima possibile.\n\n"
+    . "Se non sei stato tu a scrivere, puoi ignorare questa email.\n\n"
+    . "RastInvoice - https://www.rastinvoice.it\n"
+    . "Questa email è inviata in automatico: per rispondere scrivi a " . DESTINATARIO . ".\n";
+if ($config['smtp_host'] !== '') {
+    invia_smtp($config, $email, $oggettoConferma, $corpoConferma, DESTINATARIO);
+} else {
+    $intestazioniConferma = implode("\r\n", [
+        'From: RastInvoice <' . MITTENTE . '>',
+        'Reply-To: ' . DESTINATARIO,
+        'Auto-Submitted: auto-replied',
+        'MIME-Version: 1.0',
+        'Content-Type: text/plain; charset=UTF-8',
+        'Content-Transfer-Encoding: 8bit',
+    ]);
+    mail($email, $oggettoConferma, $corpoConferma, $intestazioniConferma, '-f' . MITTENTE);
+}
+
 $invii[] = $adesso;
 @file_put_contents($registro, implode("\n", $invii), LOCK_EX);
 rispondi(true);
