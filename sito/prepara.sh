@@ -10,7 +10,7 @@
 # La configurazione si prende da sito/rastinvoice-config.php (escluso da git) se esiste,
 # altrimenti si copia il modello config-esempio.php da compilare.
 #
-# Uso, dalla radice del repository:
+# Uso, dalla radice del repository (su Windows dalla Git Bash):
 #   sito/prepara.sh
 set -euo pipefail
 
@@ -18,9 +18,11 @@ sito="$(cd "$(dirname "$0")" && pwd)"
 uscita="$sito/../target/sito"
 rm -rf "$uscita" && mkdir -p "$uscita/public_html" "$uscita/privato"
 
-# Tutto il sito tranne documentazione, modello e script di servizio
-rsync -a --exclude README.md --exclude config-esempio.php --exclude rastinvoice-config.php \
-  --exclude prepara.sh --exclude .DS_Store "$sito/" "$uscita/public_html/"
+# Tutto il sito tranne documentazione, modello e script di servizio. Solo cp e
+# rm, senza rsync: lo script gira anche nella Git Bash di Windows.
+cp -R "$sito/." "$uscita/public_html/"
+(cd "$uscita/public_html" && rm -f README.md config-esempio.php rastinvoice-config.php prepara.sh)
+find "$uscita/public_html" \( -name .DS_Store -o -name Thumbs.db -o -name desktop.ini \) -delete
 
 if [ -f "$sito/rastinvoice-config.php" ]; then
   cp "$sito/rastinvoice-config.php" "$uscita/privato/"
