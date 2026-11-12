@@ -87,6 +87,27 @@ pub fn cartella_dati(standard: &Path) -> PathBuf {
     standard.to_path_buf()
 }
 
+/// Identificativo usato fino alla versione 1.1.6, prima dell'allineamento al
+/// nome RastInvoice: dà il nome alla cartella dati standard.
+const IDENTIFICATIVO_PRECEDENTE: &str = "net.digitare.rustinvoice";
+
+/// Sposta la cartella dati standard con il vecchio identificativo nella nuova
+/// posizione, aggiornando i percorsi dei file copiati nell'archivio. Non fa
+/// nulla se la nuova cartella esiste già o la vecchia non c'è.
+pub fn migra_cartella_precedente(standard: &Path) {
+    let precedente = standard.with_file_name(IDENTIFICATIVO_PRECEDENTE);
+    if standard.exists() || !precedente.is_dir() || precedente == standard {
+        return;
+    }
+    if std::fs::rename(&precedente, standard).is_err() {
+        return;
+    }
+    if !primo_avvio(standard) {
+        let imp = carica(standard).con_radice_cambiata(&precedente, standard);
+        let _ = salva(standard, &imp);
+    }
+}
+
 /// Primo avvio: nella cartella dati non ci sono ancora impostazioni salvate.
 pub fn primo_avvio(dir: &Path) -> bool {
     !dir.join(NOME_FILE).exists()
@@ -160,4 +181,31 @@ pub fn salva(dir: &Path, i: &Impostazioni) -> std::io::Result<()> {
     let tmp = dir.join(format!("{NOME_FILE}.tmp"));
     std::fs::write(&tmp, testo)?;
     std::fs::rename(tmp, dir.join(NOME_FILE))
+}
+
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    #[test]
+    fn cartella_precedente_spostata_con_i_percorsi() {
+        let radice = std::env::temp_dir().join(format!("rastinvoice-migra-{}", std::process::id()));
+        let _ = std::fs::remove_dir_all(&radice);
+        let precedente = radice.join(IDENTIFICATIVO_PRECEDENTE);
+        let nuova = radice.join("net.digitare.rastinvoice");
+        let imp = Impostazioni {
+            cartelle: vec!["/fatture".into()],
+            file_singoli: vec![format!("{}/archivio/a.xml", precedente.display())],
+            ..Default::default()
+        };
+        salva(&precedente, &imp).unwrap();
+
+        migra_cartella_precedente(&nuova);
+
+        assert!(!precedente.exists());
+        let migrate = carica(&nuova);
+        assert_eq!(migrate.cartelle, ["/fatture"]);
+        assert_eq!(migrate.file_singoli, [format!("{}/archivio/a.xml", nuova.display())]);
+        std::fs::remove_dir_all(&radice).unwrap();
+    }
 }

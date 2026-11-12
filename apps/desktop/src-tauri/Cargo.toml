@@ -41,6 +41,11 @@ encoding_rs.workspace = true
 [target.'cfg(target_os = "linux")'.dependencies]
 tauri-plugin-updater = "2"
 
+# Segnalibri di sicurezza per la sandbox del Mac App Store (vedi src/segnalibri.rs).
+[target.'cfg(target_os = "macos")'.dependencies]
+objc2 = "0.6"
+objc2-foundation = { version = "0.3", features = ["NSArray", "NSData", "NSError", "NSString", "NSURL"] }
+
 [features]
 # Predefinita: l'interfaccia compilata (cartella dist) è inclusa nell'eseguibile,
 # così `cargo run` e il pulsante Run dell'IDE funzionano senza server di sviluppo.

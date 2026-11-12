@@ -8,6 +8,7 @@ mod anteprima;
 mod archivio;
 mod foglio_stile;
 mod impostazioni;
+mod segnalibri;
 
 use impostazioni::Impostazioni;
 use rustinvoice_core::{apri_file, Contenuto};
@@ -67,12 +68,14 @@ fn distribuzione() -> &'static str {
     {
         return "microsoft-store";
     }
-    // Le app del Mac App Store contengono la ricevuta in Contents/_MASReceipt.
+    // Le app del Mac App Store contengono la ricevuta in Contents/_MASReceipt
+    // e girano nella sandbox, che imposta APP_SANDBOX_CONTAINER_ID (vale anche
+    // per la copia di prova in sandbox, ancora senza ricevuta).
     if cfg!(target_os = "macos")
-        && exe
+        && (std::env::var_os("APP_SANDBOX_CONTAINER_ID").is_some() || exe
             .parent()
             .and_then(|p| p.parent())
-            .is_some_and(|c| c.join("_MASReceipt").exists())
+            .is_some_and(|c| c.join("_MASReceipt").exists()))
     {
         return "mac-app-store";
     }
@@ -144,12 +147,18 @@ fn cambia_cartella_dati(
     app.restart()
 }
 
+/// Cartelle d'archivio e file singoli da riaprire al prossimo avvio.
+fn percorsi_da_ricordare(imp: &Impostazioni) -> Vec<&String> {
+    imp.cartelle.iter().chain(&imp.file_singoli).collect()
+}
+
 #[tauri::command]
 fn salva_impostazioni(
     stato: tauri::State<'_, Stato>,
     impostazioni: Impostazioni,
 ) -> Result<(), String> {
     impostazioni::salva(&stato.dir_dati, &impostazioni).map_err(|e| e.to_string())?;
+    segnalibri::aggiorna(&stato.dir_dati, &percorsi_da_ricordare(&impostazioni));
     *stato.impostazioni.lock().unwrap() = impostazioni;
     Ok(())
 }
@@ -770,11 +779,15 @@ pub fn avvia() {
                 .path()
                 .app_data_dir()
                 .unwrap_or_else(|_| std::env::temp_dir().join("rustinvoice"));
+            impostazioni::migra_cartella_precedente(&standard);
             let dir_dati = impostazioni::cartella_dati(&standard);
             let portable = dir_dati != standard;
             let primo_avvio = impostazioni::primo_avvio(&dir_dati);
             let _ = std::fs::create_dir_all(&dir_dati);
             let imp = impostazioni::carica(&dir_dati);
+            // Sandbox del Mac App Store: accesso alle cartelle scelte in passato.
+            segnalibri::riattiva_tutti(&dir_dati);
+            segnalibri::aggiorna(&dir_dati, &percorsi_da_ricordare(&imp));
             app.manage(Stato {
                 dir_dati,
                 dir_standard: standard,

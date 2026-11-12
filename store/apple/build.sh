@@ -74,9 +74,20 @@ if [ "$universale" = 0 ]; then
   exit 0
 fi
 if [ -z "$team" ] || [ -z "$id_app" ] || [ -z "$id_inst" ] || [ ! -f "$profilo" ]; then
+  # Copia firmata in locale (senza certificato) con la sandbox attiva, per
+  # provare l'app come girerà dal Mac App Store: accesso solo ai file scelti
+  # dall'utente e cartelle d'archivio ritrovate dopo il riavvio.
+  prova="target/mac-app-store/prova-sandbox"
+  rm -rf "$prova" && mkdir -p "$prova"
+  cp -R "$app" "$prova/"
+  cp store/apple/entitlements.plist "$prova/entitlements.plist"
+  /usr/libexec/PlistBuddy -c "Delete :com.apple.application-identifier" "$prova/entitlements.plist"
+  /usr/libexec/PlistBuddy -c "Delete :com.apple.developer.team-identifier" "$prova/entitlements.plist"
+  codesign --force --sign - --entitlements "$prova/entitlements.plist" "$prova/RastInvoice.app"
   echo
   echo "Certificati Mac App Store non configurati: creata solo l'app, non il pacchetto."
   echo "Per provarla: open \"$app\""
+  echo "Con la sandbox del Mac App Store: open \"$prova/RastInvoice.app\""
   exit 0
 fi
 

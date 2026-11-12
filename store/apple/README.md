@@ -27,26 +27,30 @@ Gli incassi sono da dichiarare: conviene sentire il commercialista.
    e inserire conto bancario e dati fiscali. Senza questo passo l'app non può essere venduta.
 4. Iscriversi all'**App Store Small Business Program**: commissione al 15% invece del 30%.
 
-## 2. Modifiche all'app (da fare prima del primo invio)
+## 2. Sandbox
 
-Le app del Mac App Store girano nella sandbox di Apple. Per RastInvoice significa:
+Le app del Mac App Store girano nella sandbox di Apple. In RastInvoice è già tutto pronto:
 
 - un file di entitlements con `com.apple.security.app-sandbox`,
   `com.apple.security.files.user-selected.read-write`, `com.apple.security.network.client` e
   `com.apple.security.files.bookmarks.app-scope`;
-- salvare per ogni cartella d'archivio un **segnalibro di sicurezza** (security-scoped bookmark) e
-  riattivarlo a ogni avvio: oggi l'app ricorda solo il percorso, e dopo il riavvio la sandbox negherebbe
-  l'accesso;
+- per ogni cartella d'archivio e ogni file singolo l'app salva un **segnalibro di sicurezza**
+  (security-scoped bookmark) in `segnalibri.json` e lo riattiva a ogni avvio, altrimenti dopo il riavvio la
+  sandbox negherebbe l'accesso (`apps/desktop/src-tauri/src/segnalibri.rs`);
 - nessun pulsante per le donazioni: Apple non le ammette. L'app lo nasconde già su macOS.
 
-L'app riconosce già di essere installata dal Mac App Store: nasconde il controllo degli aggiornamenti e la
-scelta della cartella dati accanto al programma.
+L'app riconosce di essere installata dal Mac App Store (ricevuta o sandbox attiva): nasconde il controllo
+degli aggiornamenti e la scelta della cartella dati accanto al programma.
+
+Senza certificati `build.sh` crea anche `target/mac-app-store/prova-sandbox/RastInvoice.app`, firmata in
+locale con la sandbox attiva: serve a provare l'app come girerà dallo Store. I suoi dati stanno in
+`~/Library/Containers/net.digitare.rastinvoice`.
 
 ## 3. Certificati e pacchetto
 
 1. In Xcode > Settings > Accounts creare i certificati **Apple Distribution** e
    **Mac Installer Distribution**.
-2. In developer.apple.com creare l'identificativo dell'app (`net.digitare.rustinvoice`) e un profilo di
+2. In developer.apple.com creare l'identificativo dell'app (`net.digitare.rastinvoice`, lo stesso di Flathub) e un profilo di
    provisioning **Mac App Store**.
 3. Sul Mac eseguire `store/apple/build.sh`: compila l'app universale, la firma con il certificato di
    distribuzione e gli entitlements (`entitlements.plist`), crea il pacchetto con `productbuild` e lo lascia in
@@ -65,5 +69,5 @@ scelta della cartella dati accanto al programma.
 ## Stato
 
 La compilazione dell'app universale con `store/apple/build.sh` è stata provata su un Mac Intel il 12 novembre 2026
-(serve Rust installato con rustup: quello di Homebrew compila solo per l'architettura del Mac in uso). Le
-modifiche per la sandbox (punto 2) non sono ancora state fatte.
+(serve Rust installato con rustup: quello di Homebrew compila solo per l'architettura del Mac in uso). La
+sandbox (punto 2) è pronta dalla versione 1.2.0. Mancano i certificati e la scheda in App Store Connect.

@@ -12,7 +12,7 @@
   <key>com.apple.security.app-sandbox</key>
   <true/>
   <key>com.apple.application-identifier</key>
-  <string>TEAMID.net.digitare.rustinvoice</string>
+  <string>TEAMID.net.digitare.rastinvoice</string>
   <key>com.apple.developer.team-identifier</key>
   <string>TEAMID</string>
   <!-- Fatture e cartelle scelte dall'utente, anche su dischi di rete. -->
