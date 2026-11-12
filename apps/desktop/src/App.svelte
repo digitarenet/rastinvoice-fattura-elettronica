@@ -7,6 +7,7 @@
 -->
 <script lang="ts">
   import { onMount, tick, untrack } from "svelte";
+  import logo from "./assets/logo.svg";
   import { getCurrentWebview } from "@tauri-apps/api/webview";
   import { open } from "@tauri-apps/plugin-dialog";
   import { api, type Avvio, type Esito, type Impostazioni as Imp, type StatoFoglio, type Voce } from "./lib/api";
@@ -503,7 +504,7 @@
       <button class="btn btn-xs btn-testata menu-stretto" aria-expanded={menuAperto} aria-controls="menu-laterale"
         onclick={() => (menuAperto = !menuAperto)}><Icona nome="it-burger" /> Menu</button>
       <div class="marchio">
-        <span class="logo"><Icona nome="it-file" /></span>
+        <img class="logo" src={logo} alt="" width="34" height="34" />
         <span class="nome">RastInvoice</span>
       </div>
       <div class="navigazione">
@@ -945,13 +946,7 @@
     width: 34px;
     height: 34px;
     border-radius: 8px;
-    background: #fff;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  .logo :global(.icon) {
-    fill: var(--ri-primario);
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.35);
   }
   .nome {
     font-weight: 700;

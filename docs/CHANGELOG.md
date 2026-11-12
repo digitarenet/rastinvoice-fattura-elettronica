@@ -4,6 +4,12 @@ Novità, miglioramenti e correzioni di RastInvoice (fino alla 0.9.0 chiamato Rus
 versione segue lo schema MAGGIORE.MINORE.CORREZIONE: la versione minore cresce con le nuove funzioni, quella
 di correzione con le sole correzioni. Le versioni senza novità nel programma non sono elencate.
 
+## 1.1.5 - 2026-11-12
+
+### Modificato
+- Nella barra in alto dell'applicazione compare il logo di RastInvoice, lo stesso dell'icona del programma,
+  al posto dell'icona generica del documento.
+
 ## 1.1.0 - 2026-11-11
 
 ### Aggiunto
