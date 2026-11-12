@@ -16,7 +16,8 @@
  * - gettone firmato: la pagina lo chiede con GET contatti.php?gettone=1 e lo rimanda con il modulo; contiene
  *   l'ora di apertura firmata con HMAC, quindi il tempo minimo di compilazione non si può falsificare;
  * - campo trappola nascosto, che solo i programmi compilano;
- * - limite di invii per indirizzo IP all'ora e limite complessivo al giorno;
+ * - limite di invii per indirizzo IP all'ora, limite complessivo in pochi minuti (contro i programmi che
+ *   cambiano IP) e limite complessivo al giorno;
  * - limite più basso per gli invii senza gettone (browser senza JavaScript), che non ricevono la conferma;
  * - al massimo una conferma di ricezione al giorno per lo stesso indirizzo email;
  * - scarto silenzioso dei messaggi con troppi link.
@@ -36,6 +37,8 @@ $config = [
     'smtp_password' => '',
     'invii_per_ora' => 5,                    // limite di invii per indirizzo IP
     'invii_al_giorno' => 50,                 // limite complessivo di messaggi al giorno
+    'invii_a_raffica' => 5,                  // limite complessivo di messaggi nella finestra breve,
+    'raffica_minuti' => 5,                   // da qualsiasi IP (contro i programmi che cambiano IP)
     'invii_senza_gettone' => 10,             // limite al giorno per gli invii senza JavaScript
     'link_massimi' => 3,                     // oltre questo numero di link il messaggio è spam
     'secondi_minimi' => 3,                   // un modulo compilato più in fretta è automatico
@@ -194,6 +197,10 @@ $occupato = 'Troppi messaggi in questo momento. Riprova più tardi o scrivi a ' 
 if (count(eventi($ip, 3600)) >= INVII_PER_ORA) {
     rispondi(false, 'Hai già inviato diversi messaggi. Riprova tra un\'ora o scrivi a ' . DESTINATARIO . '.');
 }
+$raffica = max(1, (int)$config['raffica_minuti']) * 60;
+if (count(eventi('raffica', $raffica)) >= (int)$config['invii_a_raffica']) {
+    rispondi(false, $occupato);
+}
 if (count(eventi('giorno', 86400)) >= (int)$config['invii_al_giorno']) {
     rispondi(false, $occupato);
 }
@@ -298,6 +305,7 @@ if (!$inviato) {
 }
 
 registra($ip, 3600);
+registra('raffica', $raffica);
 registra('giorno', 86400);
 if (!$conGettone) {
     registra('senza-gettone', 86400);

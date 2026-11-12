@@ -70,7 +70,8 @@ ai visitatori e non caricare servizi esterni. I controlli, tutti in `contatti.ph
   (HMAC) e lo rimanda con il modulo. I programmi che inviano direttamente al modulo non ce l'hanno, e il tempo
   minimo di compilazione (3 secondi) non si può falsificare;
 - **campo trappola** nascosto, che solo i programmi compilano;
-- **limiti**: 5 invii all'ora per indirizzo IP, 50 messaggi al giorno in tutto, 10 al giorno senza gettone
+- **limiti**: 5 invii all'ora per indirizzo IP, 5 messaggi in 5 minuti in tutto da qualsiasi IP (contro i
+  programmi che cambiano indirizzo), 50 messaggi al giorno in tutto, 10 al giorno senza gettone
   (browser senza JavaScript, che restano supportati);
 - **conferma di ricezione** solo con gettone e al massimo una al giorno per indirizzo email, così il modulo
   non può essere usato per mandare email a terzi;
