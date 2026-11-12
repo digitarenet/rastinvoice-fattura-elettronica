@@ -119,6 +119,8 @@ body { font-family: "Titillium Web", Geneva, Tahoma, sans-serif; color: #1a1a1a;
 .store .azioni { margin-top: auto; display: flex; flex-direction: column; gap: .5rem; }
 .store .btn { font-weight: 700; display: flex; align-items: center; justify-content: center; gap: .5rem; }
 .store .btn svg { width: 1.2rem; height: 1.2rem; fill: currentColor; }
+/* Pulsanti degli store non ancora pubblicati */
+.store .presto { opacity: .6; cursor: default; pointer-events: none; }
 .nota { font-size: .95rem; color: #5c6f82; }
 
 /* Domande frequenti */

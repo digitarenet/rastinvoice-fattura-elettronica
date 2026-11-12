@@ -78,8 +78,12 @@ python3 -m http.server     # senza PHP: tutto tranne il modulo
 
 ## Collegamenti da aggiornare
 
-Alcuni collegamenti sono provvisori finché le schede negli store non sono pubblicate. Si trovano in
-`index.html` (sezione Scarica e piè di pagina) e nel `README.md` del repository.
+Finché le schede negli store non sono pubblicate e il repository GitHub è privato, il sito non ha link
+che non funzionano: i pulsanti di download sono segnaposto "Prossimamente" (`<span>` con classe `presto`,
+sezione Scarica e piè di pagina di `index.html`) e i link a GitHub sono stati tolti da tutte le pagine
+(menu, contatti, piè di pagina, informativa, `llms.txt`, dati strutturati `sameAs`). Alla pubblicazione si
+ripristinano dalla cronologia di git (commit "Sito: pulsanti Prossimamente") con i collegamenti definitivi
+qui sotto.
 
 | Destinazione | Collegamento provvisorio | Collegamento definitivo |
 | --- | --- | --- |

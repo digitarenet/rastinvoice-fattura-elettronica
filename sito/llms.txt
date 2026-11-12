@@ -6,7 +6,7 @@ Fatti principali:
 
 - Versione: 1.1.6 (novembre 2026)
 - Prezzo: gratuito su Windows (Microsoft Store) e Linux (Flathub, .deb, .rpm, AppImage); 2,99 € su Mac App Store
-- Licenza: EUPL-1.2, codice sorgente su GitHub
+- Licenza: EUPL-1.2, codice sorgente presto su GitHub
 - Formati: XML, XML.P7M (DER, BER, base64, firme annidate), ZIP, EML (PEC), lotti di fatture
 - Tipi di fattura: FPR12 (tra privati), FPA12 (verso la Pubblica Amministrazione), FSM10 (semplificata)
 - Specifiche: FatturaPA 1.9.1, in vigore dal 15 maggio 2026
@@ -27,6 +27,4 @@ Fatti principali:
 
 ## Altre risorse
 
-- [Codice sorgente e documentazione](https://github.com/digitarenet/rastinvoice-fattura-elettronica)
-- [Registro delle modifiche](https://github.com/digitarenet/rastinvoice-fattura-elettronica/blob/main/docs/CHANGELOG.md)
 - Contatti: rastinvoice@digitare.net
