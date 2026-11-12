@@ -30,6 +30,10 @@ Set-Location $radice
 $conf = Get-Content "apps/desktop/src-tauri/tauri.conf.json" -Raw | ConvertFrom-Json
 $versione = "$($conf.version).0"
 
+# Tauri può rinominare l'eseguibile con il nome del prodotto: si prova anche quello.
+if (-not (Test-Path $Eseguibile) -and (Test-Path "target/release/RastInvoice.exe")) {
+    $Eseguibile = "target/release/RastInvoice.exe"
+}
 if (-not (Test-Path $Eseguibile)) {
     throw "Eseguibile non trovato: $Eseguibile. Compilare prima con 'npx tauri build'."
 }
@@ -39,7 +43,7 @@ $layout = Join-Path $Uscita "layout"
 Remove-Item $layout -Recurse -Force -ErrorAction SilentlyContinue
 New-Item -ItemType Directory -Force -Path (Join-Path $layout "Assets") | Out-Null
 Copy-Item $Eseguibile (Join-Path $layout "RastInvoice.exe")
-foreach ($logo in "Square44x44Logo", "Square150x150Logo", "Square310x310Logo", "StoreLogo") {
+foreach ($logo in "Square44x44Logo", "Square150x150Logo", "StoreLogo") {
     Copy-Item "apps/desktop/src-tauri/icons/$logo.png" (Join-Path $layout "Assets/$logo.png")
 }
 
