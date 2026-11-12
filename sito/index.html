@@ -5,6 +5,7 @@
 
   Sito rastinvoice.it. Finché schede degli store e repository non sono pubblici, i pulsanti di download
   sono segnaposto "Prossimamente" (classe "presto"): vedi sito/README.md, "Collegamenti da aggiornare".
+  Lo stesso vale per il pulsante GitHub della sezione Open source (id "pulsante-github").
 -->
 <html lang="it">
 <head>
@@ -140,6 +141,14 @@
     },
     {
       "@type": "Question",
+      "name": "RastInvoice è open source? Posso compilarlo da solo?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Sì. RastInvoice è software libero con licenza EUPL-1.2 e il codice sorgente completo è ospitato su GitHub, aperto a tutti a breve: chiunque può scaricarlo, verificarlo e compilarlo su Windows, macOS o Linux con Rust e Node.js, seguendo le istruzioni del repository."
+      }
+    },
+    {
+      "@type": "Question",
       "name": "RastInvoice conserva le fatture a norma?",
       "acceptedAnswer": {
         "@type": "Answer",
@@ -189,6 +198,7 @@
       <nav aria-label="Menu principale">
         <ul class="menu" id="menu">
           <li><a href="#funzionalita">Funzionalità</a></li>
+          <li><a href="#open-source">Open source</a></li>
           <li><a href="#immagini">Immagini</a></li>
           <li><a href="#domande">Domande</a></li>
           <li><a href="#contatti">Contatti</a></li>
@@ -203,6 +213,9 @@
       <div class="container">
         <div class="row">
           <div class="col-lg-9 col-xl-8">
+            <a class="etichetta-os" href="#open-source">
+              <svg aria-hidden="true"><use href="img/sprites.svg#it-open-source"></use></svg>
+              Open source con licenza EUPL-1.2: codice libero, compilabile da chiunque</a>
             <p class="sopratitolo">Le tue fatture, finalmente leggibili e in ordine</p>
             <h1 id="titolo">Visualizzatore di fatture elettroniche XML e P7M</h1>
             <p class="lead mt-3">RastInvoice apre le fatture elettroniche XML e P7M, le mostra in modo chiaro e le stampa
@@ -255,8 +268,71 @@
           <div class="col-sm-6 col-lg-3 vantaggio">
             <div class="icona"><svg aria-hidden="true"><use href="img/sprites.svg#it-open-source"></use></svg></div>
             <h3>Libero</h3>
-            <p>Codice sorgente pubblico con licenza europea EUPL-1.2. Gratuito su Windows e Linux, senza pubblicità e
-              senza limiti.</p>
+            <p>Codice sorgente aperto con licenza europea EUPL-1.2. Gratuito su Windows e Linux, senza pubblicità e
+              senza limiti. <a href="#open-source">Scopri di più</a></p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+    <section class="sezione aperta" id="open-source" aria-labelledby="titolo-open-source">
+      <div class="container">
+        <div class="row g-4 g-lg-5">
+          <div class="col-lg-6">
+            <p class="sopratitolo">Software libero</p>
+            <h2 id="titolo-open-source">Open source: il codice è di tutti</h2>
+            <p class="intro">RastInvoice è software libero con la licenza pubblica dell'Unione europea
+              <a href="https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12">EUPL-1.2</a>.
+              Il codice sorgente completo è ospitato su GitHub: chiunque può scaricarlo, leggerlo, compilarlo sul
+              proprio computer, modificarlo e ridistribuirlo.</p>
+            <ul class="vantaggi-os">
+              <li>
+                <svg aria-hidden="true"><use href="img/sprites.svg#it-search"></use></svg>
+                <div><h3>Verificabile</h3>
+                  <p>Puoi controllare riga per riga che le fatture restano sul tuo computer e non vengono inviate a
+                    nessuno.</p></div>
+              </li>
+              <li>
+                <svg aria-hidden="true"><use href="img/sprites.svg#it-software"></use></svg>
+                <div><h3>Compilabile da chiunque</h3>
+                  <p>Bastano Rust e Node.js, su Windows, macOS o Linux. Le istruzioni sono nel file README del
+                    repository.</p></div>
+              </li>
+              <li>
+                <svg aria-hidden="true"><use href="img/sprites.svg#it-pa"></use></svg>
+                <div><h3>Licenza europea</h3>
+                  <p>La EUPL è redatta dalla Commissione europea, vale in tutte le lingue dell'Unione ed è
+                    compatibile con le principali licenze libere.</p></div>
+              </li>
+              <li>
+                <svg aria-hidden="true"><use href="img/sprites.svg#it-comment"></use></svg>
+                <div><h3>Aperto ai contributi</h3>
+                  <p>Segnalazioni, proposte e correzioni sono benvenute: il programma cresce anche con l'aiuto di chi
+                    lo usa.</p></div>
+              </li>
+            </ul>
+          </div>
+          <div class="col-lg-6">
+            <div class="terminale">
+              <p class="titolo-terminale" id="titolo-compila">Compila RastInvoice in tre comandi</p>
+              <pre><code>git clone https://github.com/digitarenet/rastinvoice-fattura-elettronica.git
+cd rastinvoice-fattura-elettronica
+cargo build --release -p rustinvoice-desktop</code></pre>
+            </div>
+            <div class="d-flex flex-wrap gap-3 mt-4">
+              <!-- Quando il repository è pubblico sostituire lo span con:
+              <a class="btn btn-bianco btn-lg" id="pulsante-github" href="https://github.com/digitarenet/rastinvoice-fattura-elettronica">
+                <svg aria-hidden="true"><use href="img/sprites.svg#it-github"></use></svg>
+                Codice sorgente su GitHub</a>
+              e togliere la nota "nota-os" qui sotto. -->
+              <span class="btn btn-outline-light btn-lg presto" id="pulsante-github" aria-disabled="true">
+                <svg aria-hidden="true"><use href="img/sprites.svg#it-github"></use></svg>
+                Codice su GitHub: prossimamente</span>
+              <a class="btn btn-outline-light btn-lg" href="https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12">
+                Leggi la licenza EUPL-1.2</a>
+            </div>
+            <p class="nota-os mt-3">Il repository su GitHub viene aperto a breve, insieme ai pacchetti per gli store.</p>
           </div>
         </div>
       </div>
@@ -449,7 +525,8 @@
         </div>
         <p class="nota mt-4">Il pacchetto <code>.deb</code> è per Debian, Ubuntu e Linux Mint; il pacchetto <code>.rpm</code> per
           Fedora, openSUSE e RHEL; AppImage funziona su quasi tutte le distribuzioni senza installazione. I pacchetti
-          saranno pubblicati a breve, insieme al codice sorgente.</p>
+          saranno pubblicati a breve, insieme al codice sorgente: chi preferisce potrà anche
+          <a href="#open-source">compilare RastInvoice da sé</a>.</p>
       </div>
     </section>
 
@@ -533,6 +610,12 @@
                 <summary>Quanto costa?</summary>
                 <p>Su Windows e Linux è gratuito, senza pubblicità e senza limiti. Su macOS costa 2,99 € una tantum sul Mac App
                   Store, per coprire l'iscrizione al programma per sviluppatori di Apple.</p>
+              </details>
+              <details>
+                <summary>RastInvoice è open source? Posso compilarlo da solo?</summary>
+                <p>Sì. RastInvoice è software libero con licenza EUPL-1.2 e il codice sorgente completo è ospitato su
+                  GitHub, aperto a tutti a breve: chiunque può scaricarlo, verificarlo e compilarlo su Windows, macOS o Linux con Rust e Node.js,
+                  seguendo le istruzioni del repository. <a href="#open-source">Come si compila</a>.</p>
               </details>
               <details>
                 <summary>RastInvoice conserva le fatture a norma?</summary>
@@ -626,6 +709,8 @@
         <div class="col-6 col-md-4">
           <h2>Progetto</h2>
           <ul>
+            <li><a href="#open-source">Open source</a></li>
+            <li>Codice sorgente su GitHub (prossimamente)</li>
             <li><a href="privacy.html">Privacy</a></li>
             <li><a href="#contatti">Contatti</a></li>
           </ul>

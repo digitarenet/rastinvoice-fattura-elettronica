@@ -9,7 +9,7 @@ contatti usa un piccolo script PHP.
 
 | File | Cosa contiene |
 | --- | --- |
-| `index.html` | pagina principale: presentazione, funzionalità, scheda tecnica, immagini, download, domande frequenti, contatti |
+| `index.html` | pagina principale: presentazione, open source, funzionalità, scheda tecnica, immagini, download, domande frequenti, contatti |
 | `come-aprire-fattura-elettronica-xml.html`, `come-aprire-file-p7m.html`, `fattura-elettronica-in-pdf.html` | guide per le ricerche più frequenti, con dati strutturati HowTo e FAQ |
 | `404.html` | pagina non trovata |
 | `llms.txt` | riassunto del prodotto per gli assistenti AI (ChatGPT, Claude, Perplexity, Gemini) |
@@ -88,6 +88,12 @@ sezione Scarica e piè di pagina di `index.html`) e i link a GitHub sono stati t
 (menu, contatti, piè di pagina, informativa, `llms.txt`, dati strutturati `sameAs`). Alla pubblicazione si
 ripristinano dalla cronologia di git (commit "Sito: pulsanti Prossimamente") con i collegamenti definitivi
 qui sotto.
+
+La sezione "Open source" di `index.html` (`id="open-source"`) resta anche dopo la pubblicazione. Quando il
+repository diventa pubblico: sostituire lo `<span id="pulsante-github">` con il link già pronto nel commento
+accanto, togliere la nota `nota-os`, la voce "Codice sorgente su GitHub (prossimamente)" del piè di pagina
+diventa un link, e nella domanda frequente sull'open source (anche nei dati strutturati FAQPage) e in
+`llms.txt` si toglie "aperto a tutti a breve".
 
 | Destinazione | Collegamento provvisorio | Collegamento definitivo |
 | --- | --- | --- |
