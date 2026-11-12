@@ -39,6 +39,7 @@ $config = [
     'invii_al_giorno' => 50,                 // limite complessivo di messaggi al giorno
     'invii_a_raffica' => 5,                  // limite complessivo di messaggi nella finestra breve,
     'raffica_minuti' => 5,                   // da qualsiasi IP (contro i programmi che cambiano IP)
+    'notifiche' => '',                       // chi riceve l'avviso dei limiti raggiunti; vuoto: il destinatario
     'invii_senza_gettone' => 10,             // limite al giorno per gli invii senza JavaScript
     'link_massimi' => 3,                     // oltre questo numero di link il messaggio è spam
     'secondi_minimi' => 3,                   // un modulo compilato più in fretta è automatico
@@ -193,16 +194,42 @@ if ($link > (int)$config['link_massimi']) {
 
 // Limiti di invio. IP ed email sono salvati solo come impronta cifrata, non reversibile
 $ip = 'ip-' . firma('ip:' . ($_SERVER['REMOTE_ADDR'] ?? ''), $config);
-$occupato = 'Troppi messaggi in questo momento. Riprova più tardi o scrivi a ' . DESTINATARIO . '.';
+$occupato = 'È stato raggiunto il numero massimo di messaggi che il modulo può inviare in questo momento. '
+    . 'Riprova tra qualche minuto o scrivi a ' . DESTINATARIO . '.';
+
+/**
+ * Limite complessivo raggiunto: avvisa il gestore del sito, al massimo una volta per finestra
+ * (per non intasargli la casella durante un attacco), poi risponde all'utente.
+ */
+function limite_raggiunto(array $config, string $nome, string $descrizione, int $finestra, int $conteggio, string $occupato): never
+{
+    if (count(eventi('avviso-' . $nome, $finestra)) === 0) {
+        registra('avviso-' . $nome, $finestra);
+        $a = (string)$config['notifiche'] !== '' ? (string)$config['notifiche'] : DESTINATARIO;
+        $oggetto = '=?UTF-8?B?' . base64_encode('[RastInvoice] Modulo contatti: limite raggiunto (' . $descrizione . ')') . '?=';
+        $corpo = "Il modulo contatti di rastinvoice.it ha raggiunto un limite di invio.\n\n"
+            . "Limite: $descrizione\n"
+            . "Messaggi inviati nel periodo: $conteggio\n"
+            . 'Data: ' . date('d/m/Y H:i:s') . "\n"
+            . 'IP della richiesta bloccata: ' . ($_SERVER['REMOTE_ADDR'] ?? 'sconosciuto') . "\n"
+            . 'Browser: ' . riga((string)($_SERVER['HTTP_USER_AGENT'] ?? ''), 300) . "\n\n"
+            . "Finché il periodo non scade il modulo risponde ai visitatori che è stato raggiunto il numero\n"
+            . "massimo di messaggi e di riprovare più tardi. Per lo stesso limite non arrivano altri avvisi\n"
+            . "fino alla fine del periodo. I limiti si cambiano in rastinvoice-config.php.\n";
+        invia($config, $a, $oggetto, $corpo, $a);
+    }
+    rispondi(false, $occupato);
+}
 if (count(eventi($ip, 3600)) >= INVII_PER_ORA) {
     rispondi(false, 'Hai già inviato diversi messaggi. Riprova tra un\'ora o scrivi a ' . DESTINATARIO . '.');
 }
 $raffica = max(1, (int)$config['raffica_minuti']) * 60;
-if (count(eventi('raffica', $raffica)) >= (int)$config['invii_a_raffica']) {
-    rispondi(false, $occupato);
+$minuti = intdiv($raffica, 60);
+if (($n = count(eventi('raffica', $raffica))) >= (int)$config['invii_a_raffica']) {
+    limite_raggiunto($config, 'raffica', "{$config['invii_a_raffica']} messaggi in $minuti minuti", $raffica, $n, $occupato);
 }
-if (count(eventi('giorno', 86400)) >= (int)$config['invii_al_giorno']) {
-    rispondi(false, $occupato);
+if (($n = count(eventi('giorno', 86400))) >= (int)$config['invii_al_giorno']) {
+    limite_raggiunto($config, 'giorno', "{$config['invii_al_giorno']} messaggi in 24 ore", 86400, $n, $occupato);
 }
 if (!$conGettone && count(eventi('senza-gettone', 86400)) >= (int)$config['invii_senza_gettone']) {
     rispondi(false, $occupato);
@@ -277,6 +304,23 @@ function invia_smtp(array $c, string $a, string $oggetto, string $corpo, string 
     @fwrite($s, "QUIT\r\n");
     fclose($s);
     return $ok;
+}
+
+/** Invio di un'email di servizio con SMTP, se configurato, o con mail() di PHP. */
+function invia(array $c, string $a, string $oggetto, string $corpo, string $rispondiA): bool
+{
+    if ((string)$c['smtp_host'] !== '') {
+        return invia_smtp($c, $a, $oggetto, $corpo, $rispondiA);
+    }
+    $intestazioni = implode("\r\n", [
+        'From: RastInvoice <' . MITTENTE . '>',
+        'Reply-To: ' . $rispondiA,
+        'Auto-Submitted: auto-generated',
+        'MIME-Version: 1.0',
+        'Content-Type: text/plain; charset=UTF-8',
+        'Content-Transfer-Encoding: 8bit',
+    ]);
+    return mail($a, $oggetto, $corpo, $intestazioni, '-f' . MITTENTE);
 }
 
 $oggetto = '=?UTF-8?B?' . base64_encode('[RastInvoice] ' . $argomento . ' - ' . $nome) . '?=';

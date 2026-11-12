@@ -26,6 +26,8 @@ return [
     // 'invii_a_raffica' => 5,        // in tutto, da qualsiasi IP, nella finestra di...
     // 'raffica_minuti' => 5,         // ...questi minuti (contro i programmi che cambiano IP)
     // 'invii_al_giorno' => 50,       // in tutto
+    // 'notifiche' => '',             // chi riceve l'avviso quando scatta un limite complessivo
+                                      // (al massimo uno per periodo); vuoto: il destinatario
     // 'invii_senza_gettone' => 10,   // al giorno, dai browser senza JavaScript
     // 'link_massimi' => 3,           // oltre, il messaggio è scartato come spam
     // 'segreto' => '',               // vuoto: chiave generata in privato/rastinvoice-segreto

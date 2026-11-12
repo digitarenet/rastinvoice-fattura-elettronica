@@ -75,7 +75,10 @@ ai visitatori e non caricare servizi esterni. I controlli, tutti in `contatti.ph
   (browser senza JavaScript, che restano supportati);
 - **conferma di ricezione** solo con gettone e al massimo una al giorno per indirizzo email, così il modulo
   non può essere usato per mandare email a terzi;
-- **più di 3 link** nel messaggio: scartato come spam.
+- **più di 3 link** nel messaggio: scartato come spam;
+- **avviso al gestore**: quando scatta il limite dei 5 minuti o quello giornaliero arriva un'email a
+  `info@digitare.net` (o all'indirizzo `notifiche` della configurazione) con limite, conteggio, ora, IP e
+  browser della richiesta bloccata. Al massimo un avviso per periodo, per non intasare la casella.
 
 Ai programmi automatici il modulo risponde sempre "inviato". I registri (impronte cifrate di IP ed email,
 con l'orario) e la chiave dei gettoni `rastinvoice-segreto` stanno nella cartella `privato/` se PHP può
