@@ -6,7 +6,7 @@
 # node-sources.json, generati da store/linux/flatpak.sh (vedi README.md).
 id: net.digitare.rastinvoice
 runtime: org.gnome.Platform
-runtime-version: '48'
+runtime-version: '51'
 sdk: org.gnome.Sdk
 sdk-extensions:
   - org.freedesktop.Sdk.Extension.rust-stable

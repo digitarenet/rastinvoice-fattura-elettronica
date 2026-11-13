@@ -77,6 +77,15 @@
     <display_length compare="ge">980</display_length>
   </requires>
   <releases>
+    <release version="1.2.2" date="2026-11-13">
+      <description>
+        <p>Prima versione disponibile su Flathub.</p>
+        <ul>
+          <li>Scegliendo un anno dopo Contrassegnate, Da leggere o Con anomalie l'elenco non resta più vuoto.</li>
+          <li>Le fatture che comparivano vuote con il foglio di stile AssoSoftware ora si vedono per intero.</li>
+        </ul>
+      </description>
+    </release>
     <release version="1.0.0" date="2026-11-11">
       <description>
         <p>Prima versione pubblicata negli store Linux.</p>

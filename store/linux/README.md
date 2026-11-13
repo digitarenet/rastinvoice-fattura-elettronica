@@ -62,5 +62,4 @@ solo se qualcuno lo chiede: la comunità Arch spesso lo crea da sé.
 
 ## Stato
 
-Gli script `build.sh` e `flatpak.sh` non sono ancora stati eseguiti: vanno provati una volta sul
-PC Linux prima del primo invio.
+Gli script `build.sh` e `flatpak.sh` sono stati provati su LMDE 7 con la versione 1.2.2.

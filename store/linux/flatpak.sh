@@ -71,7 +71,8 @@ open(uscita, "w", encoding="utf-8").write(testo)
 PY
 
 echo "Compilazione Flatpak di RastInvoice $versione (la prima volta scarica i runtime GNOME)..."
-flatpak-builder --user --install --force-clean --install-deps-from=flathub \
+# Senza rofiles-fuse: su alcuni sistemi il suo smontaggio fallisce a compilazione finita.
+flatpak-builder --user --install --force-clean --install-deps-from=flathub --disable-rofiles-fuse \
   --state-dir="$lavoro/stato" --repo="$lavoro/repo" "$lavoro/build" "$lavoro/$id.yml"
 
 pacchetto="$lavoro/RastInvoice_${versione}.flatpak"

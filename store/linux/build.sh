@@ -77,7 +77,10 @@ rm -rf target/release/bundle/{deb,rpm,appimage} target/release/bundle/latest.jso
 cd apps/desktop
 if [ -n "${TAURI_SIGNING_PRIVATE_KEY:-}" ] && [ -n "${RASTINVOICE_CHIAVE_AGGIORNAMENTI:-}" ]; then
   echo "== Compilazione con firma per l'aggiornamento integrato"
-  npx tauri build --bundles deb,rpm,appimage --config '{"bundle":{"createUpdaterArtifacts":true}}'
+  # La chiave pubblica va anche nella configurazione: la CLI di Tauri la usa per
+  # verificare le firme appena create e si ferma se il campo pubkey è vuoto.
+  npx tauri build --bundles deb,rpm,appimage --config \
+    "{\"bundle\":{\"createUpdaterArtifacts\":true},\"plugins\":{\"updater\":{\"pubkey\":\"$RASTINVOICE_CHIAVE_AGGIORNAMENTI\"}}}"
   cd "$radice"
   node store/linux/manifesto-aggiornamenti.mjs "$versione" \
     "https://github.com/digitarenet/rastinvoice-fattura-elettronica/releases/download/v$versione" \
@@ -92,6 +95,6 @@ fi
 echo
 echo "Pacchetti pronti:"
 ls -1 target/release/bundle/deb/*.deb target/release/bundle/rpm/*.rpm \
-  target/release/bundle/appimage/*.AppImage target/release/bundle/latest.json 2>/dev/null
+  target/release/bundle/appimage/*.AppImage target/release/bundle/latest.json 2>/dev/null || true
 echo
 echo "Per pubblicarli su GitHub: store/linux/pubblica.sh"
