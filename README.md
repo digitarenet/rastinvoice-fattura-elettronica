@@ -33,9 +33,11 @@ Apre fatture emesse e ricevute in tutti i formati in cui arrivano di solito: `.x
   &nbsp;
   <a href="https://apps.apple.com/it/"><img src="https://img.shields.io/badge/Mac%20App%20Store-Scarica-000000?style=for-the-badge&logo=apple&logoColor=white" alt="Scarica dal Mac App Store" height="56"></a>
 </p>
+<!-- Badge Flathub da ripristinare quando l'app è accettata su Flathub:
 <p align="center">
   <a href="https://flathub.org/apps/net.digitare.rastinvoice"><img src="https://flathub.org/api/badge?locale=it" alt="Scarica da Flathub" height="56"></a>
 </p>
+-->
 <p align="center">
   <a href="https://github.com/digitarenet/rastinvoice-fattura-elettronica/releases/latest"><img src="https://img.shields.io/badge/Debian%20e%20Ubuntu-.deb-A81D33?style=for-the-badge&logo=debian&logoColor=white" alt="Pacchetto .deb per Debian e Ubuntu"></a>
   <a href="https://github.com/digitarenet/rastinvoice-fattura-elettronica/releases/latest"><img src="https://img.shields.io/badge/Fedora%20e%20openSUSE-.rpm-294172?style=for-the-badge&logo=fedora&logoColor=white" alt="Pacchetto .rpm per Fedora e openSUSE"></a>
@@ -46,7 +48,7 @@ Apre fatture emesse e ricevute in tutti i formati in cui arrivano di solito: `.x
 | --- | --- | --- |
 | Windows 10 e 11 | [Microsoft Store](https://apps.microsoft.com/search?query=RastInvoice) | gratuito |
 | macOS (Intel e Apple Silicon) | [Mac App Store](https://apps.apple.com/it/) | 2,99 € |
-| Linux, tutte le distribuzioni | [Flathub](https://flathub.org/apps/net.digitare.rastinvoice) · [AppImage](https://github.com/digitarenet/rastinvoice-fattura-elettronica/releases/latest) | gratuito |
+| Linux, tutte le distribuzioni | [AppImage](https://github.com/digitarenet/rastinvoice-fattura-elettronica/releases/latest) | gratuito |
 | Debian, Ubuntu, Linux Mint | [pacchetto `.deb`](https://github.com/digitarenet/rastinvoice-fattura-elettronica/releases/latest) | gratuito |
 | Fedora, openSUSE, RHEL | [pacchetto `.rpm`](https://github.com/digitarenet/rastinvoice-fattura-elettronica/releases/latest) | gratuito |
 | Qualsiasi sistema | [codice sorgente](#compilazione) | gratuito |
