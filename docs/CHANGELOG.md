@@ -11,6 +11,8 @@ di correzione con le sole correzioni. Le versioni senza novità nel programma no
   anche se l'anno conteneva documenti. Ora l'anno mostra tutti i suoi documenti; se si stava guardando
   Ricevute o Emesse, l'anno mostra solo quelle. Il numero accanto a ogni anno corrisponde sempre ai
   documenti che si vedono nell'elenco.
+- Alcune fatture, come quelle di GTT, comparivano vuote nella vista con il foglio di stile AssoSoftware,
+  mentre la vista Moderna e l'XML erano corretti. Ora si vedono per intero anche con il foglio AssoSoftware.
 
 ## 1.2.1 - 2026-11-12
 

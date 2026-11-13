@@ -71,3 +71,15 @@ fn funzionalita_non_supportate_segnalate() {
         Err(Errore::NonSupportato(_))
     ));
 }
+
+#[test]
+fn spazio_dei_nomi_predefinito_annullato() {
+    // Fatture con la radice nello spazio dei nomi predefinito e i figli con `xmlns=""`
+    // (per esempio quelle prodotte dal sistema BRAV): i figli non hanno spazio dei nomi.
+    let foglio = r#"<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:a="urn:f">
+      <xsl:template match="/"><xsl:value-of select="a:F/H/N"/>|<xsl:value-of select="count(a:F/*[namespace-uri()=''])"/>|<xsl:apply-templates select="a:F/H"/></xsl:template>
+      <xsl:template match="H">h</xsl:template>
+    </xsl:stylesheet>"#;
+    let xml = r#"<F xmlns="urn:f"><H xmlns=""><N>42</N></H></F>"#;
+    assert_eq!(trasforma(foglio, xml).unwrap(), "42|1|h");
+}

@@ -61,12 +61,17 @@ impl<'a, 'i> Nodo<'a, 'i> {
 
     /// Spazio dei nomi e nome locale (solo per elementi e attributi).
     pub fn nome_espanso(&self) -> Option<(Option<&'a str>, &'a str)> {
+        // Uno spazio dei nomi vuoto (`xmlns=""`, che annulla quello predefinito del padre) equivale
+        // a nessuno spazio dei nomi: roxmltree lo restituisce come stringa vuota.
+        let senza_vuoto = |u: Option<&'a str>| u.filter(|u| !u.is_empty());
         match self {
             Nodo::Normale(n) if n.is_element() => {
-                Some((n.tag_name().namespace(), n.tag_name().name()))
+                Some((senza_vuoto(n.tag_name().namespace()), n.tag_name().name()))
             }
             Nodo::Normale(n) if n.is_pi() => n.pi().map(|p| (None, p.target)),
-            Nodo::Attributo(..) => self.attributo().map(|a| (a.namespace(), a.name())),
+            Nodo::Attributo(..) => self
+                .attributo()
+                .map(|a| (senza_vuoto(a.namespace()), a.name())),
             _ => None,
         }
     }
