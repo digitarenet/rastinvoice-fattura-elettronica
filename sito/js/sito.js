@@ -45,7 +45,7 @@
     var nome = scheda.getAttribute("data-img");
     var testo = scheda.getAttribute("data-testo");
     immagine.src = "img/" + nome + ".webp";
-    immagine.srcset = "img/" + nome + "-800.webp 800w, img/" + nome + ".webp 1600w";
+    immagine.srcset = "img/" + nome + "-400.webp 400w, img/" + nome + "-800.webp 800w, img/" + nome + ".webp 1600w";
     immagine.alt = testo;
     didascalia.textContent = testo;
     pannello.setAttribute("aria-labelledby", scheda.id);

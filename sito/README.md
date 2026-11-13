@@ -20,8 +20,8 @@ contatti usa un piccolo script PHP.
 | `config-esempio.php` | modello della configurazione SMTP, da copiare come `rastinvoice-config.php` fuori dalla radice del sito |
 | `prepara.sh` | prepara in `target/sito/` le cartelle `public_html/` e `privato/` da caricare sul server |
 | `.htaccess` | per Apache: HTTPS e dominio unico www, compressione, cache, intestazioni di sicurezza, pagina 404, blocco dei file di configurazione |
-| `css/bootstrap-italia.min.css` | [Bootstrap Italia](https://italia.github.io/bootstrap-italia/) 2.18.0 (BSD-3-Clause), ridotto alle sole regole usate (32 KB invece di 600 KB) |
-| `css/sito.css` | stili propri del sito |
+| `css/bootstrap-italia.min.css` | [Bootstrap Italia](https://italia.github.io/bootstrap-italia/) 2.18.0 (BSD-3-Clause), ridotto alle sole regole usate (24 KB invece di 600 KB) |
+| `css/sito.css` | stili propri del sito; `prepara.sh` incorpora entrambi i fogli in ogni pagina e ne mette l'impronta SHA-256 nella Content-Security-Policy |
 | `js/sito.js` | menu su schermi piccoli, galleria, invio del modulo |
 | `fonts/` | Titillium Web (SIL Open Font License), ospitato localmente |
 | `img/` | logo, icone, schermate in WebP, anteprima per i social, icone di Bootstrap Italia (`sprites.svg`) |
@@ -121,10 +121,11 @@ salvati in `img/`, senza collegarli dai server esterni, così il sito continua a
 ## Aggiornamenti
 
 - **Nuova versione del programma:** aggiornare `softwareVersion` nei dati strutturati in `index.html`.
-- **Nuove schermate:** sostituire i file in `docs/immagini/` e rigenerare le versioni WebP (1600 e 800 pixel
+- **Nuove schermate:** sostituire i file in `docs/immagini/` e rigenerare le versioni WebP (1600, 800 e 400 pixel
   di larghezza) in `img/`.
 - **Bootstrap Italia:** copiare `dist/svg/sprites.svg` dal pacchetto npm e ridurre il foglio di stile alle
-  regole usate: `npx purgecss --css bootstrap-italia.min.css --content 'sito/*.html' sito/js/sito.js --safelist aperto show active alert alert-success alert-danger alert-info alert-warning visually-hidden --output sito/css/`.
+  regole usate: `npx purgecss --css bootstrap-italia.min.css --content 'sito/*.html' sito/js/sito.js --font-face --keyframes --safelist aperto show active alert alert-success alert-danger alert-info alert-warning visually-hidden --output sito/css/`
+  (`--font-face` toglie il carattere delle icone del lettore video, incorporato come `data:` e bloccato dalla CSP).
   Se si aggiungono pagine o classi nuove, ripetere la riduzione.
 - **Nuove guide:** aggiungerle a `sitemap.xml`, a `llms.txt` e all'elenco Guide della pagina principale.
 

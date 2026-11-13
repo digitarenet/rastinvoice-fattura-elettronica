@@ -33,9 +33,11 @@
   <link rel="icon" href="img/favicon-32.png" sizes="32x32" type="image/png">
   <link rel="apple-touch-icon" href="img/apple-touch-icon.png">
   <link rel="manifest" href="manifest.webmanifest">
+  <link rel="preload" href="fonts/titillium-web-v10-latin-ext_latin-300.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="fonts/titillium-web-v10-latin-ext_latin-regular.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="fonts/titillium-web-v10-latin-ext_latin-600.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="fonts/titillium-web-v10-latin-ext_latin-700.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="preload" as="image" href="img/documenti-800.webp" imagesrcset="img/documenti-800.webp 800w, img/documenti.webp 1600w" imagesizes="(max-width: 1200px) 100vw, 1140px" fetchpriority="high">
+  <link rel="preload" as="image" href="img/documenti-800.webp" media="(min-width: 576px)" imagesrcset="img/documenti-400.webp 400w, img/documenti-800.webp 800w, img/documenti.webp 1600w" imagesizes="(max-width: 1200px) calc(100vw - 40px), 1300px" fetchpriority="high">
   <link rel="stylesheet" href="css/bootstrap-italia.min.css">
   <link rel="stylesheet" href="css/sito.css">
 
@@ -245,8 +247,8 @@
           </div>
         </div>
         <div class="schermo">
-          <img src="img/documenti.webp" srcset="img/documenti-800.webp 800w, img/documenti.webp 1600w"
-            sizes="(max-width: 1200px) 100vw, 1140px" width="1600" height="1012" fetchpriority="high"
+          <img src="img/documenti.webp" srcset="img/documenti-400.webp 400w, img/documenti-800.webp 800w, img/documenti.webp 1600w"
+            sizes="(max-width: 1200px) calc(100vw - 40px), 1300px" width="1600" height="1012" fetchpriority="high"
             alt="RastInvoice: elenco delle fatture ricevute ed emesse a sinistra e anteprima leggibile della fattura selezionata a destra">
         </div>
       </div>
@@ -496,8 +498,8 @@ cargo build --release -p rustinvoice-desktop</code></pre>
             <button type="button" role="tab" id="scheda-allegato" aria-controls="vista-galleria" aria-selected="false" tabindex="-1" data-img="allegato" data-testo="Gli allegati, come i PDF, si aprono senza uscire dal programma.">Allegati</button>
           </div>
           <div id="vista-galleria" role="tabpanel" aria-labelledby="scheda-documenti" tabindex="0"><figure>
-            <img id="img-galleria" src="img/documenti.webp" srcset="img/documenti-800.webp 800w, img/documenti.webp 1600w"
-              sizes="(max-width: 1200px) 100vw, 1140px" width="1600" height="1012" loading="lazy"
+            <img id="img-galleria" src="img/documenti.webp" srcset="img/documenti-400.webp 400w, img/documenti-800.webp 800w, img/documenti.webp 1600w"
+              sizes="(max-width: 1200px) calc(100vw - 40px), 1300px" width="1600" height="1012" loading="lazy"
               alt="Fatture ricevute ed emesse in un unico elenco, con la vista Moderna della fattura.">
             <figcaption id="testo-galleria">Fatture ricevute ed emesse in un unico elenco, con la vista Moderna della fattura.</figcaption>
           </figure></div>
