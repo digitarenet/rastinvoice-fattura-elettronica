@@ -3,9 +3,9 @@
   Copyright (c) 2026 Andrea Re - info@digitare.net
   Autore: Andrea Re @ 2026 - info@digitare.net
 
-  Sito rastinvoice.it. Finché schede degli store e repository non sono pubblici, i pulsanti di download
+  Sito rastinvoice.it. Finché le schede degli store e i pacchetti non sono pubblicati, i pulsanti di download
   sono segnaposto "Prossimamente" (classe "presto"): vedi sito/README.md, "Collegamenti da aggiornare".
-  Lo stesso vale per il pulsante GitHub della sezione Open source (id "pulsante-github").
+  Il repository GitHub è pubblico dal 12 novembre 2026: i link a GitHub sono attivi.
 -->
 <html lang="it">
 <head>
@@ -72,6 +72,8 @@
     "image": "https://www.rastinvoice.it/img/logo-512.png",
     "screenshot": "https://www.rastinvoice.it/img/documenti.webp",
     "author": { "@id": "https://www.rastinvoice.it/#editore" },
+    "sameAs": ["https://github.com/digitarenet/rastinvoice-fattura-elettronica"],
+    "codeRepository": "https://github.com/digitarenet/rastinvoice-fattura-elettronica",
     "offers": [
       { "@type": "Offer", "price": "0", "priceCurrency": "EUR", "description": "Windows e Linux" },
       { "@type": "Offer", "price": "2.99", "priceCurrency": "EUR", "description": "macOS (Mac App Store)" }
@@ -144,7 +146,7 @@
       "name": "RastInvoice è open source? Posso compilarlo da solo?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Sì. RastInvoice è software libero con licenza EUPL-1.2 e il codice sorgente completo è ospitato su GitHub, aperto a tutti a breve: chiunque può scaricarlo, verificarlo e compilarlo su Windows, macOS o Linux con Rust e Node.js, seguendo le istruzioni del repository."
+        "text": "Sì. RastInvoice è software libero con licenza EUPL-1.2 e il codice sorgente completo è pubblico su GitHub: chiunque può scaricarlo, verificarlo e compilarlo su Windows, macOS o Linux con Rust e Node.js, seguendo le istruzioni del repository."
       }
     },
     {
@@ -330,18 +332,12 @@ cd rastinvoice-fattura-elettronica
 cargo build --release -p rustinvoice-desktop</code></pre>
             </div>
             <div class="d-flex flex-wrap gap-3 mt-4">
-              <!-- Quando il repository è pubblico sostituire lo span con:
               <a class="btn btn-bianco btn-lg" id="pulsante-github" href="https://github.com/digitarenet/rastinvoice-fattura-elettronica">
                 <svg aria-hidden="true"><use href="img/sprites.svg#it-github"></use></svg>
                 Codice sorgente su GitHub</a>
-              e togliere la nota "nota-os" qui sotto. -->
-              <span class="btn btn-outline-light btn-lg presto" id="pulsante-github" aria-disabled="true">
-                <svg aria-hidden="true"><use href="img/sprites.svg#it-github"></use></svg>
-                Codice su GitHub: prossimamente</span>
               <a class="btn btn-outline-light btn-lg" href="https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12">
                 Leggi la licenza EUPL-1.2</a>
             </div>
-            <p class="nota-os mt-3">Il repository su GitHub viene aperto a breve, insieme ai pacchetti per gli store.</p>
           </div>
         </div>
       </div>
@@ -567,8 +563,8 @@ cargo build --release -p rustinvoice-desktop</code></pre>
         </div>
         <p class="nota mt-4">Il pacchetto <code>.deb</code> è per Debian, Ubuntu e Linux Mint; il pacchetto <code>.rpm</code> per
           Fedora, openSUSE e RHEL; AppImage funziona su quasi tutte le distribuzioni senza installazione. I pacchetti
-          saranno pubblicati a breve, insieme al codice sorgente: chi preferisce potrà anche
-          <a href="#open-source">compilare RastInvoice da sé</a>.</p>
+          saranno pubblicati a breve nelle <a href="https://github.com/digitarenet/rastinvoice-fattura-elettronica/releases">release di GitHub</a>; intanto chi
+          preferisce può <a href="#open-source">compilare RastInvoice da sé</a>.</p>
       </div>
     </section>
 
@@ -601,7 +597,7 @@ cargo build --release -p rustinvoice-desktop</code></pre>
                 <tr><th scope="row">Specifiche</th><td>FatturaPA 1.9.1, in vigore dal 15 maggio 2026</td></tr>
                 <tr><th scope="row">Esportazione</th><td>PDF A4, HTML, XML, CSV</td></tr>
                 <tr><th scope="row">Connessione a Internet</th><td>Non necessaria</td></tr>
-                <tr><th scope="row">Licenza</th><td>EUPL-1.2, codice sorgente presto su GitHub</td></tr>
+                <tr><th scope="row">Licenza</th><td>EUPL-1.2, <a href="https://github.com/digitarenet/rastinvoice-fattura-elettronica">codice sorgente su GitHub</a></td></tr>
                 <tr><th scope="row">Lingua</th><td>Italiano</td></tr>
               </tbody>
             </table>
@@ -656,7 +652,7 @@ cargo build --release -p rustinvoice-desktop</code></pre>
               <details>
                 <summary>RastInvoice è open source? Posso compilarlo da solo?</summary>
                 <p>Sì. RastInvoice è software libero con licenza EUPL-1.2 e il codice sorgente completo è ospitato su
-                  GitHub, aperto a tutti a breve: chiunque può scaricarlo, verificarlo e compilarlo su Windows, macOS o Linux con Rust e Node.js,
+                  <a href="https://github.com/digitarenet/rastinvoice-fattura-elettronica">GitHub</a>: chiunque può scaricarlo, verificarlo e compilarlo su Windows, macOS o Linux con Rust e Node.js,
                   seguendo le istruzioni del repository. <a href="#open-source">Come si compila</a>.</p>
               </details>
               <details>
@@ -684,6 +680,9 @@ cargo build --release -p rustinvoice-desktop</code></pre>
             <h2 id="titolo-contatti">Contatti</h2>
             <p class="intro">Domande sul programma, segnalazioni, richieste di funzionalità o di collaborazione: scrivici e ti
               rispondiamo il prima possibile.</p>
+            <p>Per errori nel programma puoi anche aprire una
+              <a href="https://github.com/digitarenet/rastinvoice-fattura-elettronica/issues">segnalazione su GitHub</a>, indicando
+              la versione di RastInvoice e del sistema operativo.</p>
             <p>Email: <a href="mailto:rastinvoice@digitare.net">rastinvoice@digitare.net</a></p>
             <div class="sostegno mt-4">
               <h2 class="h4">Sostieni il progetto</h2>
@@ -759,7 +758,9 @@ cargo build --release -p rustinvoice-desktop</code></pre>
           <ul>
             <li><a href="#open-source">Open source</a></li>
             <li><a href="#designers-italia">Designers Italia</a></li>
-            <li>Codice sorgente su GitHub (prossimamente)</li>
+            <li><a href="https://github.com/digitarenet/rastinvoice-fattura-elettronica">Codice sorgente su GitHub</a></li>
+            <li><a href="https://github.com/digitarenet/rastinvoice-fattura-elettronica/blob/main/docs/CHANGELOG.md">Novità delle versioni</a></li>
+            <li><a href="https://github.com/digitarenet/rastinvoice-fattura-elettronica/blob/main/docs/ACCESSIBILITA.md">Accessibilità</a></li>
             <li><a href="privacy.html">Privacy</a></li>
             <li><a href="#contatti">Contatti</a></li>
           </ul>

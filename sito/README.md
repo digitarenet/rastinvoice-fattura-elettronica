@@ -99,18 +99,12 @@ python3 -m http.server     # senza PHP: tutto tranne il modulo
 
 ## Collegamenti da aggiornare
 
-Finché le schede negli store non sono pubblicate e il repository GitHub è privato, il sito non ha link
-che non funzionano: i pulsanti di download sono segnaposto "Prossimamente" (`<span>` con classe `presto`,
-sezione Scarica e piè di pagina di `index.html`) e i link a GitHub sono stati tolti da tutte le pagine
-(menu, contatti, piè di pagina, informativa, `llms.txt`, dati strutturati `sameAs`). Alla pubblicazione si
-ripristinano dalla cronologia di git (commit "Sito: pulsanti Prossimamente") con i collegamenti definitivi
-qui sotto.
-
-La sezione "Open source" di `index.html` (`id="open-source"`) resta anche dopo la pubblicazione. Quando il
-repository diventa pubblico: sostituire lo `<span id="pulsante-github">` con il link già pronto nel commento
-accanto, togliere la nota `nota-os`, la voce "Codice sorgente su GitHub (prossimamente)" del piè di pagina
-diventa un link, e nella domanda frequente sull'open source (anche nei dati strutturati FAQPage) e in
-`llms.txt` si toglie "aperto a tutti a breve".
+Finché le schede negli store e i pacchetti non sono pubblicati, i pulsanti di download sono segnaposto
+"Prossimamente" (`<span>` con classe `presto`, sezione Scarica e piè di pagina di `index.html`): alla
+pubblicazione si sostituiscono con i collegamenti definitivi qui sotto (la versione con i link si trova nella
+cronologia di git, prima del commit "Sito: pulsanti Prossimamente"). Il repository GitHub è pubblico dal
+12 novembre 2026 e i link a GitHub (sezione Open source, contatti, piè di pagina, guide, informativa,
+`llms.txt`, dati strutturati) sono attivi.
 
 | Destinazione | Collegamento provvisorio | Collegamento definitivo |
 | --- | --- | --- |
