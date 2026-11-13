@@ -104,7 +104,8 @@ Finché le schede negli store e i pacchetti non sono pubblicati, i pulsanti di d
 pubblicazione si sostituiscono con i collegamenti definitivi qui sotto (la versione con i link si trova nella
 cronologia di git, prima del commit "Sito: pulsanti Prossimamente"). Il repository GitHub è pubblico dal
 12 novembre 2026 e i link a GitHub (sezione Open source, contatti, piè di pagina, guide, informativa,
-`llms.txt`, dati strutturati) sono attivi.
+`llms.txt`, dati strutturati) sono attivi. Dal 13 novembre 2026 sono attivi anche i pulsanti dei pacchetti
+Linux (.deb, .rpm, AppImage), che portano all'ultima release di GitHub.
 
 | Destinazione | Collegamento provvisorio | Collegamento definitivo |
 | --- | --- | --- |
