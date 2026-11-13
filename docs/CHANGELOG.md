@@ -4,6 +4,14 @@ Novità, miglioramenti e correzioni di RastInvoice (fino alla 0.9.0 chiamato Rus
 versione segue lo schema MAGGIORE.MINORE.CORREZIONE: la versione minore cresce con le nuove funzioni, quella
 di correzione con le sole correzioni. Le versioni senza novità nel programma non sono elencate.
 
+## 1.2.2 - 2026-11-13
+
+### Corretto
+- Scegliendo un anno dopo le sezioni Contrassegnate, Da leggere o Con anomalie l'elenco poteva restare vuoto
+  anche se l'anno conteneva documenti. Ora l'anno mostra tutti i suoi documenti; se si stava guardando
+  Ricevute o Emesse, l'anno mostra solo quelle. Il numero accanto a ogni anno corrisponde sempre ai
+  documenti che si vedono nell'elenco.
+
 ## 1.2.1 - 2026-11-12
 
 ### Modificato

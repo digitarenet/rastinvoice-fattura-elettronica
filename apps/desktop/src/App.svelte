@@ -105,6 +105,19 @@
     contrassegnate: esito.voci.filter((v) => contrassegnate.has(v.id)).length,
     anomalie: esito.voci.filter((v) => v.avvisi > 0 || v.controlli > 0).length,
   });
+  // Sezione usata quando si sceglie un anno: ricevute ed emesse restano attive, le altre sezioni
+  // (da leggere, contrassegnate, anomalie) tornano a "tutte", così l'elenco dell'anno corrisponde
+  // sempre al numero mostrato accanto all'anno.
+  const sezioneAnno = $derived<Sezione>(sezione === "ricevute" || sezione === "emesse" ? sezione : "tutte");
+  const conteggiAnni = $derived.by(() => {
+    const conta = new Map<number, number>();
+    for (const v of esito.voci) {
+      if (sezioneAnno === "ricevute" && direzione(v, propri) !== "ricevuta") continue;
+      if (sezioneAnno === "emesse" && direzione(v, propri) !== "emessa") continue;
+      conta.set(v.anno, (conta.get(v.anno) ?? 0) + 1);
+    }
+    return conta;
+  });
   const totaleVisibili = $derived(
     visibili.reduce((s, v) => s + (v.nota_credito ? -1 : 1) * Math.abs(Number(v.totale) || 0), 0),
   );
@@ -566,9 +579,9 @@
           <ul>
             {#each anni as a (a)}
               <li>
-                <button class:attivo={vista === "documenti" && anno === a} aria-current={vista === "documenti" && anno === a ? "page" : undefined} onclick={() => vaiA(sezione, a)}>
+                <button class:attivo={vista === "documenti" && anno === a} aria-current={vista === "documenti" && anno === a ? "page" : undefined} onclick={() => vaiA(sezioneAnno, a)}>
                   <Icona nome="it-calendar" /> <span>{a}</span>
-                  <small>{esito.voci.filter((v) => v.anno === a).length}</small>
+                  <small>{conteggiAnni.get(a) ?? 0}</small>
                 </button>
               </li>
             {/each}
