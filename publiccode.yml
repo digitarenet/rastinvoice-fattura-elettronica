@@ -4,12 +4,14 @@
 # Scheda per il catalogo del software open source di Developers Italia
 # (standard publiccode.yml). Aggiornare softwareVersion e releaseDate a ogni
 # rilascio.
-publiccodeYmlVersion: "0.4"
+publiccodeYmlVersion: "0"
 
 name: RastInvoice
 url: "https://github.com/digitarenet/rastinvoice-fattura-elettronica"
+landingURL: "https://www.rastinvoice.it"
 softwareVersion: "1.2.2"
 releaseDate: "2026-11-13"
+logo: store/immagini/logo/icona.svg
 
 platforms:
   - windows
@@ -61,7 +63,6 @@ description:
 legal:
   license: EUPL-1.2
   mainCopyrightOwner: Andrea Re
-  repoOwner: Andrea Re
 
 maintenance:
   type: internal
@@ -76,8 +77,7 @@ localisation:
 
 intendedAudience:
   countries:
-    - it
+    - IT
 
-# Nessun codice IPA: il software non appartiene a una Pubblica Amministrazione.
-it:
-  countryExtensionVersion: "1.0"
+# Nessun codice IPA: il software non appartiene a una Pubblica Amministrazione,
+# quindi la sezione italiana (deprecata nello standard) non serve.
