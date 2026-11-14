@@ -118,20 +118,21 @@ primo invio vanno completate le modifiche per la sandbox descritte in [`apple/`]
 ### Rilascio su GitHub
 
 I pulsanti del sito e del README puntano a `releases/latest/download/<nome fisso>`, cioè all'ultima release
-pubblicata: ogni release deve contenere **tutti** i file, altrimenti il sito dà errore 404.
+pubblicata: ogni release pubblicata deve contenere tutti i file, altrimenti il sito dà errore 404.
 
 | File | Creato da |
 | --- | --- |
 | `RastInvoice-windows-x64.exe` | `store/windows/build.ps1` (PC Windows) |
 | `RastInvoice-linux-amd64.deb`, `RastInvoice-linux-x86_64.rpm`, `RastInvoice-linux-x86_64.AppImage`, `latest.json` | `store/linux/build.sh` (PC Linux) |
 
-Ordine: alzare la versione e fare push su `main`; su Linux `store/linux/pubblica.sh` (crea la bozza); su Windows
-`pwsh store/windows/pubblica.ps1` (aggiunge l'exe); infine pubblicare la bozza con `-Pubblica`/`--pubblica` o
-dalla pagina Releases. Gli script con `--pubblica` si rifiutano se manca uno dei file.
+Ordine: alzare la versione e fare push su `main`, poi su ciascun PC lo script `pubblica` (il primo crea la
+bozza, l'altro aggiunge i file) e infine `-Pubblica`/`--pubblica`.
 
-Versione solo per Windows: `pwsh store/windows/pubblica.ps1 -CopiaLinux -Pubblica` copia nella nuova release i
-pacchetti Linux e il `latest.json` dell'ultima release pubblicata, così sito e aggiornamenti Linux restano alla
-versione precedente.
+- **Versione per un solo sistema:** pubblicando, i file che mancano vengono copiati dall'ultima release
+  pubblicata con i nomi fissi (per Linux anche `latest.json`), così il sito non dà errori.
+  Esempio: `pwsh store/windows/pubblica.ps1 -Pubblica` con solo l'exe nuovo.
+- **Release scelta:** `-Versione 1.3.1` (Windows) o `--versione 1.3.1` (Linux) carica i file nella release
+  `v1.3.1` invece di quella della versione corrente. Una release più vecchia dell'ultima non diventa "latest".
 
 ### Controlli prima di un rilascio
 

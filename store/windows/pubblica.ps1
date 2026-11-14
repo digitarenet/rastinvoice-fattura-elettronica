@@ -1,33 +1,37 @@
 # Copyright (c) 2026 Andrea Re - info@digitare.net
 # Autore: Andrea Re @ 2026 - info@digitare.net
 #
-# Carica su GitHub l'eseguibile per Windows creato da store/windows/build.ps1,
-# nella release della versione corrente. Se la release non esiste ancora la
-# crea in bozza, con le note prese da docs/CHANGELOG.md e store/note-release.md;
-# se esiste (per esempio creata da store/linux/pubblica.sh) aggiunge il file.
+# Carica su GitHub l'eseguibile per Windows creato da store/windows/build.ps1.
+# Se la release non esiste la crea in bozza, con le note prese da
+# docs/CHANGELOG.md e store/note-release.md; se esiste aggiunge il file.
 #
-# La release va resa pubblica solo quando contiene tutti i pacchetti (Windows e
-# Linux): i pulsanti del sito puntano all'ultima release pubblicata e un file
-# mancante darebbe errore 404.
+# Pubblicando, i file che mancano nella release (per esempio i pacchetti Linux
+# di una versione solo per Windows) vengono copiati dall'ultima release
+# pubblicata, con i nomi fissi e il suo latest.json: i pulsanti del sito, che
+# puntano a releases/latest/download, continuano a funzionare.
 #
 # Prerequisito: GitHub CLI (winget install GitHub.cli) e "gh auth login" una volta.
 #
 # Uso, dalla radice del repository:
-#   pwsh store/windows/pubblica.ps1             # carica l'exe nella release (bozza se nuova)
-#   pwsh store/windows/pubblica.ps1 -Pubblica   # ... e rende pubblica la release
-#
-# Se la nuova versione esce solo per Windows, -CopiaLinux copia nella release i
-# pacchetti Linux dell'ultima release pubblicata, con i nomi fissi, insieme al
-# suo latest.json: sito e aggiornamenti Linux restano alla versione precedente.
-#   pwsh store/windows/pubblica.ps1 -CopiaLinux -Pubblica
+#   pwsh store/windows/pubblica.ps1                       # release della versione corrente, in bozza
+#   pwsh store/windows/pubblica.ps1 -Pubblica             # ... e la pubblica
+#   pwsh store/windows/pubblica.ps1 -Versione 1.3.1       # release scelta (v1.3.1)
 
-param([switch]$Pubblica, [switch]$CopiaLinux)
+param([switch]$Pubblica, [string]$Versione, [switch]$CopiaLinux)
+# -CopiaLinux resta accettato per compatibilità: ora la copia è automatica.
 
 $ErrorActionPreference = "Stop"
 $radice = Resolve-Path (Join-Path $PSScriptRoot "../..")
 Set-Location $radice
 $repo = "digitarenet/rastinvoice-fattura-elettronica"
 $file = "target/rilascio/RastInvoice-windows-x64.exe"
+# Nomi fissi dei file che il sito scarica, per estensione.
+$nomiFissi = [ordered]@{
+    ".exe" = "RastInvoice-windows-x64.exe"
+    ".deb" = "RastInvoice-linux-amd64.deb"
+    ".rpm" = "RastInvoice-linux-x86_64.rpm"
+    ".AppImage" = "RastInvoice-linux-x86_64.AppImage"
+}
 
 if (-not (Get-Command gh -ErrorAction SilentlyContinue)) {
     throw "Serve GitHub CLI: winget install GitHub.cli, poi gh auth login"
@@ -35,12 +39,19 @@ if (-not (Get-Command gh -ErrorAction SilentlyContinue)) {
 gh auth status *> $null
 if ($LASTEXITCODE) { throw "Eseguire prima: gh auth login" }
 
-$versione = (Get-Content "apps/desktop/src-tauri/tauri.conf.json" -Raw | ConvertFrom-Json).version
-$tag = "v$versione"
+$compilata = (Get-Content "apps/desktop/src-tauri/tauri.conf.json" -Raw | ConvertFrom-Json).version
+if (-not $Versione) { $Versione = $compilata }
+$Versione = $Versione.TrimStart("v")
+$tag = "v$Versione"
 
 $marcatore = "target/rilascio/.versione-windows"
-if (-not (Test-Path $file) -or -not (Test-Path $marcatore) -or (Get-Content $marcatore -Raw).Trim() -ne $versione) {
-    throw "Manca l'eseguibile della versione ${versione}: eseguire prima pwsh store/windows/build.ps1"
+if (-not (Test-Path $file) -or -not (Test-Path $marcatore)) {
+    throw "Manca l'eseguibile: eseguire prima pwsh store/windows/build.ps1"
+}
+$versioneFile = (Get-Content $marcatore -Raw).Trim()
+if ($versioneFile -ne $Versione) {
+    Write-Warning "L'eseguibile è della versione $versioneFile, la release è $tag."
+    if ((Read-Host "Caricarlo comunque? [s/N]") -ne "s") { exit 1 }
 }
 
 # La release deve corrispondere al codice pubblicato su main.
@@ -64,59 +75,66 @@ if ($LASTEXITCODE -eq 0) {
     foreach ($riga in Get-Content "docs/CHANGELOG.md" -Encoding UTF8) {
         if ($riga -match "^## ") {
             if ($dentro) { break }
-            $dentro = $riga -match "^## $([regex]::Escape($versione))( |$)"
+            $dentro = $riga -match "^## $([regex]::Escape($Versione))( |$)"
             continue
         }
         if ($dentro) { $righe += $riga }
     }
-    if ($righe.Count -eq 0) { $righe = @("RastInvoice $versione") }
+    if ($righe.Count -eq 0) { $righe = @("RastInvoice $Versione") }
     $righe += ""
     $righe += Get-Content "store/note-release.md" -Encoding UTF8 | Where-Object { $_ -notmatch "^<!--" }
     Set-Content -Path $note.FullName -Value $righe -Encoding utf8NoBOM
-    gh release create $tag $file -R $repo --draft --target main --title "RastInvoice $versione" --notes-file $note.FullName
+    gh release create $tag $file -R $repo --draft --target main --title "RastInvoice $Versione" --notes-file $note.FullName
     $esito = $LASTEXITCODE
     Remove-Item $note -Force
     if ($esito) { throw "creazione della release non riuscita" }
 }
 
-if ($CopiaLinux) {
-    $precedente = gh release view -R $repo --json tagName --jq ".tagName"
-    if ($LASTEXITCODE -or -not $precedente) { throw "nessuna release pubblicata da cui copiare i pacchetti Linux" }
-    if ($precedente -eq $tag) { throw "la release $tag è già pubblicata: niente da copiare" }
-    Write-Host "== Copio i pacchetti Linux da $precedente" -ForegroundColor Cyan
-    $cartella = Join-Path ([System.IO.Path]::GetTempPath()) "rastinvoice-linux-$precedente"
-    Remove-Item $cartella -Recurse -Force -ErrorAction SilentlyContinue
-    gh release download $precedente -R $repo -D $cartella -p "*.deb" -p "*.rpm" -p "*.AppImage" -p "latest.json"
-    if ($LASTEXITCODE) { throw "download dei pacchetti Linux non riuscito" }
-    # Nomi fissi per estensione; latest.json resta com'è (punta ai file di $precedente).
-    $nomi = @{ ".deb" = "RastInvoice-linux-amd64.deb"; ".rpm" = "RastInvoice-linux-x86_64.rpm";
-               ".AppImage" = "RastInvoice-linux-x86_64.AppImage" }
-    $daCaricare = @()
-    foreach ($f in Get-ChildItem $cartella -File) {
-        if ($f.Name -eq "latest.json") { $daCaricare += $f.FullName; continue }
-        $nuovo = $nomi[$f.Extension]
-        if (-not $nuovo) { continue }
-        if ($f.Name -ne $nuovo) { Move-Item $f.FullName (Join-Path $cartella $nuovo) -Force }
-        $daCaricare += (Join-Path $cartella $nuovo)
-    }
-    gh release upload $tag @daCaricare --clobber -R $repo
-    $esito = $LASTEXITCODE
-    Remove-Item $cartella -Recurse -Force
-    if ($esito) { throw "caricamento dei pacchetti Linux non riuscito" }
+if (-not $Pubblica) {
+    Write-Host "Bozza pronta. Per pubblicarla: pwsh store/windows/pubblica.ps1 -Versione $Versione -Pubblica" -ForegroundColor Green
+    exit 0
 }
 
-if ($Pubblica) {
-    # Il sito scarica da releases/latest/download: servono tutti i file.
-    $presenti = gh release view $tag -R $repo --json assets --jq ".assets[].name"
-    foreach ($f in "RastInvoice-windows-x64.exe", "RastInvoice-linux-amd64.deb",
-                   "RastInvoice-linux-x86_64.rpm", "RastInvoice-linux-x86_64.AppImage") {
-        if ($presenti -notcontains $f) {
-            throw "Manca $f nella release ${tag}: resta in bozza (il sito darebbe errore 404)."
-        }
+# File mancanti copiati dall'ultima release pubblicata.
+$presenti = @(gh release view $tag -R $repo --json assets --jq ".assets[].name")
+$mancanti = @($nomiFissi.Values | Where-Object { $presenti -notcontains $_ })
+$precedente = gh release view -R $repo --json tagName --jq ".tagName" 2>$null
+# Una release più vecchia dell'ultima non diventa "latest" e non tocca il sito.
+$recente = -not $precedente -or ([version]$Versione -ge [version]$precedente.TrimStart("v"))
+if (-not $recente) { $mancanti = @() }
+if ($mancanti.Count -gt 0 -and $precedente -and $precedente -ne $tag) {
+    Write-Host "== Copio da $precedente: $($mancanti -join ', ')" -ForegroundColor Cyan
+    $cartella = Join-Path ([System.IO.Path]::GetTempPath()) "rastinvoice-$precedente"
+    Remove-Item $cartella -Recurse -Force -ErrorAction SilentlyContinue
+    $modelli = @()
+    foreach ($m in $mancanti) { $modelli += "-p"; $modelli += "*$([System.IO.Path]::GetExtension($m))" }
+    # latest.json va con i pacchetti Linux: si copia se la release non lo ha.
+    $copiaManifesto = ($presenti -notcontains "latest.json") -and ($mancanti | Where-Object { $_ -like "RastInvoice-linux-*" })
+    if ($copiaManifesto) { $modelli += "-p"; $modelli += "latest.json" }
+    gh release download $precedente -R $repo -D $cartella @modelli
+    $daCaricare = @()
+    foreach ($f in Get-ChildItem $cartella -File -ErrorAction SilentlyContinue) {
+        if ($f.Name -eq "latest.json") { $daCaricare += $f.FullName; continue }
+        $nuovo = $nomiFissi[$f.Extension]
+        if (-not $nuovo -or $mancanti -notcontains $nuovo) { continue }
+        $destinazione = Join-Path $cartella $nuovo
+        if ($f.FullName -ne $destinazione) { Move-Item $f.FullName $destinazione -Force }
+        $daCaricare += $destinazione
     }
-    gh release edit $tag -R $repo --draft=false --latest
-    if ($LASTEXITCODE) { throw "pubblicazione non riuscita" }
-    Write-Host "Release $tag pubblicata." -ForegroundColor Green
-} else {
-    Write-Host "Bozza pronta: controllarla e pubblicarla da https://github.com/$repo/releases" -ForegroundColor Green
+    if ($daCaricare.Count -gt 0) {
+        gh release upload $tag @daCaricare --clobber -R $repo
+        if ($LASTEXITCODE) { throw "copia dei file non riuscita" }
+    }
+    Remove-Item $cartella -Recurse -Force -ErrorAction SilentlyContinue
+    $presenti = @(gh release view $tag -R $repo --json assets --jq ".assets[].name")
+    $mancanti = @($nomiFissi.Values | Where-Object { $presenti -notcontains $_ })
 }
+if ($mancanti.Count -gt 0) {
+    Write-Warning "Mancano ancora: $($mancanti -join ', '). I relativi pulsanti del sito darebbero errore 404."
+    if ((Read-Host "Pubblicare comunque? [s/N]") -ne "s") { exit 1 }
+}
+
+if ($recente) { gh release edit $tag -R $repo --draft=false --latest }
+else { gh release edit $tag -R $repo --draft=false --latest=false }
+if ($LASTEXITCODE) { throw "pubblicazione non riuscita" }
+Write-Host "Release $tag pubblicata." -ForegroundColor Green
