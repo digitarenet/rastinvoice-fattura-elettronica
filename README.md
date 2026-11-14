@@ -1,8 +1,5 @@
 <p align="center">
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="store/immagini/logo/logo-negativo.svg">
-    <img src="store/immagini/logo/logo.svg" alt="RastInvoice, visualizzatore di fatture elettroniche" width="440">
-  </picture>
+  <img src="store/immagini/logo/logo-su-fondo.svg" alt="RastInvoice, visualizzatore di fatture elettroniche" width="460">
 </p>
 
 # RastInvoice: visualizzatore di fatture elettroniche XML e P7M (FatturaPA)

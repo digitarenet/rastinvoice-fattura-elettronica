@@ -53,6 +53,20 @@ def svg(larghezza, altezza, corpo):
 
 def logo(negativo=False, slogan=True):
     """Marchio + «RastInvoice» (Rast in grassetto, Invoice in tondo), con o senza slogan."""
+    corpo, larghezza = logo_corpo(negativo, slogan)
+    return svg(larghezza, 100, corpo)
+
+
+def logo_su_fondo():
+    """Logo su un riquadro bianco arrotondato: leggibile su fondo chiaro e scuro (README di GitHub)."""
+    corpo, larghezza = logo_corpo()
+    m = 24
+    return svg(larghezza + 2 * m, 100 + 2 * m,
+               f'<rect width="{larghezza + 2 * m:.0f}" height="{100 + 2 * m}" rx="18" fill="#FFFFFF"/>\n'
+               f'  <g transform="translate({m} {m})">{corpo}</g>')
+
+
+def logo_corpo(negativo=False, slogan=True):
     c1, c2 = ("#FFFFFF", "#FFFFFF") if negativo else (NOTTE, BLU)
     base, x0 = (72 if slogan else 84), 122
     d1, l1 = testo("Rast", "Bold", 92, x0, base)
@@ -64,7 +78,7 @@ def logo(negativo=False, slogan=True):
         d3, l3 = testo("VISUALIZZATORE DI FATTURE ELETTRONICHE", "Regular", 17.5, x0 + 3, 96, 2.2)
         corpo += f'\n  <path fill="{c1}" opacity=".8" d="{d3}"/>'
         larghezza = max(larghezza, x0 + l3 + 6)
-    return svg(larghezza, 100, corpo)
+    return corpo, larghezza
 
 
 def icona(piccola=False):
@@ -81,6 +95,7 @@ FILE = {
     "marchio-negativo.svg": svg(100, 100, marchio_negativo()),
     "logo.svg": logo(),
     "logo-negativo.svg": logo(negativo=True),
+    "logo-su-fondo.svg": logo_su_fondo(),
     "logo-breve.svg": logo(slogan=False),
     "logo-breve-negativo.svg": logo(negativo=True, slogan=False),
     "icona.svg": icona(),
