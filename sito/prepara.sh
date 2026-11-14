@@ -34,7 +34,19 @@ stile="$uscita/stile.css"
 { cat "$pub/css/bootstrap-italia.min.css"; printf '\n'; sed 's#url("\.\./fonts/#url("/fonts/#g' "$pub/css/sito.css"; } | tr -d '\r' > "$stile"
 # L'impronta SHA-256 del blocco <style> va nella Content-Security-Policy (style-src),
 # che altrimenti bloccherebbe gli stili incorporati.
-impronta="sha256-$(openssl dgst -sha256 -binary "$stile" | openssl base64 -A)"
+# Calcolo con openssl, python3 o node: basta uno dei tre (Git Bash ha openssl,
+# WSL/Ubuntu ha python3, ogni PC di compilazione ha node).
+if command -v openssl >/dev/null; then
+  digest="$(openssl dgst -sha256 -binary "$stile" | openssl base64 -A)"
+elif command -v python3 >/dev/null; then
+  digest="$(python3 -c 'import sys,hashlib,base64; print(base64.b64encode(hashlib.sha256(open(sys.argv[1],"rb").read()).digest()).decode())' "$stile")"
+elif command -v node >/dev/null; then
+  digest="$(node -e 'process.stdout.write(require("crypto").createHash("sha256").update(require("fs").readFileSync(process.argv[1])).digest("base64"))' "$stile")"
+else
+  echo "Errore: serve openssl, python3 o node per l'impronta del CSS" >&2; exit 1
+fi
+[ "${#digest}" -eq 44 ] || { echo "Errore: impronta del CSS non valida" >&2; exit 1; }
+impronta="sha256-$digest"
 for pagina in "$pub"/*.html; do
   awk -v stile="$stile" '
     /<link rel="stylesheet" href="\/?css\/bootstrap-italia\.min\.css">/ {
