@@ -16,12 +16,15 @@ la scheda AppStream, usata da tutti gli store grafici, è [`net.digitare.rastinv
 Si compilano sul PC Linux con `store/linux/build.sh` e si caricano su una release di GitHub con
 `store/linux/pubblica.sh` (vedi [Compilare in locale](../README.md#compilare-in-locale)):
 
-- `RastInvoice_<versione>_amd64.deb` per Debian, Ubuntu, Linux Mint, Pop!_OS, elementary, Zorin, MX Linux.
+- `RastInvoice-linux-amd64.deb` per Debian, Ubuntu, Linux Mint, Pop!_OS, elementary, Zorin, MX Linux.
   È compilato in un container Debian 12, quindi funziona su Debian 12 e Ubuntu 22.04 o più recenti.
-  Installazione: `sudo apt install ./RastInvoice_<versione>_amd64.deb`.
-- `RastInvoice-<versione>-1.x86_64.rpm` per Fedora, openSUSE, RHEL, Rocky e Alma.
-  Installazione: `sudo dnf install ./RastInvoice-<versione>-1.x86_64.rpm`.
-- `RastInvoice_<versione>_amd64.AppImage`: un solo file eseguibile, senza installazione.
+  Installazione: `sudo apt install ./RastInvoice-linux-amd64.deb`.
+- `RastInvoice-linux-x86_64.rpm` per Fedora, openSUSE, RHEL, Rocky e Alma.
+  Installazione: `sudo dnf install ./RastInvoice-linux-x86_64.rpm`.
+- `RastInvoice-linux-x86_64.AppImage`: un solo file eseguibile, senza installazione.
+
+I nomi non contengono la versione, così i pulsanti del sito (`releases/latest/download/<nome>`) restano validi
+a ogni release; `build.sh` li copia con questi nomi in `target/rilascio`.
 
 Nessuna iscrizione richiesta. Basta pubblicare la release.
 

@@ -39,21 +39,26 @@ Apre fatture emesse e ricevute in tutti i formati in cui arrivano di solito: `.x
 </p>
 -->
 <p align="center">
-  <a href="https://github.com/digitarenet/rastinvoice-fattura-elettronica/releases/latest"><img src="https://img.shields.io/badge/Debian%20e%20Ubuntu-.deb-A81D33?style=for-the-badge&logo=debian&logoColor=white" alt="Pacchetto .deb per Debian e Ubuntu"></a>
-  <a href="https://github.com/digitarenet/rastinvoice-fattura-elettronica/releases/latest"><img src="https://img.shields.io/badge/Fedora%20e%20openSUSE-.rpm-294172?style=for-the-badge&logo=fedora&logoColor=white" alt="Pacchetto .rpm per Fedora e openSUSE"></a>
-  <a href="https://github.com/digitarenet/rastinvoice-fattura-elettronica/releases/latest"><img src="https://img.shields.io/badge/Linux-AppImage-333333?style=for-the-badge&logo=linux&logoColor=white" alt="AppImage per Linux"></a>
+  <a href="https://github.com/digitarenet/rastinvoice-fattura-elettronica/releases/latest/download/RastInvoice-windows-x64.exe"><img src="https://img.shields.io/badge/Windows-.exe-0078D4?style=for-the-badge&logo=windows&logoColor=white" alt="Eseguibile per Windows"></a>
+  <a href="https://github.com/digitarenet/rastinvoice-fattura-elettronica/releases/latest/download/RastInvoice-linux-amd64.deb"><img src="https://img.shields.io/badge/Debian%20e%20Ubuntu-.deb-A81D33?style=for-the-badge&logo=debian&logoColor=white" alt="Pacchetto .deb per Debian e Ubuntu"></a>
+  <a href="https://github.com/digitarenet/rastinvoice-fattura-elettronica/releases/latest/download/RastInvoice-linux-x86_64.rpm"><img src="https://img.shields.io/badge/Fedora%20e%20openSUSE-.rpm-294172?style=for-the-badge&logo=fedora&logoColor=white" alt="Pacchetto .rpm per Fedora e openSUSE"></a>
+  <a href="https://github.com/digitarenet/rastinvoice-fattura-elettronica/releases/latest/download/RastInvoice-linux-x86_64.AppImage"><img src="https://img.shields.io/badge/Linux-AppImage-333333?style=for-the-badge&logo=linux&logoColor=white" alt="AppImage per Linux"></a>
 </p>
 
 | Sistema | Dove scaricarlo | Prezzo |
 | --- | --- | --- |
-| Windows 10 e 11 | [Microsoft Store](https://apps.microsoft.com/search?query=RastInvoice) | gratuito |
+| Windows 10 e 11 | [file `.exe`](https://github.com/digitarenet/rastinvoice-fattura-elettronica/releases/latest/download/RastInvoice-windows-x64.exe), senza installazione; presto anche [Microsoft Store](https://apps.microsoft.com/search?query=RastInvoice) | gratuito |
 | macOS (Intel e Apple Silicon) | [Mac App Store](https://apps.apple.com/it/) | 2,99 € |
-| Linux, tutte le distribuzioni | [AppImage](https://github.com/digitarenet/rastinvoice-fattura-elettronica/releases/latest) | gratuito |
-| Debian, Ubuntu, Linux Mint | [pacchetto `.deb`](https://github.com/digitarenet/rastinvoice-fattura-elettronica/releases/latest) | gratuito |
-| Fedora, openSUSE, RHEL | [pacchetto `.rpm`](https://github.com/digitarenet/rastinvoice-fattura-elettronica/releases/latest) | gratuito |
+| Linux, tutte le distribuzioni | [AppImage](https://github.com/digitarenet/rastinvoice-fattura-elettronica/releases/latest/download/RastInvoice-linux-x86_64.AppImage) | gratuito |
+| Debian, Ubuntu, Linux Mint | [pacchetto `.deb`](https://github.com/digitarenet/rastinvoice-fattura-elettronica/releases/latest/download/RastInvoice-linux-amd64.deb) | gratuito |
+| Fedora, openSUSE, RHEL | [pacchetto `.rpm`](https://github.com/digitarenet/rastinvoice-fattura-elettronica/releases/latest/download/RastInvoice-linux-x86_64.rpm) | gratuito |
 | Qualsiasi sistema | [codice sorgente](#compilazione) | gratuito |
 
 Tutte le versioni e le note di rilascio sono nelle [release di GitHub](https://github.com/digitarenet/rastinvoice-fattura-elettronica/releases).
+
+**Windows: avviso al primo avvio.** Il file `.exe` non ha ancora una firma digitale, quindi Windows mostra
+«Windows ha protetto il PC»: scegliere **Ulteriori informazioni** e poi **Esegui comunque**. La versione del
+Microsoft Store, in arrivo, è firmata e non mostra avvisi.
 
 
 ## Funzionalità
@@ -120,8 +125,9 @@ Tutte le versioni e le note di rilascio sono nelle [release di GitHub](https://g
   Internet oltre al download del foglio di stile.
 
 **Distribuzione**
-- **Windows:** Microsoft Store, gratuito. Il pacchetto MSIX (`store/microsoft/msix.ps1`) viene firmato dallo Store,
-  quindi Windows non mostra avvisi di SmartScreen.
+- **Windows:** file `.exe` senza installazione nelle release di GitHub, gratuito (senza firma digitale: al primo
+  avvio compare l'avviso di SmartScreen). In arrivo sul Microsoft Store: il pacchetto MSIX
+  (`store/microsoft/msix.ps1`) viene firmato dallo Store, quindi Windows non mostra avvisi.
 - **macOS:** Mac App Store, 2,99 €.
 - **Linux:** `.deb` per Debian e Ubuntu, `.rpm` per Fedora e openSUSE e AppImage nelle
   [release di GitHub](https://github.com/digitarenet/rastinvoice-fattura-elettronica/releases).

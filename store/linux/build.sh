@@ -13,7 +13,9 @@
 # Aggiornamento integrato: se store/configurazione.local.json indica la chiave
 # privata (aggiornamenti.chiavePrivata) e la chiave pubblica
 # (aggiornamenti.chiavePubblica), i pacchetti vengono firmati e si crea anche
-# target/release/bundle/latest.json. Poi: store/linux/pubblica.sh
+# latest.json. I file da pubblicare finiscono in target/rilascio con nomi fissi
+# (senza versione), a cui puntano i pulsanti del sito tramite
+# releases/latest/download/<nome>. Poi: store/linux/pubblica.sh
 set -euo pipefail
 
 radice="$(cd "$(dirname "$0")/../.." && pwd)"
@@ -73,7 +75,9 @@ versione="$(node -p "require('./apps/desktop/src-tauri/tauri.conf.json').version
 echo "== RastInvoice $versione: dipendenze dell'interfaccia"
 (cd apps/desktop && npm ci --no-audit --no-fund)
 
-rm -rf target/release/bundle/{deb,rpm,appimage} target/release/bundle/latest.json
+rm -rf target/release/bundle/{deb,rpm,appimage}
+rm -f target/rilascio/RastInvoice-linux-* target/rilascio/latest.json target/rilascio/.versione-linux
+mkdir -p target/rilascio
 cd apps/desktop
 if [ -n "${TAURI_SIGNING_PRIVATE_KEY:-}" ] && [ -n "${RASTINVOICE_CHIAVE_AGGIORNAMENTI:-}" ]; then
   echo "== Compilazione con firma per l'aggiornamento integrato"
@@ -82,19 +86,35 @@ if [ -n "${TAURI_SIGNING_PRIVATE_KEY:-}" ] && [ -n "${RASTINVOICE_CHIAVE_AGGIORN
   npx tauri build --bundles deb,rpm,appimage --config \
     "{\"bundle\":{\"createUpdaterArtifacts\":true},\"plugins\":{\"updater\":{\"pubkey\":\"$RASTINVOICE_CHIAVE_AGGIORNAMENTI\"}}}"
   cd "$radice"
-  node store/linux/manifesto-aggiornamenti.mjs "$versione" \
-    "https://github.com/digitarenet/rastinvoice-fattura-elettronica/releases/download/v$versione" \
-    > target/release/bundle/latest.json
+  firmati=1
 else
   echo "== Compilazione (senza chiavi: niente aggiornamento integrato)"
   unset TAURI_SIGNING_PRIVATE_KEY RASTINVOICE_CHIAVE_AGGIORNAMENTI
   npx tauri build --bundles deb,rpm,appimage
   cd "$radice"
+  firmati=0
+fi
+
+# Copia con i nomi fissi usati dal sito e da latest.json (insieme alle firme).
+copia() {
+  local origine=("$1"/*"$2")
+  [ "${#origine[@]}" -eq 1 ] && [ -f "${origine[0]}" ] || { echo "Atteso un solo file $2 in $1" >&2; exit 1; }
+  cp "${origine[0]}" "target/rilascio/$3"
+  [ ! -f "${origine[0]}.sig" ] || cp "${origine[0]}.sig" "target/rilascio/$3.sig"
+}
+copia target/release/bundle/deb .deb RastInvoice-linux-amd64.deb
+copia target/release/bundle/rpm .rpm RastInvoice-linux-x86_64.rpm
+copia target/release/bundle/appimage .AppImage RastInvoice-linux-x86_64.AppImage
+printf '%s' "$versione" > target/rilascio/.versione-linux
+
+if [ "$firmati" = 1 ]; then
+  node store/linux/manifesto-aggiornamenti.mjs "$versione" \
+    "https://github.com/digitarenet/rastinvoice-fattura-elettronica/releases/download/v$versione" \
+    > target/rilascio/latest.json
 fi
 
 echo
 echo "Pacchetti pronti:"
-ls -1 target/release/bundle/deb/*.deb target/release/bundle/rpm/*.rpm \
-  target/release/bundle/appimage/*.AppImage target/release/bundle/latest.json 2>/dev/null || true
+ls -1 target/rilascio/RastInvoice-linux-* target/rilascio/latest.json 2>/dev/null | grep -v '\.sig$' || true
 echo
 echo "Per pubblicarli su GitHub: store/linux/pubblica.sh"

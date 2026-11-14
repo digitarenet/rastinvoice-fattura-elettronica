@@ -580,7 +580,7 @@ fn riavvia(app: tauri::AppHandle) {
 /// Apre nel browser la pagina di download dell'ultima versione.
 #[tauri::command]
 fn apri_download() -> Result<(), String> {
-    tauri_plugin_opener::open_url(aggiornamenti::URL_RELEASE, None::<&str>)
+    tauri_plugin_opener::open_url(aggiornamenti::URL_DOWNLOAD, None::<&str>)
         .map_err(|e| e.to_string())
 }
 

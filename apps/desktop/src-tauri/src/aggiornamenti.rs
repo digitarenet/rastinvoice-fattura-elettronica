@@ -18,8 +18,9 @@ use std::io::Read;
 
 /// Indirizzo dell'ultima release pubblicata (le bozze non compaiono).
 const URL_ULTIMA: &str = "https://api.github.com/repos/digitarenet/rastinvoice-fattura-elettronica/releases/latest";
-/// Pagina delle release da aprire per scaricare la nuova versione.
-pub const URL_RELEASE: &str = "https://github.com/digitarenet/rastinvoice-fattura-elettronica/releases/latest";
+/// Pagina del sito da aprire per scaricare la nuova versione: ha i link
+/// diretti ai file e agli store, più semplice della pagina di GitHub.
+pub const URL_DOWNLOAD: &str = "https://www.rastinvoice.it/#scarica";
 /// Descrizione delle versioni pubblicate per l'aggiornamento integrato, con
 /// indirizzo e firma di ogni pacchetto.
 #[cfg(target_os = "linux")]

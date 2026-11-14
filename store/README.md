@@ -5,7 +5,7 @@
 | Store | Cartella | Pacchetto | Costo | Cosa serve da Andrea |
 | --- | --- | --- | --- | --- |
 | Microsoft Store | [`microsoft/`](microsoft/README.md) | MSIX | gratuito | iscrizione individuale, identità del pacchetto |
-| GitHub (solo Linux) | [`linux/`](linux/README.md) | deb, rpm, AppImage | gratuito | `store/linux/build.sh` e `pubblica.sh` |
+| GitHub (Windows e Linux) | [`windows/`](windows/), [`linux/`](linux/README.md) | exe, deb, rpm, AppImage | gratuito | `build` e `pubblica` di ciascun sistema |
 | Flathub | [`linux/`](linux/README.md) | Flatpak | gratuito | prova su Linux, pull request a Flathub |
 | Mac App Store | [`apple/`](apple/README.md) | pkg | 99 USD/anno di iscrizione; app a 2,99 € | iscrizione, certificati, revisione Apple |
 
@@ -17,9 +17,12 @@ Materiale comune:
   generati da `genera.py` (richiede `pip install fonttools`).
 - `../docs/immagini/`: schermate a 2720×1720.
 - `../docs/PRIVACY.md`: informativa privacy, da indicare come URL in ogni store.
+- [`note-release.md`](note-release.md): parte fissa delle note di ogni release di GitHub (download e avviso di
+  SmartScreen), aggiunta dagli script `pubblica`.
 
-Distribuzione: Windows solo dal Microsoft Store (gratuito, nessun avviso di SmartScreen), macOS solo dal Mac
-App Store (2,99 €), Linux da GitHub e Flathub. Il pulsante per le donazioni non compare nella
+Distribuzione: Windows con il file `.exe` su GitHub (gratuito, senza firma: al primo avvio compare l'avviso di
+SmartScreen) e, appena pubblicato, dal Microsoft Store (nessun avviso); macOS solo dal Mac App Store (2,99 €);
+Linux da GitHub e Flathub. Il pulsante per le donazioni non compare nella
 versione per macOS, perché Apple non ammette donazioni esterne.
 
 Ordine consigliato: Microsoft Store e release Linux su GitHub, poi Flathub, infine Mac App
@@ -57,6 +60,19 @@ pwsh store/microsoft/build.ps1 -Prova   # in più lo installa sul PC (serve la M
 
 Il file `.msix` si carica in Partner Center. Su GitHub non si pubblica.
 
+### Windows: eseguibile per GitHub
+
+Stessi requisiti dell'MSIX, senza Windows SDK, più GitHub CLI (`winget install GitHub.cli`, poi `gh auth login`).
+
+```powershell
+pwsh store/windows/build.ps1               # crea target/rilascio/RastInvoice-windows-x64.exe
+pwsh store/windows/pubblica.ps1            # lo carica sulla release v<versione> (in bozza se nuova)
+pwsh store/windows/pubblica.ps1 -Pubblica  # ... e la rende pubblica, se contiene già i pacchetti Linux
+```
+
+Il file non richiede installazione e non ha firma digitale: al primo avvio Windows mostra «Windows ha protetto il
+PC» (si apre con Ulteriori informazioni, Esegui comunque).
+
 ### Linux (LMDE 7): deb, rpm e AppImage
 
 I pacchetti si compilano in un container Debian 12: compilati direttamente su LMDE 7 (Debian 13) non
@@ -77,6 +93,8 @@ store/linux/pubblica.sh --pubblica   # carica e rende pubblica la release
 - `store/linux/build.sh --locale` compila direttamente sul PC, senza container (solo per prove).
 - Il Flatpak ha uno script a parte, con i suoi prerequisiti: `store/linux/flatpak.sh` (dettagli in
   [`linux/`](linux/README.md)). Va su Flathub, non su GitHub.
+- I file da pubblicare vengono copiati in `target/rilascio` con nomi fissi, senza versione
+  (`RastInvoice-linux-amd64.deb`, `RastInvoice-linux-x86_64.rpm`, `RastInvoice-linux-x86_64.AppImage`).
 - `pubblica.sh` richiede GitHub CLI con accesso (`sudo apt install gh`, poi `gh auth login`). Prende le note
   della versione da `docs/CHANGELOG.md` e avvisa se il commit locale non è quello su `origin/main`.
 
@@ -96,6 +114,20 @@ store/apple/build.sh
 Crea l'app universale (Apple Silicon e Intel). Con la sezione `apple` compilata la firma e crea
 `target/mac-app-store/RastInvoice_<versione>_universale.pkg`, da caricare con l'app Transporter. Prima del
 primo invio vanno completate le modifiche per la sandbox descritte in [`apple/`](apple/README.md).
+
+### Rilascio su GitHub
+
+I pulsanti del sito e del README puntano a `releases/latest/download/<nome fisso>`, cioè all'ultima release
+pubblicata: ogni release deve contenere **tutti** i file, altrimenti il sito dà errore 404.
+
+| File | Creato da |
+| --- | --- |
+| `RastInvoice-windows-x64.exe` | `store/windows/build.ps1` (PC Windows) |
+| `RastInvoice-linux-amd64.deb`, `RastInvoice-linux-x86_64.rpm`, `RastInvoice-linux-x86_64.AppImage`, `latest.json` | `store/linux/build.sh` (PC Linux) |
+
+Ordine: alzare la versione e fare push su `main`; su Linux `store/linux/pubblica.sh` (crea la bozza); su Windows
+`pwsh store/windows/pubblica.ps1` (aggiunge l'exe); infine pubblicare la bozza con `-Pubblica`/`--pubblica` o
+dalla pagina Releases. Gli script con `--pubblica` si rifiutano se manca uno dei file.
 
 ### Controlli prima di un rilascio
 

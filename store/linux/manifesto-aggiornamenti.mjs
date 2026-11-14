@@ -4,7 +4,8 @@
 // Crea latest.json, il file che l'applicazione legge per l'aggiornamento
 // integrato dei pacchetti Linux: per ogni pacchetto (AppImage, .deb, .rpm)
 // indica l'indirizzo di download nella release e la firma prodotta da
-// `tauri build` con la chiave privata di rilascio.
+// `tauri build` con la chiave privata di rilascio. Legge i pacchetti già
+// copiati da store/linux/build.sh in target/rilascio con i nomi fissi.
 //
 // Uso: node store/linux/manifesto-aggiornamenti.mjs <versione> <url-base-release> > latest.json
 
@@ -17,25 +18,22 @@ if (!versione || !base) {
   process.exit(1);
 }
 
-const cartella = "target/release/bundle";
-// Tipo di pacchetto -> sottocartella ed estensione prodotte da tauri build.
+const cartella = "target/rilascio";
+// Tipo di pacchetto -> estensione del file.
 const tipi = { appimage: ".AppImage", deb: ".deb", rpm: ".rpm" };
 const piattaforme = {};
 
 for (const [tipo, estensione] of Object.entries(tipi)) {
-  const dir = join(cartella, tipo);
-  let file;
-  try {
-    file = readdirSync(dir).filter((f) => f.endsWith(estensione));
-  } catch {
-    continue;
-  }
+  const file = readdirSync(cartella).filter(
+    (f) => f.startsWith("RastInvoice-linux-") && f.endsWith(estensione),
+  );
+  if (file.length === 0) continue;
   if (file.length !== 1) {
-    console.error(`atteso un solo pacchetto ${estensione} in ${dir}, trovati ${file.length}`);
+    console.error(`atteso un solo pacchetto ${estensione} in ${cartella}, trovati ${file.length}`);
     process.exit(1);
   }
   const nome = file[0];
-  const firma = readFileSync(join(dir, `${nome}.sig`), "utf8").trim();
+  const firma = readFileSync(join(cartella, `${nome}.sig`), "utf8").trim();
   piattaforme[`linux-x86_64-${tipo}`] = {
     url: `${base}/${encodeURIComponent(nome)}`,
     signature: firma,

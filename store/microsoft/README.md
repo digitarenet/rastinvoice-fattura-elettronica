@@ -35,8 +35,9 @@ pwsh store/microsoft/build.ps1          # compila e crea target/msix/RastInvoice
 pwsh store/microsoft/build.ps1 -Prova   # in più installa il pacchetto sul PC per provarlo
 ```
 
-Il pacchetto non è firmato: lo firma Microsoft Store. La versione per Windows si distribuisce solo dallo
-Store: su GitHub non si pubblicano exe o zip, che senza firma farebbero comparire l'avviso di SmartScreen.
+Il pacchetto non è firmato: lo firma Microsoft Store. In attesa dello Store, su GitHub si pubblica anche
+l'eseguibile senza firma creato da `store/windows/build.ps1`, che al primo avvio fa comparire l'avviso di
+SmartScreen (vedi [Compilare in locale](../README.md#compilare-in-locale)).
 
 ## 5. Invio (Partner Center > Invii > Avvia l'invio)
 

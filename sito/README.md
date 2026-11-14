@@ -99,20 +99,27 @@ python3 -m http.server     # senza PHP: tutto tranne il modulo
 
 ## Collegamenti da aggiornare
 
-Finché le schede negli store e i pacchetti non sono pubblicati, i pulsanti di download sono segnaposto
-"Prossimamente" (`<span>` con classe `presto`, sezione Scarica e piè di pagina di `index.html`): alla
-pubblicazione si sostituiscono con i collegamenti definitivi qui sotto (la versione con i link si trova nella
-cronologia di git, prima del commit "Sito: pulsanti Prossimamente"). Il repository GitHub è pubblico dal
-12 novembre 2026 e i link a GitHub (sezione Open source, contatti, piè di pagina, guide, informativa,
-`llms.txt`, dati strutturati) sono attivi. Dal 13 novembre 2026 sono attivi anche i pulsanti dei pacchetti
-Linux (.deb, .rpm, AppImage), che portano all'ultima release di GitHub.
+Finché le schede negli store non sono pubblicate, i pulsanti degli store sono segnaposto "Prossimamente"
+(`<span>` con classe `presto`, sezione Scarica e piè di pagina di `index.html`): alla pubblicazione si
+sostituiscono con i collegamenti definitivi qui sotto (la versione con i link si trova nella cronologia di git,
+prima del commit "Sito: pulsanti Prossimamente"). I link a GitHub (sezione Open source, contatti, piè di
+pagina, guide, informativa, `llms.txt`, dati strutturati) sono attivi.
+
+I pulsanti per Windows (.exe) e Linux (.deb, .rpm, AppImage) scaricano direttamente il file dall'ultima release
+pubblicata, con indirizzi che non cambiano a ogni versione:
+`https://github.com/digitarenet/rastinvoice-fattura-elettronica/releases/latest/download/<nome>`, con `<nome>`
+uguale a `RastInvoice-windows-x64.exe`, `RastInvoice-linux-amd64.deb`, `RastInvoice-linux-x86_64.rpm` o
+`RastInvoice-linux-x86_64.AppImage`. Ogni release deve contenere tutti e quattro i file (vedi
+`store/README.md`, "Rilascio su GitHub"). Quando la versione del Microsoft Store è pubblicata, decidere se
+tenere anche l'exe: se si toglie, vanno tolti anche il pulsante, la nota `#avviso-windows` e il link nel piè di
+pagina.
 
 | Destinazione | Collegamento provvisorio | Collegamento definitivo |
 | --- | --- | --- |
 | Microsoft Store | `https://apps.microsoft.com/search?query=RastInvoice` | `https://apps.microsoft.com/detail/<ID prodotto>` |
 | Mac App Store | `https://apps.apple.com/it/` | `https://apps.apple.com/it/app/rastinvoice/id<numero>` |
 | Flathub | `https://flathub.org/apps/net.digitare.rastinvoice` | già definitivo |
-| Pacchetti Linux | release di GitHub | già definitivo, funziona quando il repository è pubblico |
+| Windows (.exe) e pacchetti Linux | `releases/latest/download/<nome>` | già definitivo |
 
 Per i pulsanti degli store il sito usa icone e testi propri. Se si preferiscono i badge ufficiali
 (Microsoft, Apple, Flathub), vanno scaricati dalle pagine dei rispettivi programmi per sviluppatori e

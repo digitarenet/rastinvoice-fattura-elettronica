@@ -4,6 +4,20 @@ Novità, miglioramenti e correzioni di RastInvoice (fino alla 0.9.0 chiamato Rus
 versione segue lo schema MAGGIORE.MINORE.CORREZIONE: la versione minore cresce con le nuove funzioni, quella
 di correzione con le sole correzioni. Le versioni senza novità nel programma non sono elencate.
 
+## 1.3.0 - 2026-11-14
+
+### Aggiunto
+- RastInvoice per Windows si può scaricare direttamente come file `.exe`, senza installazione, dal sito
+  www.rastinvoice.it e da GitHub, in attesa della versione del Microsoft Store. Il file non ha ancora una
+  firma digitale: al primo avvio Windows mostra l'avviso «Windows ha protetto il PC», da superare con
+  Ulteriori informazioni e poi Esegui comunque.
+
+### Modificato
+- Quando c'è una nuova versione, il pulsante Scarica nelle Impostazioni apre la pagina di download del sito,
+  con i collegamenti diretti ai file e agli store.
+- I file da scaricare hanno nomi fissi, senza numero di versione (per esempio `RastInvoice-linux-amd64.deb`),
+  così i collegamenti del sito portano sempre all'ultima versione.
+
 ## 1.2.2 - 2026-11-13
 
 ### Corretto

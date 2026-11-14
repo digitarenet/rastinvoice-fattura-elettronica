@@ -3,9 +3,14 @@
 # Autore: Andrea Re @ 2026 - info@digitare.net
 #
 # Carica su GitHub i pacchetti Linux creati da store/linux/build.sh, in una
-# release in bozza da controllare e pubblicare dalla pagina Releases.
-# Su GitHub vanno solo i pacchetti Linux: Windows e macOS si distribuiscono
-# dagli store.
+# release in bozza da controllare e pubblicare dalla pagina Releases. Se la
+# release esiste già (per esempio creata da store/windows/pubblica.ps1) aggiunge
+# i file. L'eseguibile per Windows si carica dal PC Windows con
+# store/windows/pubblica.ps1; macOS si distribuisce solo dal Mac App Store.
+#
+# La release va resa pubblica solo quando contiene tutti i pacchetti (Windows e
+# Linux): i pulsanti del sito puntano all'ultima release pubblicata e un file
+# mancante darebbe errore 404.
 #
 # Prerequisito: GitHub CLI (sudo apt install gh) e `gh auth login` una volta.
 #
@@ -24,15 +29,15 @@ gh auth status >/dev/null 2>&1 || { echo "Eseguire prima: gh auth login" >&2; ex
 versione="$(node -p "require('./apps/desktop/src-tauri/tauri.conf.json').version")"
 tag="v$versione"
 
-shopt -s nullglob
-file=(target/release/bundle/deb/*_"$versione"_*.deb
-      target/release/bundle/rpm/*-"$versione"-*.rpm
-      target/release/bundle/appimage/*_"$versione"_*.AppImage)
-[ -f target/release/bundle/latest.json ] && file+=(target/release/bundle/latest.json)
-if [ "${#file[@]}" -eq 0 ]; then
+# Pacchetti con i nomi fissi creati da build.sh, solo se della versione corrente.
+if [ "$(cat target/rilascio/.versione-linux 2>/dev/null)" != "$versione" ]; then
   echo "Nessun pacchetto della versione $versione: eseguire prima store/linux/build.sh" >&2
   exit 1
 fi
+file=(target/rilascio/RastInvoice-linux-amd64.deb
+      target/rilascio/RastInvoice-linux-x86_64.rpm
+      target/rilascio/RastInvoice-linux-x86_64.AppImage)
+[ -f target/rilascio/latest.json ] && file+=(target/rilascio/latest.json)
 
 # La release deve corrispondere al codice pubblicato su main.
 git fetch -q origin main
@@ -50,6 +55,8 @@ awk -v v="$versione" '
   dentro { print }
 ' docs/CHANGELOG.md > "$note"
 [ -s "$note" ] || echo "RastInvoice $versione" > "$note"
+# Parte fissa: download e avviso di SmartScreen per Windows.
+{ echo; grep -v '^<!--' store/note-release.md; } >> "$note"
 
 if gh release view "$tag" -R "$repo" >/dev/null 2>&1; then
   echo "== Aggiorno i file della release $tag"
@@ -62,6 +69,15 @@ fi
 rm -f "$note"
 
 if [ "${1:-}" = "--pubblica" ]; then
+  # Il sito scarica da releases/latest/download: servono tutti i file.
+  presenti="$(gh release view "$tag" -R "$repo" --json assets --jq '.assets[].name')"
+  for f in RastInvoice-windows-x64.exe RastInvoice-linux-amd64.deb \
+           RastInvoice-linux-x86_64.rpm RastInvoice-linux-x86_64.AppImage; do
+    grep -qx "$f" <<< "$presenti" || {
+      echo "Manca $f nella release $tag: resta in bozza (il sito darebbe errore 404)." >&2
+      exit 1
+    }
+  done
   gh release edit "$tag" -R "$repo" --draft=false --latest
   echo "Release $tag pubblicata."
 else
