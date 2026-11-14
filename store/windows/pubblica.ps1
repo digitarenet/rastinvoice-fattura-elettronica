@@ -15,8 +15,13 @@
 # Uso, dalla radice del repository:
 #   pwsh store/windows/pubblica.ps1             # carica l'exe nella release (bozza se nuova)
 #   pwsh store/windows/pubblica.ps1 -Pubblica   # ... e rende pubblica la release
+#
+# Se la nuova versione esce solo per Windows, -CopiaLinux copia nella release i
+# pacchetti Linux dell'ultima release pubblicata, con i nomi fissi, insieme al
+# suo latest.json: sito e aggiornamenti Linux restano alla versione precedente.
+#   pwsh store/windows/pubblica.ps1 -CopiaLinux -Pubblica
 
-param([switch]$Pubblica)
+param([switch]$Pubblica, [switch]$CopiaLinux)
 
 $ErrorActionPreference = "Stop"
 $radice = Resolve-Path (Join-Path $PSScriptRoot "../..")
@@ -72,6 +77,32 @@ if ($LASTEXITCODE -eq 0) {
     $esito = $LASTEXITCODE
     Remove-Item $note -Force
     if ($esito) { throw "creazione della release non riuscita" }
+}
+
+if ($CopiaLinux) {
+    $precedente = gh release view -R $repo --json tagName --jq ".tagName"
+    if ($LASTEXITCODE -or -not $precedente) { throw "nessuna release pubblicata da cui copiare i pacchetti Linux" }
+    if ($precedente -eq $tag) { throw "la release $tag è già pubblicata: niente da copiare" }
+    Write-Host "== Copio i pacchetti Linux da $precedente" -ForegroundColor Cyan
+    $cartella = Join-Path ([System.IO.Path]::GetTempPath()) "rastinvoice-linux-$precedente"
+    Remove-Item $cartella -Recurse -Force -ErrorAction SilentlyContinue
+    gh release download $precedente -R $repo -D $cartella -p "*.deb" -p "*.rpm" -p "*.AppImage" -p "latest.json"
+    if ($LASTEXITCODE) { throw "download dei pacchetti Linux non riuscito" }
+    # Nomi fissi per estensione; latest.json resta com'è (punta ai file di $precedente).
+    $nomi = @{ ".deb" = "RastInvoice-linux-amd64.deb"; ".rpm" = "RastInvoice-linux-x86_64.rpm";
+               ".AppImage" = "RastInvoice-linux-x86_64.AppImage" }
+    $daCaricare = @()
+    foreach ($f in Get-ChildItem $cartella -File) {
+        if ($f.Name -eq "latest.json") { $daCaricare += $f.FullName; continue }
+        $nuovo = $nomi[$f.Extension]
+        if (-not $nuovo) { continue }
+        if ($f.Name -ne $nuovo) { Move-Item $f.FullName (Join-Path $cartella $nuovo) -Force }
+        $daCaricare += (Join-Path $cartella $nuovo)
+    }
+    gh release upload $tag @daCaricare --clobber -R $repo
+    $esito = $LASTEXITCODE
+    Remove-Item $cartella -Recurse -Force
+    if ($esito) { throw "caricamento dei pacchetti Linux non riuscito" }
 }
 
 if ($Pubblica) {

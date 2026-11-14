@@ -129,6 +129,10 @@ Ordine: alzare la versione e fare push su `main`; su Linux `store/linux/pubblica
 `pwsh store/windows/pubblica.ps1` (aggiunge l'exe); infine pubblicare la bozza con `-Pubblica`/`--pubblica` o
 dalla pagina Releases. Gli script con `--pubblica` si rifiutano se manca uno dei file.
 
+Versione solo per Windows: `pwsh store/windows/pubblica.ps1 -CopiaLinux -Pubblica` copia nella nuova release i
+pacchetti Linux e il `latest.json` dell'ultima release pubblicata, così sito e aggiornamenti Linux restano alla
+versione precedente.
+
 ### Controlli prima di un rilascio
 
 ```bash
