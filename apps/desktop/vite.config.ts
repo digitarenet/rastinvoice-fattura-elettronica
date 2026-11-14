@@ -11,7 +11,7 @@ import type { Plugin } from "vite";
 
 // File di supporto di PDF.js (caratteri standard e decodificatori) serviti
 // dall'applicazione stessa in /pdfjs/: nessun accesso alla rete.
-const PDFJS = join(__dirname, "node_modules", "pdfjs-dist");
+const PDFJS = join(import.meta.dirname, "node_modules", "pdfjs-dist");
 const CARTELLE_PDFJS = ["standard_fonts", "wasm"];
 
 function risorsePdfjs(): Plugin {
