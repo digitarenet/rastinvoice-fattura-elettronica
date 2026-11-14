@@ -116,10 +116,15 @@ pagina.
 
 | Destinazione | Collegamento provvisorio | Collegamento definitivo |
 | --- | --- | --- |
-| Microsoft Store | `https://apps.microsoft.com/search?query=RastInvoice` | `https://apps.microsoft.com/detail/<ID prodotto>` |
+| Microsoft Store | — | `https://apps.microsoft.com/detail/9P4DGT99P024?hl=it-IT&gl=IT` (ID prodotto `9P4DGT99P024`), già definitivo |
 | Mac App Store | `https://apps.apple.com/it/` | `https://apps.apple.com/it/app/rastinvoice/id<numero>` |
 | Flathub | `https://flathub.org/apps/net.digitare.rastinvoice` | già definitivo |
 | Windows (.exe) e pacchetti Linux | `releases/latest/download/<nome>` | già definitivo |
+
+**Installazioni per campagna.** Aprendo il sito con `?cid=<campagna>` (per esempio
+`https://www.rastinvoice.it/?cid=ads-novembre#scarica`), `js/sito.js` aggiunge lo stesso `cid` ai link con
+`data-store="microsoft"`; Partner Center mostra poi le installazioni per campagna in **Approfondimenti →
+Acquisizioni**. Per il Mac App Store servirà lo stesso meccanismo con i parametri `pt` e `ct`.
 
 Per i pulsanti degli store il sito usa icone e testi propri. Se si preferiscono i badge ufficiali
 (Microsoft, Apple, Flathub), vanno scaricati dalle pagine dei rispettivi programmi per sviluppatori e

@@ -2,7 +2,8 @@
  * Copyright (c) 2026 Andrea Re - info@digitare.net
  * Autore: Andrea Re @ 2026 - info@digitare.net
  *
- * Comportamenti del sito: menu su schermi piccoli, galleria a schede, invio del modulo contatti.
+ * Comportamenti del sito: menu su schermi piccoli, galleria a schede, campagna nei link degli store,
+ * invio del modulo contatti.
  * Il sito resta utilizzabile anche senza JavaScript.
  */
 (function () {
@@ -28,6 +29,18 @@
         pulsante.setAttribute("aria-expanded", "false");
         pulsante.focus();
       }
+    });
+  }
+
+  // Campagna nei link degli store: se la pagina è aperta con ?cid=<campagna> (per esempio da un annuncio
+  // o da una guida), il codice passa ai pulsanti del Microsoft Store, così Partner Center conta le
+  // installazioni per campagna. Sono ammessi solo lettere, cifre, trattino e trattino basso.
+  var campagna = (window.location.search.match(/[?&]cid=([A-Za-z0-9_-]{1,64})(?:&|$)/) || [])[1];
+  if (campagna) {
+    Array.prototype.forEach.call(document.querySelectorAll('a[data-store="microsoft"]'), function (a) {
+      var url = new URL(a.href);
+      url.searchParams.set("cid", campagna);
+      a.href = url.toString();
     });
   }
 

@@ -22,11 +22,11 @@ Apre fatture emesse e ricevute in tutti i formati in cui arrivano di solito: `.x
 
 ## Scarica RastInvoice
 
-<!-- Collegamenti provvisori: sostituire con gli indirizzi definitivi delle schede quando sono pubblicate
-     (Microsoft Store: https://apps.microsoft.com/detail/<ID prodotto>; Mac App Store: https://apps.apple.com/it/app/<id>). -->
+<!-- Collegamento provvisorio da sostituire quando la scheda è pubblicata:
+     Mac App Store: https://apps.apple.com/it/app/<id>. -->
 
 <p align="center">
-  <a href="https://apps.microsoft.com/search?query=RastInvoice"><img src="https://get.microsoft.com/images/it-it%20dark.svg" alt="Scarica dal Microsoft Store" height="56"></a>
+  <a href="https://apps.microsoft.com/detail/9P4DGT99P024?hl=it-IT&gl=IT"><img src="https://get.microsoft.com/images/it-it%20dark.svg" alt="Scarica dal Microsoft Store" height="56"></a>
   &nbsp;
   <a href="https://apps.apple.com/it/"><img src="https://img.shields.io/badge/Mac%20App%20Store-Scarica-000000?style=for-the-badge&logo=apple&logoColor=white" alt="Scarica dal Mac App Store" height="56"></a>
 </p>
@@ -44,7 +44,7 @@ Apre fatture emesse e ricevute in tutti i formati in cui arrivano di solito: `.x
 
 | Sistema | Dove scaricarlo | Prezzo |
 | --- | --- | --- |
-| Windows 10 e 11 | [file `.exe`](https://github.com/digitarenet/rastinvoice-fattura-elettronica/releases/latest/download/RastInvoice-windows-x64.exe), senza installazione; presto anche [Microsoft Store](https://apps.microsoft.com/search?query=RastInvoice) | gratuito |
+| Windows 10 e 11 | [Microsoft Store](https://apps.microsoft.com/detail/9P4DGT99P024?hl=it-IT&gl=IT); in alternativa [file `.exe`](https://github.com/digitarenet/rastinvoice-fattura-elettronica/releases/latest/download/RastInvoice-windows-x64.exe) senza installazione | gratuito |
 | macOS (Intel e Apple Silicon) | [Mac App Store](https://apps.apple.com/it/) | 2,99 € |
 | Linux, tutte le distribuzioni | [AppImage](https://github.com/digitarenet/rastinvoice-fattura-elettronica/releases/latest/download/RastInvoice-linux-x86_64.AppImage) | gratuito |
 | Debian, Ubuntu, Linux Mint | [pacchetto `.deb`](https://github.com/digitarenet/rastinvoice-fattura-elettronica/releases/latest/download/RastInvoice-linux-amd64.deb) | gratuito |
@@ -53,9 +53,9 @@ Apre fatture emesse e ricevute in tutti i formati in cui arrivano di solito: `.x
 
 Tutte le versioni e le note di rilascio sono nelle [release di GitHub](https://github.com/digitarenet/rastinvoice-fattura-elettronica/releases).
 
-**Windows: avviso al primo avvio.** Il file `.exe` non ha ancora una firma digitale, quindi Windows mostra
-«Windows ha protetto il PC»: scegliere **Ulteriori informazioni** e poi **Esegui comunque**. La versione del
-Microsoft Store, in arrivo, è firmata e non mostra avvisi.
+**Windows: avviso al primo avvio del file `.exe`.** Il file `.exe` non ha una firma digitale, quindi Windows
+mostra «Windows ha protetto il PC»: scegliere **Ulteriori informazioni** e poi **Esegui comunque**. La versione
+del Microsoft Store è firmata, non mostra avvisi e si aggiorna da sola.
 
 
 ## Funzionalità
@@ -122,9 +122,9 @@ Microsoft Store, in arrivo, è firmata e non mostra avvisi.
   Internet oltre al download del foglio di stile.
 
 **Distribuzione**
-- **Windows:** file `.exe` senza installazione nelle release di GitHub, gratuito (senza firma digitale: al primo
-  avvio compare l'avviso di SmartScreen). In arrivo sul Microsoft Store: il pacchetto MSIX
-  (`store/microsoft/msix.ps1`) viene firmato dallo Store, quindi Windows non mostra avvisi.
+- **Windows:** [Microsoft Store](https://apps.microsoft.com/detail/9P4DGT99P024?hl=it-IT&gl=IT), gratuito: il pacchetto MSIX (`store/microsoft/msix.ps1`) viene
+  firmato dallo Store, quindi Windows non mostra avvisi. In alternativa, file `.exe` senza installazione nelle
+  release di GitHub (senza firma digitale: al primo avvio compare l'avviso di SmartScreen).
 - **macOS:** Mac App Store, 2,99 €.
 - **Linux:** `.deb` per Debian e Ubuntu, `.rpm` per Fedora e openSUSE e AppImage nelle
   [release di GitHub](https://github.com/digitarenet/rastinvoice-fattura-elettronica/releases).

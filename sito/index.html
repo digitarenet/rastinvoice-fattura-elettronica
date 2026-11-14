@@ -511,8 +511,8 @@ cargo build --release -p rustinvoice-desktop</code></pre>
     <section class="sezione chiara" id="scarica" aria-labelledby="titolo-scarica">
       <div class="container">
         <h2 id="titolo-scarica">Scarica RastInvoice</h2>
-        <p class="intro">Scegli il tuo sistema: il download parte subito, senza registrazione. Le versioni per Microsoft
-          Store e Mac App Store sono in preparazione.</p>
+        <p class="intro">Scegli il tuo sistema: gratuito e senza registrazione. La versione per Mac App Store è in
+          preparazione.</p>
         <div class="row g-4 mt-2">
           <div class="col-md-6 col-lg-4">
             <div class="store">
@@ -521,16 +521,16 @@ cargo build --release -p rustinvoice-desktop</code></pre>
                 <h3>Windows</h3>
               </div>
               <span class="prezzo">Gratuito</span>
-              <p>Per Windows 10 e 11 a 64 bit. Un solo file, senza installazione: scaricalo e aprilo. Il file non ha
-                ancora una firma digitale, quindi al primo avvio Windows mostra un avviso:
-                <a href="#avviso-windows">ecco come aprirlo</a>.</p>
+              <p>Per Windows 10 e 11 a 64 bit. Installazione e aggiornamenti automatici dal Microsoft Store, con firma
+                digitale e senza avvisi. In alternativa c'è un solo file senza installazione, non firmato:
+                <a href="#avviso-windows">come aprirlo</a>.</p>
               <div class="azioni">
-                <a class="btn btn-primary" href="https://github.com/digitarenet/rastinvoice-fattura-elettronica/releases/latest/download/RastInvoice-windows-x64.exe">
+                <a class="btn btn-primary" data-store="microsoft" href="https://apps.microsoft.com/detail/9P4DGT99P024?hl=it-IT&amp;gl=IT">
                   <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 5.1l7.4-1v7.2H3zm0 13.8l7.4 1v-7.1H3zm8.3 1.1L21 21.4v-8.6h-9.7zm0-15.9v7.3H21V2.6z"/></svg>
-                  Scarica per Windows (.exe)</a>
-                <span class="btn btn-outline-primary presto" aria-disabled="true">
+                  Scarica dal Microsoft Store</a>
+                <a class="btn btn-outline-primary" href="https://github.com/digitarenet/rastinvoice-fattura-elettronica/releases/latest/download/RastInvoice-windows-x64.exe">
                   <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 5.1l7.4-1v7.2H3zm0 13.8l7.4 1v-7.1H3zm8.3 1.1L21 21.4v-8.6h-9.7zm0-15.9v7.3H21V2.6z"/></svg>
-                  Presto sul Microsoft Store</span>
+                  Scarica il file .exe</a>
               </div>
             </div>
           </div>
@@ -568,9 +568,9 @@ cargo build --release -p rustinvoice-desktop</code></pre>
             </div>
           </div>
         </div>
-        <p class="nota mt-4" id="avviso-windows"><strong>Avviso di Windows al primo avvio.</strong> Finché la versione
-          firmata del Microsoft Store non è disponibile, Windows SmartScreen mostra la finestra «Windows ha protetto il
-          PC». Per aprire RastInvoice scegli <strong>Ulteriori informazioni</strong> e poi <strong>Esegui comunque</strong>.
+        <p class="nota mt-4" id="avviso-windows"><strong>Avviso di Windows al primo avvio del file .exe.</strong> Il file .exe non
+          ha una firma digitale, quindi Windows SmartScreen mostra la finestra «Windows ha protetto il PC» (la versione
+          del Microsoft Store non mostra avvisi). Per aprire RastInvoice scegli <strong>Ulteriori informazioni</strong> e poi <strong>Esegui comunque</strong>.
           Anche il browser può segnalare che il file non viene scaricato comunemente: scegli <strong>Mantieni</strong>.
           Al primo avvio RastInvoice chiede dove salvare i dati: nel profilo utente oppure accanto al file, per
           esempio su una chiavetta USB. Serve WebView2, già presente in Windows 11 e in Windows 10 aggiornato.</p>
@@ -763,7 +763,7 @@ cargo build --release -p rustinvoice-desktop</code></pre>
             <li><a href="https://github.com/digitarenet/rastinvoice-fattura-elettronica/releases/latest/download/RastInvoice-windows-x64.exe">Windows (.exe)</a></li>
             <li>Linux: <a href="https://github.com/digitarenet/rastinvoice-fattura-elettronica/releases/latest/download/RastInvoice-linux-amd64.deb">.deb</a>, <a href="https://github.com/digitarenet/rastinvoice-fattura-elettronica/releases/latest/download/RastInvoice-linux-x86_64.rpm">.rpm</a>,
               <a href="https://github.com/digitarenet/rastinvoice-fattura-elettronica/releases/latest/download/RastInvoice-linux-x86_64.AppImage">AppImage</a></li>
-            <li>Microsoft Store (prossimamente)</li>
+            <li><a data-store="microsoft" href="https://apps.microsoft.com/detail/9P4DGT99P024?hl=it-IT&amp;gl=IT">Microsoft Store</a></li>
             <li>Mac App Store (prossimamente)</li>
           </ul>
         </div>
