@@ -11,7 +11,7 @@
 # altrimenti si copia il modello config-esempio.php da compilare.
 #
 # Uso, dalla radice del repository (su Windows dalla Git Bash):
-#   sito/prepara.sh
+#   sito/prepara.sh          (in PowerShell: pwsh sito/prepara.ps1)
 set -euo pipefail
 
 sito="$(cd "$(dirname "$0")" && pwd)"
@@ -21,7 +21,7 @@ rm -rf "$uscita" && mkdir -p "$uscita/public_html" "$uscita/privato"
 # Tutto il sito tranne documentazione, modello e script di servizio. Solo cp e
 # rm, senza rsync: lo script gira anche nella Git Bash di Windows.
 cp -R "$sito/." "$uscita/public_html/"
-(cd "$uscita/public_html" && rm -f README.md config-esempio.php rastinvoice-config.php prepara.sh)
+(cd "$uscita/public_html" && rm -f README.md config-esempio.php rastinvoice-config.php prepara.sh prepara.ps1)
 find "$uscita/public_html" \( -name .DS_Store -o -name Thumbs.db -o -name desktop.ini \) -delete
 
 # CSS incorporato nelle pagine: i due fogli di stile non bloccano più il rendering

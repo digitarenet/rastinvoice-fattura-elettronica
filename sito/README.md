@@ -18,7 +18,7 @@ contatti usa un piccolo script PHP.
 | `grazie.html` | conferma dopo l'invio del modulo quando JavaScript è disattivato |
 | `contatti.php` | invio del modulo per email, con `mail()` di PHP o SMTP autenticato |
 | `config-esempio.php` | modello della configurazione SMTP, da copiare come `rastinvoice-config.php` fuori dalla radice del sito |
-| `prepara.sh` | prepara in `target/sito/` le cartelle `public_html/` e `privato/` da caricare sul server |
+| `prepara.sh`, `prepara.ps1` | (bash o PowerShell, stesso risultato) preparano in `target/sito/` le cartelle `public_html/` e `privato/` da caricare sul server |
 | `.htaccess` | per Apache: HTTPS e dominio unico www, compressione, cache, intestazioni di sicurezza, pagina 404, blocco dei file di configurazione |
 | `css/bootstrap-italia.min.css` | [Bootstrap Italia](https://italia.github.io/bootstrap-italia/) 2.18.0 (BSD-3-Clause), ridotto alle sole regole usate (24 KB invece di 600 KB) |
 | `css/sito.css` | stili propri del sito; `prepara.sh` incorpora entrambi i fogli in ogni pagina e ne mette l'impronta SHA-256 nella Content-Security-Policy |
@@ -34,7 +34,7 @@ cookie.
 
 Serve un hosting con PHP 8.1 o successivo. Su un VPS basta un server web con PHP-FPM.
 
-1. Eseguire `sito/prepara.sh`: crea in `target/sito/` la cartella `public_html/`, da copiare nella radice
+1. Eseguire `sito/prepara.sh` (su Windows anche `pwsh sito/prepara.ps1`): crea in `target/sito/` la cartella `public_html/`, da copiare nella radice
    del dominio (`domains/rastinvoice.it/public_html/`), e la cartella `privato/` con la configurazione del
    modulo, da copiare accanto (`domains/rastinvoice.it/privato/`). Non usare `private_html` per i file
    riservati: sui server DirectAdmin è la radice del sito in HTTPS, quindi raggiungibile dal web.
