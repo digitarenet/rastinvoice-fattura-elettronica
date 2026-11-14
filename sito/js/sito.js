@@ -42,6 +42,10 @@
       url.searchParams.set("cid", campagna);
       a.href = url.toString();
     });
+    // Dalle guide la campagna segue il visitatore fino alla sezione Scarica della pagina principale.
+    Array.prototype.forEach.call(document.querySelectorAll('a[href="./#scarica"]'), function (a) {
+      a.setAttribute("href", "./?cid=" + campagna + "#scarica");
+    });
   }
 
   // Galleria a schede (modello ARIA "tabs", con frecce, Home e Fine)
