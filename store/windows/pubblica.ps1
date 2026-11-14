@@ -103,7 +103,7 @@ $precedente = gh release view -R $repo --json tagName --jq ".tagName" 2>$null
 $recente = -not $precedente -or ([version]$Versione -ge [version]$precedente.TrimStart("v"))
 if (-not $recente) { $mancanti = @() }
 if ($mancanti.Count -gt 0 -and $precedente -and $precedente -ne $tag) {
-    Write-Host "== Copio da $precedente: $($mancanti -join ', ')" -ForegroundColor Cyan
+    Write-Host "== Copio da ${precedente}: $($mancanti -join ', ')" -ForegroundColor Cyan
     $cartella = Join-Path ([System.IO.Path]::GetTempPath()) "rastinvoice-$precedente"
     Remove-Item $cartella -Recurse -Force -ErrorAction SilentlyContinue
     $modelli = @()
@@ -134,7 +134,7 @@ if ($mancanti.Count -gt 0) {
     if ((Read-Host "Pubblicare comunque? [s/N]") -ne "s") { exit 1 }
 }
 
-if ($recente) { gh release edit $tag -R $repo --draft=false --latest }
-else { gh release edit $tag -R $repo --draft=false --latest=false }
+$latest = if ($recente) { "--latest" } else { "--latest=false" }
+gh release edit $tag -R $repo --draft=false $latest
 if ($LASTEXITCODE) { throw "pubblicazione non riuscita" }
 Write-Host "Release $tag pubblicata." -ForegroundColor Green
