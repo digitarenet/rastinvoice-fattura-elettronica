@@ -97,10 +97,13 @@
   let sceltaDatiFatta = $state(false);
 
   const anni = $derived([...new Set(esito.voci.map((v) => v.anno).filter((a) => a > 0))].sort((a, b) => b - a));
+  // Con un anno scelto, tutti/ricevute/emesse contano solo i documenti di quell'anno: sono i filtri
+  // che si combinano con l'anno, così il numero accanto alla voce corrisponde all'elenco.
+  const vociAnno = $derived(anno === null ? esito.voci : esito.voci.filter((v) => v.anno === anno));
   const conteggi = $derived({
-    tutte: esito.voci.length,
-    ricevute: esito.voci.filter((v) => direzione(v, propri) === "ricevuta").length,
-    emesse: esito.voci.filter((v) => direzione(v, propri) === "emessa").length,
+    tutte: vociAnno.length,
+    ricevute: vociAnno.filter((v) => direzione(v, propri) === "ricevuta").length,
+    emesse: vociAnno.filter((v) => direzione(v, propri) === "emessa").length,
     da_leggere: esito.voci.filter((v) => !lette.has(v.id)).length,
     contrassegnate: esito.voci.filter((v) => contrassegnate.has(v.id)).length,
     anomalie: esito.voci.filter((v) => v.avvisi > 0 || v.controlli > 0).length,
@@ -122,6 +125,23 @@
     visibili.reduce((s, v) => s + (v.nota_credito ? -1 : 1) * Math.abs(Number(v.totale) || 0), 0),
   );
   const suggerito = $derived(indovinaPropri(esito.voci));
+  // Clienti (emesse) o fornitori (ricevute) presenti nella sezione e nell'anno scelti, per il filtro
+  // nell'intestazione dell'elenco.
+  const ruoloControparte = $derived(sezione === "emesse" ? "cliente" : sezione === "ricevute" ? "fornitore" : null);
+  const controparti = $derived.by(() => {
+    if (!ruoloControparte) return [];
+    const dir = sezione === "emesse" ? "emessa" : "ricevuta";
+    const mappa = new Map<string, { chiave: string; nome: string; documenti: number }>();
+    for (const v of vociAnno) {
+      if (direzione(v, propri) !== dir) continue;
+      const c = controparte(v, propri);
+      if (!c.chiave) continue;
+      const voce = mappa.get(c.chiave) ?? { chiave: c.chiave, nome: c.nome || c.chiave, documenti: 0 };
+      voce.documenti += 1;
+      mappa.set(c.chiave, voce);
+    }
+    return [...mappa.values()].sort((a, b) => a.nome.localeCompare(b.nome, "it", { sensitivity: "base" }));
+  });
   const nomeContatto = $derived.by(() => {
     if (!contatto) return "";
     const v = esito.voci.find((x) => x.cedente.chiave === contatto || x.cessionario.chiave === contatto);
@@ -420,9 +440,26 @@
     }
   }
 
-  function vaiA(s: Sezione, a: number | null = null) {
+  /**
+   * Sceglie una sezione del menu laterale. Tutti, ricevute ed emesse si combinano con l'anno scelto,
+   * che resta attivo; le altre sezioni (da leggere, contrassegnate, anomalie) mostrano tutti gli anni.
+   */
+  function vaiA(s: Sezione) {
     vista = "documenti";
+    // Passando da emesse a ricevute (o viceversa) il cliente scelto non è più un fornitore.
+    if (ruoloControparte && (s === "ricevute" || s === "emesse") && s !== sezione) contatto = null;
     sezione = s;
+    if (s !== "tutte" && s !== "ricevute" && s !== "emesse") anno = null;
+  }
+
+  /** Sceglie un anno; un secondo clic sull'anno già scelto lo toglie. */
+  function vaiAnno(a: number) {
+    if (vista === "documenti" && anno === a) {
+      anno = null;
+      return;
+    }
+    vista = "documenti";
+    sezione = sezioneAnno;
     anno = a;
   }
 
@@ -566,7 +603,7 @@
           {#each ["tutte", "ricevute", "emesse", "da_leggere", "contrassegnate", "anomalie"] as const as s (s)}
             {#if !((s === "ricevute" || s === "emesse") && propri.size === 0) && !(s === "anomalie" && conteggi.anomalie === 0)}
               <li>
-                <button class:attivo={vista === "documenti" && sezione === s && anno === null} aria-current={vista === "documenti" && sezione === s && anno === null ? "page" : undefined} onclick={() => vaiA(s)}>
+                <button class:attivo={vista === "documenti" && sezione === s} aria-current={vista === "documenti" && sezione === s ? "true" : undefined} onclick={() => vaiA(s)}>
                   <Icona nome={icone[s]} /> <span>{etichette[s]}</span> <small>{conteggi[s]}</small>
                 </button>
               </li>
@@ -579,7 +616,8 @@
           <ul>
             {#each anni as a (a)}
               <li>
-                <button class:attivo={vista === "documenti" && anno === a} aria-current={vista === "documenti" && anno === a ? "page" : undefined} onclick={() => vaiA(sezioneAnno, a)}>
+                <button class:attivo={vista === "documenti" && anno === a} aria-current={vista === "documenti" && anno === a ? "true" : undefined}
+                  title={vista === "documenti" && anno === a ? "Clic di nuovo per mostrare tutti gli anni" : undefined} onclick={() => vaiAnno(a)}>
                   <Icona nome="it-calendar" /> <span>{a}</span>
                   <small>{conteggiAnni.get(a) ?? 0}</small>
                 </button>
@@ -649,9 +687,24 @@
                       <button class="btn btn-link btn-xs" title="Esporta l'elenco in CSV" aria-label="Esporta l'elenco in CSV" onclick={esportaCsv}><Icona nome="it-download" /></button>
                     </div>
                   </div>
-                  {#if contatto || ricerca || dal || al}
+                  {#if ruoloControparte && controparti.length > 0}
+                    <label class="filtro-controparte">
+                      <span>{ruoloControparte === "cliente" ? "Cliente" : "Fornitore"}</span>
+                      <select class="form-select form-select-sm" value={contatto ?? ""}
+                        onchange={(e) => (contatto = e.currentTarget.value || null)}>
+                        <option value="">{ruoloControparte === "cliente" ? "Tutti i clienti" : "Tutti i fornitori"}</option>
+                        {#if contatto && !controparti.some((c) => c.chiave === contatto)}
+                          <option value={contatto}>{nomeContatto}</option>
+                        {/if}
+                        {#each controparti as c (c.chiave)}
+                          <option value={c.chiave}>{c.nome} ({c.documenti})</option>
+                        {/each}
+                      </select>
+                    </label>
+                  {/if}
+                  {#if (contatto && !(ruoloControparte && controparti.length > 0)) || ricerca || dal || al}
                     <div class="filtri-attivi">
-                      {#if contatto}<span class="filtro">{nomeContatto}<button aria-label="Togli il filtro {nomeContatto}" onclick={() => (contatto = null)}><Icona nome="it-close" dimensione="xs" /></button></span>{/if}
+                      {#if contatto && !(ruoloControparte && controparti.length > 0)}<span class="filtro">{nomeContatto}<button aria-label="Togli il filtro {nomeContatto}" onclick={() => (contatto = null)}><Icona nome="it-close" dimensione="xs" /></button></span>{/if}
                       {#if ricerca}<span class="filtro">"{ricerca}"<button aria-label="Togli la ricerca {ricerca}" onclick={() => (ricerca = "")}><Icona nome="it-close" dimensione="xs" /></button></span>{/if}
                       {#if dal || al}<span class="filtro">{dal ? data(dal) : "…"} – {al ? data(al) : "…"}<button aria-label="Togli il filtro per date" onclick={() => { dal = ""; al = ""; }}><Icona nome="it-close" dimensione="xs" /></button></span>{/if}
                       <button class="btn btn-link btn-xs p-0" onclick={azzeraFiltri}>Azzera</button>
@@ -772,6 +825,7 @@
             onApriImpostazioni={() => (vista = "impostazioni")}
             onMostraContatto={(c) => {
               vaiA("tutte");
+              anno = null;
               contatto = c;
             }}
           />
@@ -1176,6 +1230,18 @@
     border: 0;
     background: none;
     padding: 0 0.15rem;
+  }
+  .filtro-controparte {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+    font-size: 0.8rem;
+    color: var(--ri-testo-2);
+  }
+  .filtro-controparte select {
+    flex: 1;
+    min-width: 0;
   }
   .pannello-filtri {
     display: grid;

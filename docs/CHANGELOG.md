@@ -2,7 +2,16 @@
 
 Novità, miglioramenti e correzioni di RastInvoice (fino alla 0.9.0 chiamato RustinVoice).
 
-## 1.3.0 - 2026-11-14
+## 1.4.0 - 2026-11-16
+
+### Aggiunto
+- Filtro per cliente nelle emesse e per fornitore nelle ricevute.
+- Versione per Windows sul Microsoft Store.
+
+### Corretto
+- Sezione e anno scelti restano evidenziati insieme nel menu laterale.
+
+## 1.3.0
 
 ### Aggiunto
 - Versione per Windows scaricabile come file `.exe`, senza installazione.
