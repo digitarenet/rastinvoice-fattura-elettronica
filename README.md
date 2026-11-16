@@ -26,9 +26,9 @@ Apre fatture emesse e ricevute in tutti i formati in cui arrivano di solito: `.x
      Mac App Store: https://apps.apple.com/it/app/<id>. -->
 
 <p align="center">
-  <a href="https://apps.microsoft.com/detail/9P4DGT99P024?hl=it-IT&gl=IT"><img src="https://get.microsoft.com/images/it-it%20dark.svg" alt="Scarica dal Microsoft Store" height="56"></a>
+  <a href="https://apps.microsoft.com/detail/9P4DGT99P024?hl=it-IT&gl=IT"><img src="https://img.shields.io/badge/Microsoft%20Store-Scarica-0078D4?style=for-the-badge" alt="Scarica dal Microsoft Store"></a>
   &nbsp;
-  <a href="https://apps.apple.com/it/"><img src="https://img.shields.io/badge/Mac%20App%20Store-Scarica-000000?style=for-the-badge&logo=apple&logoColor=white" alt="Scarica dal Mac App Store" height="56"></a>
+  <a href="https://apps.apple.com/it/"><img src="https://img.shields.io/badge/Mac%20App%20Store-Scarica-000000?style=for-the-badge&logo=apple&logoColor=white" alt="Scarica dal Mac App Store"></a>
 </p>
 <!-- Badge Flathub da ripristinare quando l'app è accettata su Flathub:
 <p align="center">
