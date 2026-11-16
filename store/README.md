@@ -21,7 +21,7 @@ Materiale comune:
   SmartScreen), aggiunta dagli script `pubblica`.
 
 Distribuzione: Windows con il file `.exe` su GitHub (gratuito, senza firma: al primo avvio compare l'avviso di
-SmartScreen) e, appena pubblicato, dal Microsoft Store (nessun avviso); macOS solo dal Mac App Store (2,99 €);
+SmartScreen) e dal Microsoft Store (https://apps.microsoft.com/detail/9P4DGT99P024, nessun avviso); macOS solo dal Mac App Store (2,99 €);
 Linux da GitHub e Flathub. Il pulsante per le donazioni non compare nella
 versione per macOS, perché Apple non ammette donazioni esterne.
 

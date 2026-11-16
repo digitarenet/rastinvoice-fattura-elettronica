@@ -99,9 +99,10 @@ python3 -m http.server     # senza PHP: tutto tranne il modulo
 
 ## Collegamenti da aggiornare
 
-Finché le schede negli store non sono pubblicate, i pulsanti degli store sono segnaposto "Prossimamente"
+Il Microsoft Store è pubblicato (pulsante principale per Windows, con il file .exe come alternativa). Finché
+la scheda del Mac App Store non è pubblicata, il suo pulsante è un segnaposto "Prossimamente"
 (`<span>` con classe `presto`, sezione Scarica e piè di pagina di `index.html`): alla pubblicazione si
-sostituiscono con i collegamenti definitivi qui sotto (la versione con i link si trova nella cronologia di git,
+sostituisce con il collegamento definitivo qui sotto (la versione con i link si trova nella cronologia di git,
 prima del commit "Sito: pulsanti Prossimamente"). I link a GitHub (sezione Open source, contatti, piè di
 pagina, guide, informativa, `llms.txt`, dati strutturati) sono attivi.
 
@@ -110,9 +111,8 @@ pubblicata, con indirizzi che non cambiano a ogni versione:
 `https://github.com/digitarenet/rastinvoice-fattura-elettronica/releases/latest/download/<nome>`, con `<nome>`
 uguale a `RastInvoice-windows-x64.exe`, `RastInvoice-linux-amd64.deb`, `RastInvoice-linux-x86_64.rpm` o
 `RastInvoice-linux-x86_64.AppImage`. Ogni release deve contenere tutti e quattro i file (vedi
-`store/README.md`, "Rilascio su GitHub"). Quando la versione del Microsoft Store è pubblicata, decidere se
-tenere anche l'exe: se si toglie, vanno tolti anche il pulsante, la nota `#avviso-windows` e il link nel piè di
-pagina.
+`store/README.md`, "Rilascio su GitHub"). L'exe resta come alternativa al Microsoft Store: se un giorno si
+toglie, vanno tolti anche il pulsante, la nota `#avviso-windows` e il link nel piè di pagina.
 
 | Destinazione | Collegamento provvisorio | Collegamento definitivo |
 | --- | --- | --- |
